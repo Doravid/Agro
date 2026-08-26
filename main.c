@@ -19,11 +19,13 @@ typedef struct
     uint32_t maxHealth, currentHealth;
     float dashTimer;
 } Player;
+
 typedef enum
 {
     PlayerProj,
     EnemyProj,
 } ProjectileOwner;
+
 typedef struct
 {
     Vector2 position, direction;
@@ -45,13 +47,17 @@ Player mainPlayer = {
     .position = {400.0f, 200.0f},
     .size = {40.0f, 40.0f},
     .rotation = -90.f,
-    .rotationSpeed = 90.f,
+    .rotationSpeed = 300.f,
     .moveSpeed = 400.0f,
     .color = GREEN,
     .movementVector = (Vector2){0},
     .dashTimer = 0.0f,
 };
-
+/**
+ * @brief Draws a player
+ *
+ * @param player the player that will be drawn.
+ */
 void drawPlayer(Player player)
 {
     const float fadeAmount = 0.3f;
@@ -112,13 +118,14 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner)
 {
     Vector2 directionVector = {.x = cosf(parent.rotation * DEG2RAD), .y = sinf(parent.rotation * DEG2RAD)};
     spawnProjectile((Projectile){
-        .color = PINK,
+        .color = ColorLerp(PINK, parent.color, 0.5),
         .direction = directionVector,
         .position = {parent.position.x + directionVector.x * 40, parent.position.y + directionVector.y * 40},
         .size = 10.f,
         .moveSpeed = 250.f,
         .damage = 15,
         .owner = owner,
+
     });
 }
 
@@ -221,7 +228,7 @@ void updateEnemies()
 const float VIRTUAL_WIDTH = 1920.0f;
 const float VIRTUAL_HEIGHT = 1080.0f;
 
-void updatePlayer()
+void updatePlayer(Camera2D camera)
 {
     // Input & Movement
     if (IsKeyDown(KEY_D))
@@ -255,10 +262,22 @@ void updatePlayer()
         mainPlayer.position = Vector2Add(mainPlayer.position, offset);
         return;
     }
-
+    // Move
     Vector2 norm = Vector2Normalize(mainPlayer.movementVector);
     Vector2 offset = Vector2Scale(norm, GetFrameTime() * mainPlayer.moveSpeed);
     mainPlayer.position = Vector2Add(mainPlayer.position, offset);
+
+    // Rotate
+    Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
+    float ang = atan2f(mousePos.y - mainPlayer.position.y, mousePos.x - mainPlayer.position.x);
+    float enemyAngle = mainPlayer.rotation * DEG2RAD;
+    float delta = enemyAngle - ang;
+    delta = atan2f(sinf(delta), cosf(delta));
+
+    if (delta < 0)
+        mainPlayer.rotation += mainPlayer.rotationSpeed * GetFrameTime();
+    else
+        mainPlayer.rotation -= mainPlayer.rotationSpeed * GetFrameTime();
 }
 
 int main(void)
@@ -311,7 +330,7 @@ int main(void)
             float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
             SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
         }
-        updatePlayer();
+        updatePlayer(camera);
         // Modify base user zoom
         userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
         if (userZoom > 3.0f)
