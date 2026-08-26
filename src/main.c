@@ -7,6 +7,7 @@
 #include "player.h"
 #include "projectile.h"
 #include "enemies.h"
+#include "levelManager.h"
 
 // Base virtual design resolution
 const float VIRTUAL_WIDTH = 1920.0f;
@@ -24,9 +25,8 @@ int main(void)
     float userZoom = 1.0f;
 
     Camera2D camera = {0};
-    enemies[0] = (Player){.rotationSpeed = 50.f, .attackCooldown = 0., .attackSpeed = 0.2, .color = BLUE, .moveSpeed = 400.f, .position = {100, 50}, .rotation = 0, .size = {40.f, 40.f}, .maxHealth = 100, .currentHealth = 100};
-    numEnemies = 1;
-
+    // spawnEnemy(50., 0.5, 100, 100, BLUE, (Vector2){50, 50});
+    startLevel((Level){.difficultyLevel = 1, .numSwarms = 2, .timeBetweenSwarms = 20., .swarmSize = 4});
     Shader bloom = LoadShader(0, "resources/bloom.fs");
     int sizeLoc = GetShaderLocation(bloom, "size");
     float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
@@ -81,7 +81,7 @@ int main(void)
 
         // Movement Updates
         updateProjectiles();
-
+        updateLevel();
         updateEnemies();
 
         // Render
@@ -104,6 +104,8 @@ int main(void)
         BeginShaderMode(bloom);
         DrawTextureRec(target.texture, (Rectangle){0, 0, (float)target.texture.width, (float)-target.texture.height}, (Vector2){0, 0}, WHITE);
         EndShaderMode();
+        DrawFPS(10, 10);
+
         EndDrawing();
     }
 

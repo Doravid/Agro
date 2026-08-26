@@ -15,7 +15,7 @@ pub fn build(b: *std.Build) void {
 
     exe.root_module.addIncludePath(b.path("include"));
     exe.root_module.addCSourceFiles(.{
-        .files = &.{ "src/main.c", "src/player.c", "src/projectile.c", "src/enemies.c" },
+        .files = &.{ "src/main.c", "src/player.c", "src/projectile.c", "src/enemies.c", "src/levelManager.c" },
         .flags = &.{ "-std=c23", "-O3", "-march=native", "-D_DEFAULT_SOURCE" },
     });
 

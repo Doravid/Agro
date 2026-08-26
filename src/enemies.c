@@ -22,6 +22,11 @@ void drawEnemies()
         drawPlayer(enemies[enemyIndex]);
     }
 }
+void spawnEnemy(float rotationSpeed, float attackSpeed, float maxHealth, float moveSpeed, Color color, Vector2 position)
+{
+    enemies[numEnemies] = (Player){.rotationSpeed = rotationSpeed, .attackCooldown = 0., .attackSpeed = attackSpeed, .color = color, .moveSpeed = moveSpeed, .position = position, .rotation = 0, .size = {40.f, 40.f}, .maxHealth = maxHealth, .currentHealth = maxHealth};
+    numEnemies++;
+}
 
 void updateEnemies()
 {
@@ -35,6 +40,7 @@ void updateEnemies()
         }
         currentEnemy->attackCooldown -= GetFrameTime();
 
+        // Rotate towards the player.
         float ang = atan2f(mainPlayer.position.y - currentEnemy->position.y, mainPlayer.position.x - currentEnemy->position.x);
         float enemyAngle = currentEnemy->rotation * DEG2RAD;
         float delta = enemyAngle - ang;
@@ -44,5 +50,14 @@ void updateEnemies()
             currentEnemy->rotation += currentEnemy->rotationSpeed * GetFrameTime();
         else
             currentEnemy->rotation -= currentEnemy->rotationSpeed * GetFrameTime();
+
+        // Move towards the player
+        Vector2 dirToPlayer = Vector2Normalize(Vector2Subtract(mainPlayer.position, currentEnemy->position));
+        Vector2 offset = Vector2Scale(dirToPlayer, 150.0f);
+        Vector2 targetPoint = Vector2Subtract(mainPlayer.position, offset);
+
+        currentEnemy->movementVector = Vector2Subtract(targetPoint, currentEnemy->position);
+        Vector2 move = Vector2Scale(Vector2Normalize(currentEnemy->movementVector), currentEnemy->moveSpeed * GetFrameTime());
+        currentEnemy->position = Vector2Add(move, currentEnemy->position);
     }
 }
