@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "enemies.h"
 
 Player enemies[MAX_PROJECTILES];
@@ -22,7 +23,7 @@ void drawEnemies()
         drawPlayer(enemies[enemyIndex]);
     }
 }
-void spawnEnemy(float rotationSpeed, float attackSpeed, float maxHealth, float moveSpeed, Color color, Vector2 position)
+void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position)
 {
     enemies[numEnemies] = (Player){.rotationSpeed = rotationSpeed, .attackCooldown = 0., .attackSpeed = attackSpeed, .color = color, .moveSpeed = moveSpeed, .position = position, .rotation = 0, .size = {40.f, 40.f}, .maxHealth = maxHealth, .currentHealth = maxHealth};
     numEnemies++;
@@ -33,6 +34,8 @@ void updateEnemies()
     for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++)
     {
         Player *currentEnemy = &enemies[enemyIndex];
+        printf("cooldown: %f, attackspeed: %f\n", currentEnemy->attackCooldown, currentEnemy->attackSpeed);
+
         if (currentEnemy->attackCooldown <= 0)
         {
             spawnProjectileFromPlayer(*currentEnemy, EnemyProj);

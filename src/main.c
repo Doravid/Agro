@@ -26,7 +26,7 @@ int main(void)
 
     Camera2D camera = {0};
     // spawnEnemy(50., 0.5, 100, 100, BLUE, (Vector2){50, 50});
-    startLevel((Level){.difficultyLevel = 1, .numSwarms = 2, .timeBetweenSwarms = 20., .swarmSize = 4});
+    startLevel((Level){.difficultyLevel = 1, .numSwarms = 3, .timeBetweenSwarms = 8., .swarmSize = 4});
     Shader bloom = LoadShader(0, "resources/bloom.fs");
     int sizeLoc = GetShaderLocation(bloom, "size");
     float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
