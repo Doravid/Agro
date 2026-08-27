@@ -16,5 +16,6 @@ typedef struct
 void drawPlayer(Player player);
 void updatePlayer(Camera2D camera);
 void damagePlayer(uint32_t damage);
+void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color);
 
 extern Player mainPlayer;

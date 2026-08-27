@@ -18,6 +18,16 @@ void damageEnemy(uint32_t enemyIndex, uint32_t damage)
 
 static void drawMeleeEnemy(Enemy *enemy)
 {
+
+    // Draw the Player Cube
+    Color playerDrawColor = enemy->color;
+
+    Rectangle playerRec = {enemy->position.x, enemy->position.y, enemy->size.x, enemy->size.y};
+    Vector2 playerOrigin = {enemy->size.x * 0.5f, enemy->size.y * 0.5f};
+    DrawRectanglePro(playerRec, playerOrigin, enemy->rotation, playerDrawColor);
+
+    // Draw the Health12 Bar
+    drawHealthBar(enemy->size, enemy->position, (float)enemy->currentHealth / enemy->maxHealth, enemy->color);
 }
 
 static void drawShooter(Enemy *enemy)
@@ -62,7 +72,7 @@ void updateEnemies()
         }
         currentEnemy->attackCooldown -= GetFrameTime();
 
-        // Rotate towards the player.
+        // Rotate towards the player
         float ang = atan2f(mainPlayer.position.y - currentEnemy->position.y, mainPlayer.position.x - currentEnemy->position.x);
         float enemyAngle = currentEnemy->rotation * DEG2RAD;
         float delta = enemyAngle - ang;
