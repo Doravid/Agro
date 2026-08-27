@@ -16,7 +16,7 @@ pub fn build(b: *std.Build) void {
     exe.root_module.addIncludePath(b.path("include"));
     exe.root_module.addCSourceFiles(.{
         .files = &.{ "src/main.c", "src/player.c", "src/projectile.c", "src/enemies.c", "src/levelManager.c" },
-        .flags = &.{ "-std=c23", "-O3", "-march=native", "-D_DEFAULT_SOURCE" },
+        .flags = &.{ "-std=gnu23", "-O3", "-march=native", "-D_DEFAULT_SOURCE", "-fms-extensions", "-Wno-microsoft-anon-tag", "-Wall", "-Werror" },
     });
 
     exe.root_module.linkSystemLibrary("raylib", .{});

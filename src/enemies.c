@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "enemies.h"
 
-Player enemies[MAX_PROJECTILES];
+Enemy enemies[MAX_PROJECTILES];
 uint32_t numEnemies = 0;
 
 void damageEnemy(uint32_t enemyIndex, uint32_t damage)
@@ -16,16 +16,36 @@ void damageEnemy(uint32_t enemyIndex, uint32_t damage)
         enemies[enemyIndex].currentHealth -= damage;
 }
 
+static void drawMeleeEnemy(Enemy *enemy)
+{
+}
+
+static void drawShooter(Enemy *enemy)
+{
+    drawPlayer(*(Player *)enemy);
+}
+
 void drawEnemies()
 {
     for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++)
     {
-        drawPlayer(enemies[enemyIndex]);
+        switch (enemies[enemyIndex].type)
+        {
+        case ENEMY_SHOOTER:
+            drawShooter(&enemies[enemyIndex]);
+            break;
+        case ENEMY_MELEE:
+            drawMeleeEnemy(&enemies[enemyIndex]);
+            break;
+
+        default:
+            break;
+        }
     }
 }
 void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position)
 {
-    enemies[numEnemies] = (Player){.rotationSpeed = rotationSpeed, .attackCooldown = 0., .attackSpeed = attackSpeed, .color = color, .moveSpeed = moveSpeed, .position = position, .rotation = 0, .size = {40.f, 40.f}, .maxHealth = maxHealth, .currentHealth = maxHealth};
+    enemies[numEnemies] = (Enemy){.rotationSpeed = rotationSpeed, .attackCooldown = 0., .attackSpeed = attackSpeed, .color = color, .moveSpeed = moveSpeed, .position = position, .rotation = 0, .size = {40.f, 40.f}, .maxHealth = maxHealth, .currentHealth = maxHealth};
     numEnemies++;
 }
 
@@ -33,12 +53,11 @@ void updateEnemies()
 {
     for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++)
     {
-        Player *currentEnemy = &enemies[enemyIndex];
-        printf("cooldown: %f, attackspeed: %f\n", currentEnemy->attackCooldown, currentEnemy->attackSpeed);
+        Enemy *currentEnemy = &enemies[enemyIndex];
 
         if (currentEnemy->attackCooldown <= 0)
         {
-            spawnProjectileFromPlayer(*currentEnemy, EnemyProj);
+            spawnProjectileFromPlayer(*(Player *)currentEnemy, EnemyProj);
             currentEnemy->attackCooldown += currentEnemy->attackSpeed;
         }
         currentEnemy->attackCooldown -= GetFrameTime();

@@ -17,6 +17,26 @@ Player mainPlayer = {
     .dashTimer = 0.0f,
 };
 
+void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color)
+{
+    Vector2 playerOrigin = {size.x * 0.5f, size.y * 0.5f};
+    const float healthBarStart = (position.x - size.x / 4);
+    const float healthBarMaxWidth = size.x * 1.5;
+    Rectangle healthRec = {
+        .x = healthBarStart,
+        .y = position.y + 49.,
+        .width = healthBarMaxWidth * healthPercent,
+        .height = size.y / 10.0,
+    };
+    Rectangle redHealthRec = {
+        .x = healthBarStart + healthRec.width,
+        .y = position.y + 49.,
+        .width = healthBarMaxWidth - healthBarMaxWidth * healthPercent,
+        .height = size.y / 10.0,
+    };
+    DrawRectanglePro(healthRec, playerOrigin, 0, color);
+    DrawRectanglePro(redHealthRec, playerOrigin, 0, RED);
+}
 /**
  * @brief Draws a player
  *
@@ -44,23 +64,8 @@ void drawPlayer(Player player)
     Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
     DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
 
-    // Draw the Health Bar
-    const float healthBarStart = (player.position.x - player.size.x / 4);
-    const float healthBarMaxWidth = player.size.x * 1.5;
-    Rectangle healthRec = {
-        .x = healthBarStart,
-        .y = player.position.y + 49.,
-        .width = healthBarMaxWidth * ((float)player.currentHealth / player.maxHealth),
-        .height = player.size.y / 10.0,
-    };
-    Rectangle redHealthRec = {
-        .x = healthBarStart + healthRec.width,
-        .y = player.position.y + 49.,
-        .width = healthBarMaxWidth - healthBarMaxWidth * ((float)player.currentHealth / player.maxHealth),
-        .height = player.size.y / 10.0,
-    };
-    DrawRectanglePro(healthRec, playerOrigin, 0, player.color);
-    DrawRectanglePro(redHealthRec, playerOrigin, 0, RED);
+    // Draw the Health12 Bar
+    drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth, player.color);
 }
 void dashPlayer(Player *player)
 {
