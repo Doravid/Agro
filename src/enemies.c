@@ -73,23 +73,27 @@ void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, floa
 
 void spawnShooter(uint32_t difficulty)
 {
-    int randValue = GetRandomValue(1, 100);
+    int randValueX = GetRandomValue(0, 100);
+    int randValueY = GetRandomValue(0, 100);
     float baseRotationSpeed = 100.;
     float baseAttackSpeed = 1.;
     uint32_t baseMaxHealth = 100;
     float baseMoveSpeed = 100.;
+    Vector2 spawnPos = Vector2Add(mainPlayer.position, (Vector2){10.f * randValueX - 500.f, 10.f * randValueY - 500.f});
 
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), (Vector2){10 * randValue - 50, 10 * randValue - 50}, ENEMY_SHOOTER);
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_SHOOTER);
 }
 void spawnMelee(uint32_t difficulty)
 {
-    int randValue = GetRandomValue(1, 100);
+    int randValueX = GetRandomValue(0, 100);
+    int randValueY = GetRandomValue(0, 100);
     float baseRotationSpeed = 100.;
     float baseAttackSpeed = 1.;
     uint32_t baseMaxHealth = 100;
     float baseMoveSpeed = 200.;
+    Vector2 spawnPos = Vector2Add(mainPlayer.position, (Vector2){10.f * randValueX - 500.f, 10.f * randValueY - 500.f});
 
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), (Vector2){10 * randValue - 50, 10 * randValue - 50}, ENEMY_MELEE);
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_MELEE);
 }
 
 void updateShooter(Enemy *currentEnemy)
@@ -112,7 +116,7 @@ void updateShooter(Enemy *currentEnemy)
         currentEnemy->rotation += currentEnemy->rotationSpeed * GetFrameTime();
     else
         currentEnemy->rotation -= currentEnemy->rotationSpeed * GetFrameTime();
-    // Move towards the player
+    // Move towards the player (well aktually a point that is 150 units away from the player in the direction of the player.)
     Vector2 dirToPlayer = Vector2Normalize(Vector2Subtract(mainPlayer.position, currentEnemy->position));
     Vector2 offset = Vector2Scale(dirToPlayer, 150.0f);
     Vector2 targetPoint = Vector2Subtract(mainPlayer.position, offset);

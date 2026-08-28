@@ -34,7 +34,6 @@ void updateLevel()
     {
         return;
     }
-    // printf("curTime: %f, time: %f\n", currentLevel.currentLevelTime, currentLevel.timeBetweenSwarms);
     if (currentLevel.currentLevelTime > currentLevel.timeBetweenSwarms)
     {
         spawnSwarm(currentLevel.swarmSize, currentLevel.difficultyLevel);
@@ -48,6 +47,4 @@ void startLevel(Level level)
 {
     currentLevel = level;
     currentLevel.currentLevelTime = 0;
-    spawnSwarm(currentLevel.swarmSize, currentLevel.difficultyLevel);
-    currentLevel.numSwarms--;
 }
