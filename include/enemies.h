@@ -5,8 +5,8 @@
 
 typedef enum
 {
-    ENEMY_SHOOTER,
-    ENEMY_MELEE,
+    ENEMY_SHOOTER = 1,
+    ENEMY_MELEE = 2,
     ENEMY_CRUSHER,
     ENEMY_BOSS1,
     ENEMY_BOSS2,
@@ -26,4 +26,5 @@ extern uint32_t numEnemies;
 void damageEnemy(uint32_t enemyIndex, uint32_t damage);
 void updateEnemies();
 void drawEnemies();
-void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position);
+void spawnShooter(uint32_t difficulty);
+void spawnMelee(uint32_t difficulty);

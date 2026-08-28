@@ -1,20 +1,30 @@
 #include <stdio.h>
+#include <raylib.h>
+#include <raymath.h>
+
 #include "levelManager.h"
 #include "enemies.h"
 Level currentLevel;
 
 void spawnSwarm(uint32_t swarmSize, uint32_t difficulty)
 {
-    float baseRotationSpeed = 100.;
-    float baseAttackSpeed = 1.;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 100.;
 
     for (uint16_t enemyIndex = 0; enemyIndex < swarmSize; enemyIndex++)
     {
-        int randValue = GetRandomValue(1, 100);
-        spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), (Vector2){10 * randValue - 50, 10 * randValue - 50});
+        EnemyType type = GetRandomValue(ENEMY_SHOOTER, ENEMY_MELEE);
+        switch (type)
+        {
+        case ENEMY_SHOOTER:
+            spawnShooter(difficulty);
+            break;
+        case ENEMY_MELEE:
+            spawnMelee(difficulty);
+            break;
+        default:
+            break;
+        }
     }
+
     return;
 }
 
