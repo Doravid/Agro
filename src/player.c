@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include "projectile.h"
+#include "audio.h"
 
 Player mainPlayer = {
     .maxHealth = 100,
@@ -71,6 +72,7 @@ void dashPlayer(Player *player)
 {
     if (player->dashTimer > 0.f || Vector2LengthSqr(player->movementVector) <= 0)
         return;
+    PlaySound(dash);
     player->dashTimer = 0.15f;
 }
 void updatePlayer(Camera2D camera)
@@ -94,7 +96,11 @@ void updatePlayer(Camera2D camera)
     if (IsKeyDown(KEY_E))
         mainPlayer.rotation += mainPlayer.rotationSpeed * GetFrameTime();
     if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        PlaySound(shoot);
         spawnProjectileFromPlayer(mainPlayer, PlayerProj);
+    }
+
     if (IsKeyPressed(KEY_LEFT_SHIFT))
         dashPlayer(&mainPlayer);
 

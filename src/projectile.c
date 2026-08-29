@@ -5,6 +5,7 @@
 #include "projectile.h"
 #include "player.h"
 #include "enemies.h"
+#include "camera.h"
 
 Projectile projectiles[MAX_PROJECTILES];
 uint32_t numProjectiles = 0;
@@ -46,6 +47,7 @@ bool projectileHitsEntity(Projectile proj)
     {
         if (mainPlayer.dashTimer > 0)
             return false;
+        triggerScreenShake(0.25, 4.5f);
         damagePlayer(proj.damage);
         return true;
     }
@@ -56,6 +58,7 @@ bool projectileHitsEntity(Projectile proj)
             if (Vector2Distance(proj.position, enemies[enemyIndex].position) < proj.size + enemies[enemyIndex].size.x / 2)
             {
                 damageEnemy(enemyIndex, proj.damage);
+
                 return true;
             }
         }

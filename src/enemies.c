@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "enemies.h"
+#include "camera.h"
 
 Enemy enemies[MAX_PROJECTILES];
 uint32_t numEnemies = 0;
@@ -18,7 +19,6 @@ void damageEnemy(uint32_t enemyIndex, uint32_t damage)
 
 static void drawMeleeEnemy(Enemy *enemy)
 {
-
     // Draw the Player Cube
     Color playerDrawColor = enemy->color;
 
@@ -141,6 +141,7 @@ void updateMelee(Enemy *currentEnemy)
         Vector2 offset = Vector2Add(Vector2Scale(dirToPlayer, 90.0f), mainPlayer.position);
         currentEnemy->position = offset;
         damagePlayer(currentEnemy->maxHealth / 10);
+        triggerScreenShake(0.25, 4.5f);
     }
 }
 void updateEnemies()

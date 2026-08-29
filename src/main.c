@@ -8,10 +8,10 @@
 #include "projectile.h"
 #include "enemies.h"
 #include "levelManager.h"
+#include "camera.h"
+#include "audio.h"
 
 // Base virtual design resolution
-const float VIRTUAL_WIDTH = 1920.0f;
-const float VIRTUAL_HEIGHT = 1080.0f;
 
 int main(void)
 {
@@ -20,6 +20,7 @@ int main(void)
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1920, 1080, "Stupid");
     SetTargetFPS(0);
+    initSounds();
 
     // User-controlled zoom multiplier
     float userZoom = 1.0f;
@@ -64,25 +65,13 @@ int main(void)
         }
         updatePlayer(camera);
         // Modify base user zoom
-        userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
-        if (userZoom > 3.0f)
-            userZoom = 3.0f;
-        if (userZoom < 0.1f)
-            userZoom = 0.1f;
-
-        // FOV Scaling
-        float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
-        float scaleY = (float)GetScreenHeight() / VIRTUAL_HEIGHT;
-        float windowScale = fminf(scaleX, scaleY);
-        camera.zoom = userZoom * windowScale;
-        camera.offset = (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
-        camera.target = mainPlayer.position;
-        camera.rotation = 0.0f;
+        updateCamera(&camera, &userZoom);
 
         // Movement Updates
         updateProjectiles();
         updateLevel();
         updateEnemies();
+        updateSound();
 
         // Render
         BeginTextureMode(target); // Enable drawing to texture
