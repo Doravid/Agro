@@ -6,6 +6,7 @@
 #include "player.h"
 #include "enemies.h"
 #include "camera.h"
+#include "levelManager.h"
 
 Projectile projectiles[MAX_PROJECTILES];
 uint32_t numProjectiles = 0;
@@ -61,6 +62,18 @@ bool projectileHitsEntity(Projectile proj)
 
                 return true;
             }
+        }
+    }
+
+    for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
+    {
+        Rectangle bounds = currentRoom.colliders[colliderIndex].bounds;
+
+        bool isInXRange = proj.position.x + proj.size / 2 >= bounds.x && proj.position.x <= bounds.x + bounds.width + proj.size / 2;
+        bool isInYRange = proj.position.y + proj.size / 2 >= bounds.y && proj.position.y <= bounds.y + bounds.height + proj.size / 2;
+        if (isInXRange && isInYRange)
+        {
+            return true;
         }
     }
 
