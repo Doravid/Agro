@@ -21,7 +21,8 @@ typedef struct
     Vector2 playerSpawn;
 
     Collider *colliders;
-    int numColliders;
+    uint32_t numColliders;
+    uint32_t numEnemies;
 } RoomData;
 
 typedef struct
@@ -35,6 +36,7 @@ typedef struct
 void startLevel(Level level);
 void updateLevel();
 void drawLevel();
-RoomData loadRoom(const char *filepath);
+void loadRoom(const char *filepath, RoomData *room);
+bool roomDone(RoomData *room);
 
 extern RoomData currentRoom;

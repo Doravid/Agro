@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "enemies.h"
 #include "camera.h"
+#include "levelManager.h"
 
 Enemy enemies[MAX_PROJECTILES];
 uint32_t numEnemies = 0;
@@ -53,7 +54,7 @@ void drawEnemies()
         }
     }
 }
-void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position, EnemyType type)
+static Enemy *spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position, EnemyType type)
 {
     enemies[numEnemies] = (Enemy){
         .rotationSpeed = rotationSpeed,
@@ -69,9 +70,10 @@ void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, floa
         .type = type,
     };
     numEnemies++;
+    return &enemies[numEnemies];
 }
 
-void spawnShooter(uint32_t difficulty)
+Enemy *spawnShooter(uint32_t difficulty)
 {
     int randValueX = GetRandomValue(0, 100);
     int randValueY = GetRandomValue(0, 100);
@@ -81,7 +83,7 @@ void spawnShooter(uint32_t difficulty)
     float baseMoveSpeed = 100.;
     Vector2 spawnPos = Vector2Add(mainPlayer.position, (Vector2){10.f * randValueX - 500.f, 10.f * randValueY - 500.f});
 
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_SHOOTER);
+    return spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_SHOOTER);
 }
 void spawnMelee(uint32_t difficulty)
 {

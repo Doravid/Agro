@@ -26,5 +26,5 @@ extern uint32_t numEnemies;
 void damageEnemy(uint32_t enemyIndex, uint32_t damage);
 void updateEnemies();
 void drawEnemies();
-void spawnShooter(uint32_t difficulty);
+Enemy *spawnShooter(uint32_t difficulty);
 void spawnMelee(uint32_t difficulty);

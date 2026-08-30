@@ -34,9 +34,8 @@ int main(void)
     SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
-    currentRoom = loadRoom("maps/thing/Level_1.ldtkl");
+    loadRoom("maps/thing/Level_1.ldtkl", &currentRoom);
     mainPlayer.position = currentRoom.playerSpawn;
-    // printf("x, y: %f, %f\n", currentRoom.playerSpawn.x, currentRoom.playerSpawn.y);
 
     // Main Game Loop
     while (!WindowShouldClose())

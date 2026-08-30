@@ -47,13 +47,6 @@ void updateLevel()
     {
         return;
     }
-    if (currentLevel.currentLevelTime > currentLevel.timeBetweenSwarms)
-    {
-        spawnSwarm(currentLevel.swarmSize, currentLevel.difficultyLevel);
-        currentLevel.currentLevelTime = 0.f;
-        currentLevel.numSwarms--;
-    }
-    currentLevel.currentLevelTime += GetFrameTime();
 }
 
 void startLevel(Level level)
@@ -61,20 +54,26 @@ void startLevel(Level level)
     currentLevel = level;
     currentLevel.currentLevelTime = 0;
 }
-RoomData loadRoom(const char *filepath)
-{
-    RoomData room = {0};
+const float myGridSize = 85.0f;
 
-    // Raylib function to load text file into a string
+bool roomDone(RoomData *room)
+{
+    return room->numEnemies == 0;
+}
+
+void loadRoom(const char *filepath, RoomData *room)
+{
+    *room = (RoomData){0};
+
     char *fileText = LoadFileText(filepath);
     if (!fileText)
-        return room;
+        return;
 
     cJSON *root = cJSON_Parse(fileText);
     if (!root)
     {
         UnloadFileText(fileText);
-        return room;
+        return;
     }
 
     cJSON *layers = cJSON_GetObjectItemCaseSensitive(root, "layerInstances");
@@ -88,12 +87,11 @@ RoomData loadRoom(const char *filepath)
         if (strcmp(layerId->valuestring, "IntGrid") == 0)
         {
             int gridWid = cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
-            int gridSize = 85;
 
             cJSON *gridCsv = cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
 
             int totalTiles = cJSON_GetArraySize(gridCsv);
-            room.colliders = malloc(sizeof(Collider) * totalTiles);
+            room->colliders = malloc(sizeof(Collider) * totalTiles);
 
             cJSON *tileValue = NULL;
             int tileIndex = 0;
@@ -104,12 +102,12 @@ RoomData loadRoom(const char *filepath)
 
                 if (type == TILE_WALL || type == TILE_ENTRANCE || type == TILE_EXIT)
                 {
-                    int x = (tileIndex % gridWid) * gridSize;
-                    int y = (tileIndex / gridWid) * gridSize;
+                    int x = (tileIndex % gridWid) * myGridSize;
+                    int y = (tileIndex / gridWid) * myGridSize;
 
-                    room.colliders[room.numColliders].bounds = (Rectangle){(float)x, (float)y, (float)gridSize, (float)gridSize};
-                    room.colliders[room.numColliders].type = type;
-                    room.numColliders++;
+                    room->colliders[room->numColliders].bounds = (Rectangle){(float)x, (float)y, (float)myGridSize, (float)myGridSize};
+                    room->colliders[room->numColliders].type = type;
+                    room->numColliders++;
                 }
                 tileIndex++;
             }
@@ -118,10 +116,8 @@ RoomData loadRoom(const char *filepath)
         // PARSE THE ENTITIES
         else if (strcmp(layerId->valuestring, "Entities") == 0)
         {
-            // Get LDtk's grid size (which is 16)
             int ldtkGridSize = cJSON_GetObjectItemCaseSensitive(layer, "__gridSize")->valueint;
 
-            // Your custom game grid size
             float myGridSize = 85.0f;
             float scaleFactor = myGridSize / (float)ldtkGridSize;
 
@@ -133,25 +129,21 @@ RoomData loadRoom(const char *filepath)
                 cJSON *entId = cJSON_GetObjectItemCaseSensitive(entity, "__identifier");
                 cJSON *pxArray = cJSON_GetObjectItemCaseSensitive(entity, "px");
 
-                // 1. Get the raw LDtk pixel coordinates
                 float rawX = (float)cJSON_GetArrayItem(pxArray, 0)->valueint;
                 float rawY = (float)cJSON_GetArrayItem(pxArray, 1)->valueint;
 
-                // 2. Scale them up to your 85x85 grid
-                float scaledX = rawX * scaleFactor;
-                float scaledY = rawY * scaleFactor;
-
-                // 3. (Optional but recommended) Center the spawn inside the 85x85 tile
-                scaledX += myGridSize / 2.0f;
-                scaledY += myGridSize / 2.0f;
+                float scaledX = rawX * scaleFactor + myGridSize / 2.0f;
+                float scaledY = rawY * scaleFactor + myGridSize / 2.0f;
 
                 if (strcmp(entId->valuestring, "PlayerSpawn") == 0)
                 {
-                    room.playerSpawn = (Vector2){scaledX, scaledY};
+                    room->playerSpawn = (Vector2){scaledX, scaledY};
                 }
                 else if (strcmp(entId->valuestring, "EnemySpawn") == 0)
                 {
-                    // spawnShooter(1, scaledX, scaledY);
+                    Enemy *enemy = spawnShooter(1);
+                    enemy->position = (Vector2){.x = scaledX, scaledY};
+                    numEnemies++;
                 }
             }
         }
@@ -160,7 +152,7 @@ RoomData loadRoom(const char *filepath)
     cJSON_Delete(root);
     UnloadFileText(fileText);
 
-    return room;
+    return;
 }
 
 void drawLevel()
@@ -169,7 +161,7 @@ void drawLevel()
     {
         if (currentRoom.colliders[colliderIndex].type == TILE_WALL)
             DrawRectangleRec(currentRoom.colliders[colliderIndex].bounds, WHITE);
-        if (currentRoom.colliders[colliderIndex].type == TILE_EXIT)
+        if (currentRoom.colliders[colliderIndex].type == TILE_EXIT && !roomDone(&currentRoom))
             DrawRectangleRec(currentRoom.colliders[colliderIndex].bounds, DARKBROWN);
     }
 }

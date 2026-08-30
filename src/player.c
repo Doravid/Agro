@@ -124,6 +124,9 @@ void updatePlayer(Camera2D camera)
     bool canMove = true;
     for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
     {
+        if (currentRoom.colliders[colliderIndex].type == TILE_EXIT && roomDone(&currentRoom))
+            continue;
+
         Rectangle bounds = currentRoom.colliders[colliderIndex].bounds;
         bool isInXRange = newPos.x + mainPlayer.size.x / 2 >= bounds.x && newPos.x <= bounds.x + bounds.width + mainPlayer.size.x / 2;
         bool isInYRange = newPos.y + mainPlayer.size.y / 2 >= bounds.y && newPos.y <= bounds.y + bounds.height + mainPlayer.size.y / 2;
