@@ -1,6 +1,29 @@
 #include <raylib.h>
 #include <stdint.h>
 
+typedef enum
+{
+    TILE_EMPTY = 0,
+    TILE_WALL = 1,
+    TILE_ENTRANCE = 2,
+    TILE_EXIT = 3,
+    TILE_FLOOR = 4
+} TileType;
+
+typedef struct
+{
+    Rectangle bounds;
+    TileType type;
+} Collider;
+
+typedef struct
+{
+    Vector2 playerSpawn;
+
+    Collider *colliders;
+    int numColliders;
+} RoomData;
+
 typedef struct
 {
     float currentLevelTime;
@@ -8,5 +31,10 @@ typedef struct
     uint32_t numSwarms, swarmSize;
     uint32_t difficultyLevel;
 } Level;
+
 void startLevel(Level level);
 void updateLevel();
+void drawLevel();
+RoomData loadRoom(const char *filepath);
+
+extern RoomData currentRoom;

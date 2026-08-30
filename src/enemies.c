@@ -141,7 +141,7 @@ void updateMelee(Enemy *currentEnemy)
         Vector2 offset = Vector2Add(Vector2Scale(dirToPlayer, 90.0f), mainPlayer.position);
         currentEnemy->position = offset;
         damagePlayer(currentEnemy->maxHealth / 10);
-        }
+    }
 }
 void updateEnemies()
 {

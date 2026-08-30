@@ -6,6 +6,7 @@
 #include "projectile.h"
 #include "audio.h"
 #include "camera.h"
+#include "levelManager.h"
 
 Player mainPlayer = {
     .maxHealth = 100,
@@ -118,7 +119,22 @@ void updatePlayer(Camera2D camera)
     // Move
     Vector2 norm = Vector2Normalize(mainPlayer.movementVector);
     Vector2 offset = Vector2Scale(norm, GetFrameTime() * mainPlayer.moveSpeed);
-    mainPlayer.position = Vector2Add(mainPlayer.position, offset);
+    Vector2 newPos = Vector2Add(mainPlayer.position, offset);
+
+    bool canMove = true;
+    for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
+    {
+        Rectangle bounds = currentRoom.colliders[colliderIndex].bounds;
+        bool isInXRange = newPos.x + mainPlayer.size.x / 2 >= bounds.x && newPos.x <= bounds.x + bounds.width + mainPlayer.size.x / 2;
+        bool isInYRange = newPos.y + mainPlayer.size.y / 2 >= bounds.y && newPos.y <= bounds.y + bounds.height + mainPlayer.size.y / 2;
+        if (isInXRange && isInYRange)
+        {
+            canMove = false;
+            break;
+        }
+    }
+    if (canMove)
+        mainPlayer.position = newPos;
 
     // Rotate
     Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);

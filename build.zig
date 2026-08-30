@@ -28,6 +28,7 @@ pub fn build(b: *std.Build) void {
     });
 
     exe.root_module.linkSystemLibrary("raylib", .{});
+    exe.root_module.linkSystemLibrary("cJSON", .{});
     b.installArtifact(exe);
 
     const run_tests = b.addRunArtifact(exe);
