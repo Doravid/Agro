@@ -5,6 +5,7 @@
 #include "player.h"
 #include "projectile.h"
 #include "audio.h"
+#include "camera.h"
 
 Player mainPlayer = {
     .maxHealth = 100,
@@ -140,4 +141,6 @@ void damagePlayer(uint32_t damage)
         mainPlayer.currentHealth = 0;
     else
         mainPlayer.currentHealth -= damage;
+    triggerScreenShake(0.25, 4.5f);
+    PlaySound(hit);
 }

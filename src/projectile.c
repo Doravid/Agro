@@ -47,7 +47,7 @@ bool projectileHitsEntity(Projectile proj)
     {
         if (mainPlayer.dashTimer > 0)
             return false;
-        triggerScreenShake(0.25, 4.5f);
+
         damagePlayer(proj.damage);
         return true;
     }
@@ -75,7 +75,7 @@ void updateProjectiles()
         currentProjectile->position.x += currentProjectile->direction.x * currentProjectile->moveSpeed * GetFrameTime();
         currentProjectile->position.y += currentProjectile->direction.y * currentProjectile->moveSpeed * GetFrameTime();
 
-        if (projectileHitsEntity(*currentProjectile) || Vector2Distance(currentProjectile->position, mainPlayer.position) > 1000.)
+        if (projectileHitsEntity(*currentProjectile) || Vector2Distance(currentProjectile->position, mainPlayer.position) > 2500.)
         {
             *currentProjectile = projectiles[numProjectiles - 1];
             numProjectiles--;

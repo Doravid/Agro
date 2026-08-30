@@ -1,6 +1,6 @@
 #include <raylib.h>
 
-extern Sound shoot, dash;
+extern Sound shoot, dash, hit;
 
 void initSounds();
 void updateSound();

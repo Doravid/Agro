@@ -38,10 +38,10 @@ void updateCamera(Camera2D *camera, float *userZoom)
 {
     *userZoom = expf(logf(*userZoom) + ((float)GetMouseWheelMove() * 0.1f));
 
-    if (*userZoom > 3.0f)
-        *userZoom = 3.0f;
-    if (*userZoom < 0.1f)
-        *userZoom = 0.1f;
+    if (*userZoom > 2.0f)
+        *userZoom = 2.0f;
+    if (*userZoom < 0.5f)
+        *userZoom = 0.5f;
 
     // FOV Scaling
     float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
