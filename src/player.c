@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <raymath.h>
+#include <stdlib.h>
 
 #include "player.h"
 #include "projectile.h"
@@ -124,6 +125,8 @@ void updatePlayer(Camera2D camera)
     float enemyAngle = mainPlayer.rotation * DEG2RAD;
     float delta = enemyAngle - ang;
     delta = atan2f(sinf(delta), cosf(delta));
+    if (fabs(delta) < 0.02f)
+        return;
 
     if (delta < 0)
         mainPlayer.rotation += mainPlayer.rotationSpeed * GetFrameTime();
@@ -133,5 +136,8 @@ void updatePlayer(Camera2D camera)
 
 void damagePlayer(uint32_t damage)
 {
-    mainPlayer.currentHealth -= damage;
+    if (damage > mainPlayer.currentHealth)
+        mainPlayer.currentHealth = 0;
+    else
+        mainPlayer.currentHealth -= damage;
 }

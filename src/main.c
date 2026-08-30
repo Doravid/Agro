@@ -79,8 +79,8 @@ int main(void)
         ClearBackground(BLACK);
 
         BeginMode2D(camera);
+        drawGraphPaper(camera, GetScreenWidth(), GetScreenHeight());
         drawProjectiles(projectiles, numProjectiles);
-
         drawPlayer(mainPlayer);
         drawEnemies();
 

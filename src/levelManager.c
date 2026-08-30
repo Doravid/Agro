@@ -4,7 +4,22 @@
 
 #include "levelManager.h"
 #include "enemies.h"
+
 Level currentLevel;
+
+typedef struct
+{
+    Vector2 position;
+    uint32_t maxHealth, currentHealth;
+    float size;
+    Color color;
+} Obstacle;
+
+typedef struct
+{
+    Rectangle rectangle;
+    Color color;
+} Wall;
 
 void spawnSwarm(uint32_t swarmSize, uint32_t difficulty)
 {

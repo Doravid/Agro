@@ -5,3 +5,4 @@
 
 void triggerScreenShake(float duration, float intensity);
 void updateCamera(Camera2D *camera, float *userZoom);
+void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight);
