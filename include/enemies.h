@@ -28,3 +28,4 @@ void updateEnemies();
 void drawEnemies();
 Enemy *spawnShooter(uint32_t difficulty);
 void spawnMelee(uint32_t difficulty);
+Enemy *spawnShooterPos(uint32_t difficulty, Vector2 spawnPos);

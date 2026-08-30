@@ -38,5 +38,7 @@ void updateLevel();
 void drawLevel();
 void loadRoom(const char *filepath, RoomData *room);
 bool roomDone(RoomData *room);
+bool checkEntityCollision(Vector2 pos, Vector2 size);
+Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset);
 
 extern RoomData currentRoom;

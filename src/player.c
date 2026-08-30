@@ -94,10 +94,6 @@ void updatePlayer(Camera2D camera)
     else
         mainPlayer.movementVector.y = 0;
 
-    if (IsKeyDown(KEY_Q))
-        mainPlayer.rotation -= mainPlayer.rotationSpeed * GetFrameTime();
-    if (IsKeyDown(KEY_E))
-        mainPlayer.rotation += mainPlayer.rotationSpeed * GetFrameTime();
     if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         PlaySound(shoot);
@@ -113,31 +109,13 @@ void updatePlayer(Camera2D camera)
 
         float currentDashSpeed = mainPlayer.moveSpeed * 3.5f;
         Vector2 offset = Vector2Scale(mainPlayer.movementVector, currentDashSpeed * GetFrameTime());
-        mainPlayer.position = Vector2Add(mainPlayer.position, offset);
+        mainPlayer.position = moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
         return;
     }
     // Move
     Vector2 norm = Vector2Normalize(mainPlayer.movementVector);
     Vector2 offset = Vector2Scale(norm, GetFrameTime() * mainPlayer.moveSpeed);
-    Vector2 newPos = Vector2Add(mainPlayer.position, offset);
-
-    bool canMove = true;
-    for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
-    {
-        if (currentRoom.colliders[colliderIndex].type == TILE_EXIT && roomDone(&currentRoom))
-            continue;
-
-        Rectangle bounds = currentRoom.colliders[colliderIndex].bounds;
-        bool isInXRange = newPos.x + mainPlayer.size.x / 2 >= bounds.x && newPos.x <= bounds.x + bounds.width + mainPlayer.size.x / 2;
-        bool isInYRange = newPos.y + mainPlayer.size.y / 2 >= bounds.y && newPos.y <= bounds.y + bounds.height + mainPlayer.size.y / 2;
-        if (isInXRange && isInYRange)
-        {
-            canMove = false;
-            break;
-        }
-    }
-    if (canMove)
-        mainPlayer.position = newPos;
+    mainPlayer.position = moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
 
     // Rotate
     Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);

@@ -34,7 +34,7 @@ int main(void)
     SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
-    loadRoom("maps/thing/Level_1.ldtkl", &currentRoom);
+    loadRoom("maps/thing/Level_0.ldtkl", &currentRoom);
     mainPlayer.position = currentRoom.playerSpawn;
 
     // Main Game Loop
@@ -83,7 +83,7 @@ int main(void)
         BeginMode2D(camera);
 
         // Draw Calls
-        drawGraphPaper(camera, GetScreenWidth(), GetScreenHeight());
+        // drawGraphPaper(camera, GetScreenWidth(), GetScreenHeight());
         drawProjectiles(projectiles, numProjectiles);
         drawPlayer(mainPlayer);
         drawEnemies();

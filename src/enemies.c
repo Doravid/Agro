@@ -85,6 +85,17 @@ Enemy *spawnShooter(uint32_t difficulty)
 
     return spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_SHOOTER);
 }
+
+Enemy *spawnShooterPos(uint32_t difficulty, Vector2 spawnPos)
+{
+    int randValue = GetRandomValue(0, 100);
+    float baseRotationSpeed = 100.;
+    float baseAttackSpeed = 1.;
+    uint32_t baseMaxHealth = 100;
+    float baseMoveSpeed = 100.;
+
+    return spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_SHOOTER);
+}
 void spawnMelee(uint32_t difficulty)
 {
     int randValueX = GetRandomValue(0, 100);
@@ -125,7 +136,7 @@ void updateShooter(Enemy *currentEnemy)
 
     currentEnemy->movementVector = Vector2Subtract(targetPoint, currentEnemy->position);
     Vector2 move = Vector2Scale(Vector2Normalize(currentEnemy->movementVector), currentEnemy->moveSpeed * GetFrameTime());
-    currentEnemy->position = Vector2Add(move, currentEnemy->position);
+    currentEnemy->position = moveWithCollision(currentEnemy->position, currentEnemy->size, move);
 }
 void updateMelee(Enemy *currentEnemy)
 {

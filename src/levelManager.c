@@ -58,7 +58,7 @@ const float myGridSize = 85.0f;
 
 bool roomDone(RoomData *room)
 {
-    return room->numEnemies == 0;
+    return numEnemies == 0;
 }
 
 void loadRoom(const char *filepath, RoomData *room)
@@ -141,9 +141,7 @@ void loadRoom(const char *filepath, RoomData *room)
                 }
                 else if (strcmp(entId->valuestring, "EnemySpawn") == 0)
                 {
-                    Enemy *enemy = spawnShooter(1);
-                    enemy->position = (Vector2){.x = scaledX, scaledY};
-                    numEnemies++;
+                    spawnShooterPos(1, (Vector2){.x = scaledX, scaledY});
                 }
             }
         }
@@ -164,4 +162,49 @@ void drawLevel()
         if (currentRoom.colliders[colliderIndex].type == TILE_EXIT && !roomDone(&currentRoom))
             DrawRectangleRec(currentRoom.colliders[colliderIndex].bounds, DARKBROWN);
     }
+}
+
+bool checkEntityCollision(Vector2 pos, Vector2 size)
+{
+    Rectangle entityRec = {pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, size.x, size.y};
+
+    for (uint32_t i = 0; i < currentRoom.numColliders; i++)
+    {
+        if (currentRoom.colliders[i].type == TILE_ENTRANCE ||
+            (currentRoom.colliders[i].type == TILE_EXIT && roomDone(&currentRoom)))
+        {
+            continue;
+        }
+
+        if (CheckCollisionRecs(entityRec, currentRoom.colliders[i].bounds))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset)
+{
+    Vector2 nextPos = currentPos;
+
+    if (offset.x != 0.0f)
+    {
+        Vector2 testPosX = {nextPos.x + offset.x, nextPos.y};
+        if (!checkEntityCollision(testPosX, size))
+        {
+            nextPos.x += offset.x;
+        }
+    }
+
+    if (offset.y != 0.0f)
+    {
+        Vector2 testPosY = {nextPos.x, nextPos.y + offset.y};
+        if (!checkEntityCollision(testPosY, size))
+        {
+            nextPos.y += offset.y;
+        }
+    }
+
+    return nextPos;
 }
