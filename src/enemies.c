@@ -54,7 +54,7 @@ void drawEnemies()
         }
     }
 }
-static Enemy *spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position, EnemyType type)
+static void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed, Color color, Vector2 position, EnemyType type)
 {
     enemies[numEnemies] = (Enemy){
         .rotationSpeed = rotationSpeed,
@@ -70,23 +70,9 @@ static Enemy *spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHea
         .type = type,
     };
     numEnemies++;
-    return &enemies[numEnemies];
 }
 
-Enemy *spawnShooter(uint32_t difficulty)
-{
-    int randValueX = GetRandomValue(0, 100);
-    int randValueY = GetRandomValue(0, 100);
-    float baseRotationSpeed = 100.;
-    float baseAttackSpeed = 1.;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 100.;
-    Vector2 spawnPos = Vector2Add(mainPlayer.position, (Vector2){10.f * randValueX - 500.f, 10.f * randValueY - 500.f});
-
-    return spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_SHOOTER);
-}
-
-Enemy *spawnShooterPos(uint32_t difficulty, Vector2 spawnPos)
+void spawnShooterPos(uint32_t difficulty, Vector2 spawnPos)
 {
     int randValue = GetRandomValue(0, 100);
     float baseRotationSpeed = 100.;
@@ -94,19 +80,34 @@ Enemy *spawnShooterPos(uint32_t difficulty, Vector2 spawnPos)
     uint32_t baseMaxHealth = 100;
     float baseMoveSpeed = 100.;
 
-    return spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_SHOOTER);
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_SHOOTER);
 }
-void spawnMelee(uint32_t difficulty)
+void spawnMeleePos(uint32_t difficulty, Vector2 spawnPos)
 {
-    int randValueX = GetRandomValue(0, 100);
-    int randValueY = GetRandomValue(0, 100);
+    int randValue = GetRandomValue(0, 100);
     float baseRotationSpeed = 100.;
     float baseAttackSpeed = 1.;
     uint32_t baseMaxHealth = 100;
     float baseMoveSpeed = 200.;
-    Vector2 spawnPos = Vector2Add(mainPlayer.position, (Vector2){10.f * randValueX - 500.f, 10.f * randValueY - 500.f});
 
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, DARKBLUE, (float)randValueX / 100), spawnPos, ENEMY_MELEE);
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty, baseMaxHealth * difficulty, baseMoveSpeed * difficulty, ColorLerp(BLUE, PINK, (float)randValue / 100), spawnPos, ENEMY_MELEE);
+}
+
+void spawnRandomEnemyPos(uint32_t difficulty, Vector2 spawnPos)
+{
+    int randValue = GetRandomValue(ENEMY_SHOOTER, ENEMY_MELEE);
+    switch (randValue)
+    {
+    case ENEMY_SHOOTER:
+        spawnShooterPos(difficulty, spawnPos);
+        break;
+    case ENEMY_MELEE:
+        spawnMeleePos(difficulty, spawnPos);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void updateShooter(Enemy *currentEnemy)
@@ -146,13 +147,12 @@ void updateMelee(Enemy *currentEnemy)
 
     currentEnemy->movementVector = Vector2Subtract(targetPoint, currentEnemy->position);
     Vector2 move = Vector2Scale(Vector2Normalize(currentEnemy->movementVector), currentEnemy->moveSpeed * GetFrameTime());
-    currentEnemy->position = Vector2Add(move, currentEnemy->position);
+    currentEnemy->position = moveWithCollision(currentEnemy->position, currentEnemy->size, move);
 
     if (Vector2Distance(targetPoint, currentEnemy->position) < 15.f)
     {
         Vector2 dirToPlayer = Vector2Normalize(Vector2Subtract(currentEnemy->position, mainPlayer.position));
-        Vector2 offset = Vector2Add(Vector2Scale(dirToPlayer, 90.0f), mainPlayer.position);
-        currentEnemy->position = offset;
+        currentEnemy->position = moveWithCollision(currentEnemy->position, currentEnemy->size, Vector2Scale(dirToPlayer, 90.0f));
         damagePlayer(currentEnemy->maxHealth / 10);
     }
 }

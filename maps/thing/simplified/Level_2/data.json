@@ -1,0 +1,71 @@
+{
+	"identifier": "Level_2",
+	"uniqueIdentifer": "5aff27b2-96d0-11f1-a7c7-1717e9ea462b",
+	"x": 128,
+	"y": -80,
+	"width": 224,
+	"height": 192,
+	"bgColor": "#696A79",
+	"neighbourLevels": [],
+	"customFields" : {},
+	"layers": [],
+	"entities": {
+		"EnemySpawn": [
+			{
+				"id": "EnemySpawn",
+				"iid": "b587bad0-96d0-11f1-a7c7-9102d125177e",
+				"layer": "Entities",
+				"x": 64,
+				"y": 16,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "b616db70-96d0-11f1-a7c7-23da7447a9fc",
+				"layer": "Entities",
+				"x": 16,
+				"y": 80,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "b71538a0-96d0-11f1-a7c7-eb892175bbcf",
+				"layer": "Entities",
+				"x": 176,
+				"y": 96,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "b7b178a0-96d0-11f1-a7c7-338a9eeb513b",
+				"layer": "Entities",
+				"x": 176,
+				"y": 144,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "b8b83a40-96d0-11f1-a7c7-97cf8e598611",
+				"layer": "Entities",
+				"x": 64,
+				"y": 144,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			}
+		]
+	}
+}

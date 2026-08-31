@@ -11,8 +11,6 @@
 #include "camera.h"
 #include "audio.h"
 
-// Base virtual design resolution
-
 int main(void)
 {
     // Init
@@ -26,16 +24,17 @@ int main(void)
     float userZoom = 1.0f;
 
     Camera2D camera = {0};
-    // spawnEnemy(50., 0.5, 100, 100, BLUE, (Vector2){50, 50});
-    startLevel((Level){.difficultyLevel = 1, .numSwarms = 3, .timeBetweenSwarms = 5., .swarmSize = 4});
     Shader bloom = LoadShader(0, "resources/bloom.fs");
     int sizeLoc = GetShaderLocation(bloom, "size");
     float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
     SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
-    loadRoom("maps/thing/Level_0.ldtkl", &currentRoom);
-    mainPlayer.position = currentRoom.playerSpawn;
+
+    numRoomsLoaded = 0;
+    loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded], (Vector2){0, 0});
+    mainPlayer.position = rooms[numRoomsLoaded].playerSpawn;
+    numRoomsLoaded++;
 
     // Main Game Loop
     while (!WindowShouldClose())
@@ -71,23 +70,22 @@ int main(void)
 
         // Movement Updates
         updateProjectiles();
-        updateLevel();
+        updateRooms();
         updateEnemies();
         updateSound();
 
         // Render
-        BeginTextureMode(target); // Enable drawing to texture
+        BeginTextureMode(target);
 
         ClearBackground(BLACK);
 
         BeginMode2D(camera);
 
         // Draw Calls
-        // drawGraphPaper(camera, GetScreenWidth(), GetScreenHeight());
         drawProjectiles(projectiles, numProjectiles);
         drawPlayer(mainPlayer);
         drawEnemies();
-        drawLevel();
+        drawRooms();
 
         EndMode2D();
         EndTextureMode();

@@ -23,6 +23,7 @@ typedef struct
     Collider *colliders;
     uint32_t numColliders;
     uint32_t numEnemies;
+    bool isCleared;
 } RoomData;
 
 typedef struct
@@ -33,12 +34,20 @@ typedef struct
     uint32_t difficultyLevel;
 } Level;
 
-void startLevel(Level level);
-void updateLevel();
-void drawLevel();
-void loadRoom(const char *filepath, RoomData *room);
+typedef struct
+{
+    Vector2 position;
+    uint32_t maxHealth, currentHealth;
+    float size;
+    Color color;
+} Obstacle;
+
+void updateRooms();
+void drawRooms();
+void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance);
 bool roomDone(RoomData *room);
-bool checkEntityCollision(Vector2 pos, Vector2 size);
 Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset);
 
 extern RoomData currentRoom;
+extern uint32_t numRoomsLoaded;
+extern RoomData rooms[16];

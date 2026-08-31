@@ -9,59 +9,23 @@
 #include "enemies.h"
 
 Level currentLevel;
-RoomData currentRoom;
-
-typedef struct
-{
-    Vector2 position;
-    uint32_t maxHealth, currentHealth;
-    float size;
-    Color color;
-} Obstacle;
-
-void spawnSwarm(uint32_t swarmSize, uint32_t difficulty)
-{
-
-    for (uint16_t enemyIndex = 0; enemyIndex < swarmSize; enemyIndex++)
-    {
-        EnemyType type = GetRandomValue(ENEMY_SHOOTER, ENEMY_MELEE);
-        switch (type)
-        {
-        case ENEMY_SHOOTER:
-            spawnShooter(difficulty);
-            break;
-        case ENEMY_MELEE:
-            spawnMelee(difficulty);
-            break;
-        default:
-            break;
-        }
-    }
-
-    return;
-}
-
-void updateLevel()
-{
-    if (currentLevel.numSwarms <= 0)
-    {
-        return;
-    }
-}
-
-void startLevel(Level level)
-{
-    currentLevel = level;
-    currentLevel.currentLevelTime = 0;
-}
+RoomData rooms[16];
+uint32_t numRoomsLoaded = 0;
 const float myGridSize = 85.0f;
 
 bool roomDone(RoomData *room)
 {
-    return numEnemies == 0;
+    if (room->isCleared)
+        return true;
+    if (numEnemies == 0)
+    {
+        room->isCleared = true;
+        return true;
+    }
+    return false;
 }
 
-void loadRoom(const char *filepath, RoomData *room)
+void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance)
 {
     *room = (RoomData){0};
 
@@ -76,8 +40,32 @@ void loadRoom(const char *filepath, RoomData *room)
         return;
     }
 
+    Vector2 entranceLocal = {0, 0};
     cJSON *layers = cJSON_GetObjectItemCaseSensitive(root, "layerInstances");
     cJSON *layer = NULL;
+
+    cJSON_ArrayForEach(layer, layers)
+    {
+        cJSON *layerId = cJSON_GetObjectItemCaseSensitive(layer, "__identifier");
+        if (strcmp(layerId->valuestring, "IntGrid") == 0)
+        {
+            int gridWid = cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
+            cJSON *gridCsv = cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
+            cJSON *tileValue = NULL;
+            int tileIndex = 0;
+            cJSON_ArrayForEach(tileValue, gridCsv)
+            {
+                if (tileValue->valueint == TILE_ENTRANCE)
+                {
+                    entranceLocal.x = (tileIndex % gridWid) * myGridSize;
+                    entranceLocal.y = (tileIndex / gridWid) * myGridSize;
+                }
+                tileIndex++;
+            }
+        }
+    }
+
+    Vector2 offset = {targetEntrance.x - entranceLocal.x, targetEntrance.y - entranceLocal.y};
 
     cJSON_ArrayForEach(layer, layers)
     {
@@ -102,8 +90,8 @@ void loadRoom(const char *filepath, RoomData *room)
 
                 if (type == TILE_WALL || type == TILE_ENTRANCE || type == TILE_EXIT)
                 {
-                    int x = (tileIndex % gridWid) * myGridSize;
-                    int y = (tileIndex / gridWid) * myGridSize;
+                    int x = (tileIndex % gridWid) * myGridSize + offset.x;
+                    int y = (tileIndex / gridWid) * myGridSize + offset.y;
 
                     room->colliders[room->numColliders].bounds = (Rectangle){(float)x, (float)y, (float)myGridSize, (float)myGridSize};
                     room->colliders[room->numColliders].type = type;
@@ -118,7 +106,6 @@ void loadRoom(const char *filepath, RoomData *room)
         {
             int ldtkGridSize = cJSON_GetObjectItemCaseSensitive(layer, "__gridSize")->valueint;
 
-            float myGridSize = 85.0f;
             float scaleFactor = myGridSize / (float)ldtkGridSize;
 
             cJSON *entities = cJSON_GetObjectItemCaseSensitive(layer, "entityInstances");
@@ -132,8 +119,8 @@ void loadRoom(const char *filepath, RoomData *room)
                 float rawX = (float)cJSON_GetArrayItem(pxArray, 0)->valueint;
                 float rawY = (float)cJSON_GetArrayItem(pxArray, 1)->valueint;
 
-                float scaledX = rawX * scaleFactor + myGridSize / 2.0f;
-                float scaledY = rawY * scaleFactor + myGridSize / 2.0f;
+                float scaledX = rawX * scaleFactor + myGridSize / 2.0f + offset.x;
+                float scaledY = rawY * scaleFactor + myGridSize / 2.0f + offset.y;
 
                 if (strcmp(entId->valuestring, "PlayerSpawn") == 0)
                 {
@@ -141,7 +128,7 @@ void loadRoom(const char *filepath, RoomData *room)
                 }
                 else if (strcmp(entId->valuestring, "EnemySpawn") == 0)
                 {
-                    spawnShooterPos(1, (Vector2){.x = scaledX, scaledY});
+                    spawnRandomEnemyPos(1, (Vector2){.x = scaledX, scaledY});
                 }
             }
         }
@@ -153,32 +140,40 @@ void loadRoom(const char *filepath, RoomData *room)
     return;
 }
 
-void drawLevel()
+void drawRooms()
 {
-    for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
+    for (uint32_t r = 0; r < numRoomsLoaded; r++)
     {
-        if (currentRoom.colliders[colliderIndex].type == TILE_WALL)
-            DrawRectangleRec(currentRoom.colliders[colliderIndex].bounds, WHITE);
-        if (currentRoom.colliders[colliderIndex].type == TILE_EXIT && !roomDone(&currentRoom))
-            DrawRectangleRec(currentRoom.colliders[colliderIndex].bounds, DARKBROWN);
+        RoomData *room = &rooms[r];
+        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++)
+        {
+            if (room->colliders[colliderIndex].type == TILE_WALL)
+                DrawRectangleRec(room->colliders[colliderIndex].bounds, GRAY);
+            if (room->colliders[colliderIndex].type == TILE_EXIT && !roomDone(room))
+                DrawRectangleRec(room->colliders[colliderIndex].bounds, DARKBROWN);
+        }
     }
 }
 
-bool checkEntityCollision(Vector2 pos, Vector2 size)
+static bool checkEntityCollision(Vector2 pos, Vector2 size)
 {
     Rectangle entityRec = {pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, size.x, size.y};
 
-    for (uint32_t i = 0; i < currentRoom.numColliders; i++)
+    for (uint32_t r = 0; r < numRoomsLoaded; r++)
     {
-        if (currentRoom.colliders[i].type == TILE_ENTRANCE ||
-            (currentRoom.colliders[i].type == TILE_EXIT && roomDone(&currentRoom)))
+        RoomData *room = &rooms[r];
+        for (uint32_t i = 0; i < room->numColliders; i++)
         {
-            continue;
-        }
+            if (room->colliders[i].type == TILE_ENTRANCE ||
+                (room->colliders[i].type == TILE_EXIT && roomDone(room)))
+            {
+                continue;
+            }
 
-        if (CheckCollisionRecs(entityRec, currentRoom.colliders[i].bounds))
-        {
-            return true;
+            if (CheckCollisionRecs(entityRec, room->colliders[i].bounds))
+            {
+                return true;
+            }
         }
     }
     return false;

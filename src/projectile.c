@@ -1,4 +1,3 @@
-
 #include <raylib.h>
 #include <raymath.h>
 
@@ -65,15 +64,21 @@ bool projectileHitsEntity(Projectile proj)
         }
     }
 
-    for (uint32_t colliderIndex = 0; colliderIndex < currentRoom.numColliders; colliderIndex++)
+    for (uint32_t r = 0; r < numRoomsLoaded; r++)
     {
-        Rectangle bounds = currentRoom.colliders[colliderIndex].bounds;
-
-        bool isInXRange = proj.position.x + proj.size / 2 >= bounds.x && proj.position.x <= bounds.x + bounds.width + proj.size / 2;
-        bool isInYRange = proj.position.y + proj.size / 2 >= bounds.y && proj.position.y <= bounds.y + bounds.height + proj.size / 2;
-        if (isInXRange && isInYRange)
+        RoomData *room = &rooms[r];
+        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++)
         {
-            return true;
+            if (room->colliders[colliderIndex].type == TILE_ENTRANCE || (room->colliders[colliderIndex].type == TILE_EXIT && roomDone(room)))
+                continue;
+            Rectangle bounds = room->colliders[colliderIndex].bounds;
+
+            bool isInXRange = proj.position.x + proj.size / 2 >= bounds.x && proj.position.x <= bounds.x + bounds.width + proj.size / 2;
+            bool isInYRange = proj.position.y + proj.size / 2 >= bounds.y && proj.position.y <= bounds.y + bounds.height + proj.size / 2;
+            if (isInXRange && isInYRange)
+            {
+                return true;
+            }
         }
     }
 

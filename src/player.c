@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "player.h"
 #include "projectile.h"
@@ -41,15 +42,10 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color co
     DrawRectanglePro(healthRec, playerOrigin, 0, color);
     DrawRectanglePro(redHealthRec, playerOrigin, 0, RED);
 }
-/**
- * @brief Draws a player
- *
- * @param player the player that will be drawn.
- */
+
 void drawPlayer(Player player)
 {
     const float fadeAmount = 0.3f;
-    // Draw the Barrel
     Vector2 childOffset = {30.0f, 0.0f};
     Vector2 childSize = {20.0f, 15.0f};
 
@@ -61,14 +57,12 @@ void drawPlayer(Player player)
     Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
     DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
 
-    // Draw the Player Cube
     Color playerDrawColor = player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
 
     Rectangle playerRec = {player.position.x, player.position.y, player.size.x, player.size.y};
     Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
     DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
 
-    // Draw the Health12 Bar
     drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth, player.color);
 }
 void dashPlayer(Player *player)
@@ -140,4 +134,33 @@ void damagePlayer(uint32_t damage)
         mainPlayer.currentHealth -= damage;
     triggerScreenShake(0.25, 4.5f);
     PlaySound(hit);
+}
+
+void updateRooms()
+{
+    if (numRoomsLoaded == 0 || numRoomsLoaded >= 16)
+        return;
+
+    RoomData *lastRoom = &rooms[numRoomsLoaded - 1];
+
+    if (roomDone(lastRoom))
+    {
+        Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f, mainPlayer.position.y - mainPlayer.size.y / 2.0f, mainPlayer.size.x, mainPlayer.size.y};
+
+        for (uint32_t i = 0; i < lastRoom->numColliders; i++)
+        {
+            if (lastRoom->colliders[i].type == TILE_EXIT && CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds))
+            {
+                puts("HELLO");
+                Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
+
+                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl"};
+                int randIndex = GetRandomValue(0, 1);
+
+                loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
+                numRoomsLoaded++;
+                break;
+            }
+        }
+    }
 }
