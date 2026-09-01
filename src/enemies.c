@@ -73,8 +73,8 @@ void drawBoss1(Enemy *enemy)
     DrawRectangle(leftEyeOffset - eyeRadius / 2, enemy->position.y - 10, 4, 15, BLACK);
     DrawRectangle(rightEyeOffset, enemy->position.y - 10, 4, 15, BLACK);
 
-    Vector2 leftShoulder = Vector2Add(enemy->position, Vector2Rotate((Vector2){-enemy->size.x / 2, 0.0f}, (enemy->rotation + 45) * DEG2RAD));
-    Vector2 rightShoulder = Vector2Add(enemy->position, Vector2Rotate((Vector2){enemy->size.x / 2, 0.0f}, (enemy->rotation - 45) * DEG2RAD));
+    Vector2 leftShoulder = Vector2Add(enemy->position, Vector2Rotate((Vector2){-enemy->size.x / 2, 0.0f}, (enemy->rotation) * DEG2RAD));
+    Vector2 rightShoulder = Vector2Add(enemy->position, Vector2Rotate((Vector2){enemy->size.x / 2, 0.0f}, (enemy->rotation) * DEG2RAD));
 
     float arm1Length = 90.0f;
     float arm2Length = 90.0f;
@@ -395,9 +395,10 @@ void updateBoss1(Enemy *currentEnemy)
     }
     else if (currentEnemy->extraData.boss.state == BOSS_SPIN)
     {
-        currentEnemy->rotation += currentEnemy->rotationSpeed * 3.0f * GetFrameTime();
-        currentEnemy->extraData.boss.leftArmTargetPoint = Vector2Add(leftShoulder, Vector2Rotate((Vector2){-70.0f, 0.0f}, currentEnemy->rotation * DEG2RAD));
-        currentEnemy->extraData.boss.rightArmTargetPoint = Vector2Add(rightShoulder, Vector2Rotate((Vector2){70.0f, 0.0f}, currentEnemy->rotation * DEG2RAD));
+        printf("rotation = %f\n", currentEnemy->rotation);
+        currentEnemy->rotation += 600.0f * GetFrameTime();
+        currentEnemy->extraData.boss.leftArmTargetPoint = Vector2Add(leftShoulder, Vector2Rotate((Vector2){-currentEnemy->size.x * 3, -21.0f}, currentEnemy->rotation * DEG2RAD));
+        currentEnemy->extraData.boss.rightArmTargetPoint = Vector2Add(rightShoulder, Vector2Rotate((Vector2){currentEnemy->size.x * 3, -21.0f}, currentEnemy->rotation * DEG2RAD));
     }
     else if (currentEnemy->extraData.boss.state == BOSS_LASER_WINDUP)
     {
