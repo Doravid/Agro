@@ -11,6 +11,7 @@ typedef struct
     float rotation, moveSpeed, rotationSpeed, attackSpeed, attackCooldown;
     uint32_t maxHealth, currentHealth;
     float dashTimer;
+    uint32_t attackDamage;
 } Player;
 
 void drawPlayer(Player player);

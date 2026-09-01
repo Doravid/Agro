@@ -36,11 +36,27 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner)
         .position = {parent.position.x + directionVector.x * 40, parent.position.y + directionVector.y * 40},
         .size = 10.f,
         .moveSpeed = 250.f,
-        .damage = 15,
+        .damage = parent.attackDamage,
         .owner = owner,
 
     });
 }
+
+void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size, float moveSpeed)
+{
+    Vector2 directionVector = {.x = cosf(parent.rotation * DEG2RAD), .y = sinf(parent.rotation * DEG2RAD)};
+    spawnProjectile((Projectile){
+        .color = ColorLerp(PINK, parent.color, 0.5),
+        .direction = directionVector,
+        .position = {parent.position.x + directionVector.x * 40, parent.position.y + directionVector.y * 40},
+        .size = size,
+        .moveSpeed = moveSpeed,
+        .damage = parent.attackDamage,
+        .owner = owner,
+
+    });
+}
+
 bool projectileHitsEntity(Projectile proj)
 {
     if (proj.owner == EnemyProj && Vector2Distance(proj.position, mainPlayer.position) < proj.size + mainPlayer.size.x / 2)

@@ -34,20 +34,21 @@ void triggerScreenShake(float duration, float intensity)
     shakeIntensity = intensity;
 }
 
-void updateCamera(Camera2D *camera, float *userZoom)
+void updateCamera(Camera2D *camera)
 {
-    *userZoom = expf(logf(*userZoom) + ((float)GetMouseWheelMove() * 0.1f));
+    static float userZoom = 1.0f;
+    userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
 
-    if (*userZoom > 2.0f)
-        *userZoom = 2.0f;
-    if (*userZoom < 0.5f)
-        *userZoom = 0.5f;
+    if (userZoom > 2.0f)
+        userZoom = 2.0f;
+    if (userZoom < 0.5f)
+        userZoom = 0.5f;
 
     // FOV Scaling
     float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
     float scaleY = (float)GetScreenHeight() / VIRTUAL_HEIGHT;
     float windowScale = fminf(scaleX, scaleY);
-    camera->zoom = *userZoom * windowScale;
+    camera->zoom = userZoom * windowScale;
     camera->offset = (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
     camera->target = mainPlayer.position;
     camera->rotation = 0.0f;

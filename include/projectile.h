@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+
 #include "player.h"
 
 #define MAX_PROJECTILES 512
@@ -21,5 +22,6 @@ extern Projectile projectiles[MAX_PROJECTILES];
 extern uint32_t numProjectiles;
 
 void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner);
+void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size, float moveSpeed);
 void drawProjectiles(Projectile *projs, uint32_t numProjs);
 void updateProjectiles();

@@ -20,6 +20,7 @@ Player mainPlayer = {
     .color = GREEN,
     .movementVector = (Vector2){0},
     .dashTimer = 0.0f,
+    .attackDamage = 15,
 };
 
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color)
@@ -29,13 +30,13 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color co
     const float healthBarMaxWidth = size.x * 1.5;
     Rectangle healthRec = {
         .x = healthBarStart,
-        .y = position.y + 49.,
+        .y = position.y + size.y * 1.5,
         .width = healthBarMaxWidth * healthPercent,
         .height = size.y / 10.0,
     };
     Rectangle redHealthRec = {
         .x = healthBarStart + healthRec.width,
-        .y = position.y + 49.,
+        .y = position.y + size.y * 1.5,
         .width = healthBarMaxWidth - healthBarMaxWidth * healthPercent,
         .height = size.y / 10.0,
     };
@@ -154,7 +155,7 @@ void updateRooms()
                 puts("HELLO");
                 Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
 
-                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl"};
+                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_1.ldtkl"};
                 int randIndex = GetRandomValue(0, 1);
 
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);

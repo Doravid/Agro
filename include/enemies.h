@@ -5,9 +5,26 @@
 
 typedef enum
 {
+    BOSS_IDLE,
+    BOSS_SPIN_WINDUP,
+    BOSS_SPIN,
+    BOSS_LASER_WINDUP,
+    BOSS_LASER_FIRE
+} BossState;
+
+typedef struct
+{
+    BossState state;
+    float stateTimer;
+    Vector2 leftArmTargetPoint;
+    Vector2 rightArmTargetPoint;
+} BossData;
+
+typedef enum
+{
     ENEMY_SHOOTER = 1,
     ENEMY_MELEE = 2,
-    ENEMY_CRUSHER,
+    ENEMY_BUFFSHOT,
     ENEMY_BOSS1,
     ENEMY_BOSS2,
     ENEMY_BOSS3,
@@ -18,6 +35,10 @@ typedef struct
 {
     Player;
     EnemyType type;
+    union
+    {
+        BossData boss;
+    } extraData;
 } Enemy;
 
 extern Enemy enemies[MAX_PROJECTILES];

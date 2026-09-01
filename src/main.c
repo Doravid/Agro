@@ -21,7 +21,6 @@ int main(void)
     initSounds();
 
     // User-controlled zoom multiplier
-    float userZoom = 1.0f;
 
     Camera2D camera = {0};
     Shader bloom = LoadShader(0, "resources/bloom.fs");
@@ -66,7 +65,7 @@ int main(void)
         }
         updatePlayer(camera);
         // Modify base user zoom
-        updateCamera(&camera, &userZoom);
+        updateCamera(&camera);
 
         // Movement Updates
         updateProjectiles();
