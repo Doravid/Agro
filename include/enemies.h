@@ -43,7 +43,9 @@ typedef struct
 
 extern Enemy enemies[MAX_PROJECTILES];
 extern uint32_t numEnemies;
+extern bool gameOver;
 
+void spawnBoss1Pos(Vector2 spawnPos);
 void damageEnemy(uint32_t enemyIndex, uint32_t damage);
 void updateEnemies();
 void drawEnemies();

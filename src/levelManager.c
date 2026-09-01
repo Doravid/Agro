@@ -130,6 +130,10 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance)
                 {
                     spawnRandomEnemyPos(1, (Vector2){.x = scaledX, scaledY});
                 }
+                else if (strcmp(entId->valuestring, "Boss1") == 0)
+                {
+                    spawnBoss1Pos((Vector2){.x = scaledX, scaledY});
+                }
             }
         }
     }
@@ -202,4 +206,36 @@ Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset)
     }
 
     return nextPos;
+}
+
+void updateRooms()
+{
+    if (numRoomsLoaded == 0 || numRoomsLoaded >= 16)
+        return;
+
+    RoomData *lastRoom = &rooms[numRoomsLoaded - 1];
+
+    if (roomDone(lastRoom))
+    {
+        Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f, mainPlayer.position.y - mainPlayer.size.y / 2.0f, mainPlayer.size.x, mainPlayer.size.y};
+
+        for (uint32_t i = 0; i < lastRoom->numColliders; i++)
+        {
+            if (lastRoom->colliders[i].type == TILE_EXIT && CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds))
+            {
+                Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
+                if (numRoomsLoaded == 7)
+                {
+                    loadRoom("maps/thing/Level_3.ldtkl", &rooms[numRoomsLoaded], targetEntrance);
+                    numRoomsLoaded++;
+                    break;
+                }
+                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl"};
+                int randIndex = GetRandomValue(0, 1);
+                loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
+                numRoomsLoaded++;
+                break;
+            }
+        }
+    }
 }

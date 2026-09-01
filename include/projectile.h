@@ -25,3 +25,4 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner);
 void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size, float moveSpeed);
 void drawProjectiles(Projectile *projs, uint32_t numProjs);
 void updateProjectiles();
+void spawnProjectile(Projectile proj_to_spawn);

@@ -30,6 +30,7 @@ void drawProjectiles(Projectile *projs, uint32_t numProjs)
 void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner)
 {
     Vector2 directionVector = {.x = cosf(parent.rotation * DEG2RAD), .y = sinf(parent.rotation * DEG2RAD)};
+
     spawnProjectile((Projectile){
         .color = ColorLerp(PINK, parent.color, 0.5),
         .direction = directionVector,
@@ -45,6 +46,8 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner)
 void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size, float moveSpeed)
 {
     Vector2 directionVector = {.x = cosf(parent.rotation * DEG2RAD), .y = sinf(parent.rotation * DEG2RAD)};
+    ProjectileOwner newOwner = owner;
+
     spawnProjectile((Projectile){
         .color = ColorLerp(PINK, parent.color, 0.5),
         .direction = directionVector,
@@ -52,7 +55,7 @@ void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float si
         .size = size,
         .moveSpeed = moveSpeed,
         .damage = parent.attackDamage,
-        .owner = owner,
+        .owner = newOwner,
 
     });
 }

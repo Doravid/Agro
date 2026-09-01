@@ -75,6 +75,8 @@ void dashPlayer(Player *player)
 }
 void updatePlayer(Camera2D camera)
 {
+    if (mainPlayer.currentHealth == 0)
+        return;
     // Input & Movement
     if (IsKeyDown(KEY_D))
         mainPlayer.movementVector.x = 1;
@@ -135,33 +137,4 @@ void damagePlayer(uint32_t damage)
         mainPlayer.currentHealth -= damage;
     triggerScreenShake(0.25, 4.5f);
     PlaySound(hit);
-}
-
-void updateRooms()
-{
-    if (numRoomsLoaded == 0 || numRoomsLoaded >= 16)
-        return;
-
-    RoomData *lastRoom = &rooms[numRoomsLoaded - 1];
-
-    if (roomDone(lastRoom))
-    {
-        Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f, mainPlayer.position.y - mainPlayer.size.y / 2.0f, mainPlayer.size.x, mainPlayer.size.y};
-
-        for (uint32_t i = 0; i < lastRoom->numColliders; i++)
-        {
-            if (lastRoom->colliders[i].type == TILE_EXIT && CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds))
-            {
-                puts("HELLO");
-                Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
-
-                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_1.ldtkl"};
-                int randIndex = GetRandomValue(0, 1);
-
-                loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
-                numRoomsLoaded++;
-                break;
-            }
-        }
-    }
 }

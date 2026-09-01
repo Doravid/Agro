@@ -94,7 +94,11 @@ int main(void)
         BeginShaderMode(bloom);
         DrawTextureRec(target.texture, (Rectangle){0, 0, (float)target.texture.width, (float)-target.texture.height}, (Vector2){0, 0}, WHITE);
         EndShaderMode();
-        DrawFPS(10, 10);
+
+        if (gameOver)
+            DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150, GOLD);
+        if (mainPlayer.currentHealth == 0)
+            DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4, 150, RED);
 
         EndDrawing();
     }
