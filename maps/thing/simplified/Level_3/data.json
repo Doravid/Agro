@@ -1,8 +1,8 @@
 {
 	"identifier": "Level_3",
-	"uniqueIdentifer": "7cb7bed0-96d0-11f1-a7c7-9100bd27c68f",
-	"x": 400,
-	"y": -80,
+	"uniqueIdentifer": "74e0f3c0-96d0-11f1-a7c7-29d380926f39",
+	"x": -160,
+	"y": -320,
 	"width": 224,
 	"height": 192,
 	"bgColor": "#696A79",
@@ -10,16 +10,60 @@
 	"customFields" : {},
 	"layers": [],
 	"entities": {
-		"Boss1": [
+		"EnemySpawn": [
 			{
-				"id": "Boss1",
-				"iid": "98b60920-96d0-11f1-a7c7-cd9ba1b30415",
+				"id": "EnemySpawn",
+				"iid": "ba54afe0-96d0-11f1-a7c7-ab05a3244e81",
 				"layer": "Entities",
-				"x": 112,
+				"x": 16,
+				"y": 160,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "bb0fe990-96d0-11f1-a7c7-2d849a298b74",
+				"layer": "Entities",
+				"x": 80,
 				"y": 64,
 				"width": 16,
 				"height": 16,
-				"color": 16711748,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "bbb8d3c0-96d0-11f1-a7c7-bd2e65036715",
+				"layer": "Entities",
+				"x": 176,
+				"y": 128,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "bc31fb60-96d0-11f1-a7c7-95baa135d27f",
+				"layer": "Entities",
+				"x": 192,
+				"y": 96,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "be216f50-96d0-11f1-a7c7-61c8696c3070",
+				"layer": "Entities",
+				"x": 192,
+				"y": 16,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
 				"customFields" : {}
 			}
 		]

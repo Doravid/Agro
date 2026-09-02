@@ -227,13 +227,13 @@ void updateRooms()
                 Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
                 if (numRoomsLoaded == 5)
                 {
-                    loadRoom("maps/thing/Level_3.ldtkl", &rooms[numRoomsLoaded], targetEntrance);
+                    loadRoom("maps/thing/BossLevel.ldtkl", &rooms[numRoomsLoaded], targetEntrance);
                     numRoomsLoaded++;
                     playBossMusic();
                     break;
                 }
-                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl"};
-                int randIndex = GetRandomValue(0, 1);
+                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl", "maps/thing/Level_3.ldtkl"};
+                int randIndex = GetRandomValue(0, 2);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
                 numRoomsLoaded++;
                 break;

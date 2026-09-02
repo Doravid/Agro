@@ -21,6 +21,28 @@
 				"height": 16,
 				"color": 12220723,
 				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "6c87a750-96d0-11f1-a7c7-21e51cfc6470",
+				"layer": "Entities",
+				"x": 176,
+				"y": 160,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "6e6ae640-96d0-11f1-a7c7-876301bcf239",
+				"layer": "Entities",
+				"x": 64,
+				"y": 112,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
 			}
 		]
 	}
