@@ -43,6 +43,7 @@ typedef struct
 } Obstacle;
 
 void updateRooms();
+void initRoomTexture();
 void drawRooms();
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance);
 bool roomDone(RoomData *room);

@@ -19,9 +19,9 @@ int main(void)
     InitWindow(1920, 1080, "Stupid");
     SetTargetFPS(0);
     initSounds();
+    initRoomTexture();
 
     // User-controlled zoom multiplier
-
     Camera2D camera = {0};
     Shader bloom = LoadShader(0, "resources/bloom.fs");
     int sizeLoc = GetShaderLocation(bloom, "size");

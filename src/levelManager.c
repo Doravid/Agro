@@ -13,7 +13,12 @@ Level currentLevel;
 RoomData rooms[16];
 uint32_t numRoomsLoaded = 0;
 const float myGridSize = 85.0f;
+Texture2D whiteTexture;
 
+void initRoomTexture()
+{
+    whiteTexture = LoadTexture("resources/image.png");
+}
 bool roomDone(RoomData *room)
 {
     if (room->isCleared)
@@ -153,7 +158,7 @@ void drawRooms()
         for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++)
         {
             if (room->colliders[colliderIndex].type == TILE_WALL)
-                DrawRectangleRec(room->colliders[colliderIndex].bounds, GRAY);
+                DrawTexturePro(whiteTexture, (Rectangle){0, 0, 16, 16}, room->colliders[colliderIndex].bounds, (Vector2){0, 0}, 0.0f, (Color){.r = 120, .g = 120, .b = 130, .a = 255});
             if (room->colliders[colliderIndex].type == TILE_EXIT && !roomDone(room))
                 DrawRectangleRec(room->colliders[colliderIndex].bounds, DARKBROWN);
         }
