@@ -42,7 +42,7 @@ void updateCamera(Camera2D *camera)
     if (userZoom > 2.0f)
         userZoom = 2.0f;
     if (userZoom < 0.5f)
-        userZoom = 0.5f;
+        userZoom = 0.6f;
 
     // FOV Scaling
     float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
