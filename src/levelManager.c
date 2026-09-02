@@ -225,7 +225,7 @@ void updateRooms()
             if (lastRoom->colliders[i].type == TILE_EXIT && CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds))
             {
                 Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x, lastRoom->colliders[i].bounds.y};
-                if (numRoomsLoaded == 1)
+                if (numRoomsLoaded == 5)
                 {
                     loadRoom("maps/thing/Level_3.ldtkl", &rooms[numRoomsLoaded], targetEntrance);
                     numRoomsLoaded++;
