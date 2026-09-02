@@ -23,6 +23,7 @@ pub fn build(b: *std.Build) void {
             "src/levelManager.c",
             "src/camera.c",
             "src/audio.c",
+            "src/boss.c",
         },
         .flags = &.{ "-std=gnu23", "-O3", "-march=native", "-D_DEFAULT_SOURCE", "-fms-extensions", "-Wno-microsoft-anon-tag", "-Wall", "-Werror" },
     });
