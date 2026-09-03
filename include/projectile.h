@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-#define MAX_PROJECTILES 512
+#define MAX_PROJECTILES 99999
 
 typedef enum
 {
@@ -17,6 +17,7 @@ typedef struct
     float moveSpeed, size;
     uint32_t damage;
     ProjectileOwner owner;
+    float lifetime;
 } Projectile;
 extern Projectile projectiles[MAX_PROJECTILES];
 extern uint32_t numProjectiles;

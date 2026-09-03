@@ -8,11 +8,12 @@
 #include "levelManager.h"
 #include "enemies.h"
 #include "audio.h"
+#include "traps.h"
 
 Level currentLevel;
 RoomData rooms[16];
 uint32_t numRoomsLoaded = 0;
-const float myGridSize = 85.0f;
+static const float myGridSize = 85.0f;
 Texture2D whiteTexture;
 
 void initRoomTexture()
@@ -140,6 +141,55 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance)
                 {
                     spawnBoss1Pos((Vector2){.x = scaledX, scaledY});
                 }
+                else if (strcmp(entId->valuestring, "FireTrap") == 0)
+                {
+                    cJSON *fieldInstances = cJSON_GetObjectItemCaseSensitive(entity, "fieldInstances");
+                    const char *directionStr;
+                    int size = cJSON_GetArraySize(fieldInstances);
+
+                    for (int i = 0; i < size; i++)
+                    {
+                        cJSON *field = cJSON_GetArrayItem(fieldInstances, i);
+                        cJSON *id = cJSON_GetObjectItemCaseSensitive(field, "__identifier");
+                        if (cJSON_IsString(id) && strcmp(id->valuestring, "Direction") == 0)
+                        {
+                            directionStr = cJSON_GetObjectItemCaseSensitive(field, "__value")->valuestring;
+                        }
+                    }
+                    Direction dir;
+                    if (strcmp(directionStr, "LEFT") == 0)
+                    {
+                        dir = DIRECTION_LEFT;
+                    }
+                    else if (strcmp(directionStr, "RIGHT") == 0)
+                    {
+                        dir = DIRECTION_RIGHT;
+                    }
+                    else if (strcmp(directionStr, "UP") == 0)
+                    {
+                        dir = DIRECTION_UP;
+                    }
+                    else if (strcmp(directionStr, "DOWN") == 0)
+                    {
+                        dir = DIRECTION_DOWN;
+                    }
+                    else
+                        continue;
+
+                    addTrap((FireTrap){
+                        .damage = 1,
+                        .direction = dir,
+                        .state = FIRETRAP_IDLE,
+                        .position = (Vector2){
+                            .x = rawX * scaleFactor + offset.x,
+                            .y = rawY * scaleFactor + offset.y,
+                        },
+                        .currentTimer = 1.f,
+                        .maxTime = 2.f,
+                        .fireTimer = 0,
+                        .fireTimerMax = 0.04,
+                    });
+                }
             }
         }
     }
@@ -237,8 +287,8 @@ void updateRooms()
                     playBossMusic();
                     break;
                 }
-                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl", "maps/thing/Level_3.ldtkl"};
-                int randIndex = GetRandomValue(0, 2);
+                const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl", "maps/thing/Level_3.ldtkl", "maps/thing/Level_4.ldtkl"};
+                int randIndex = GetRandomValue(3, 3);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
                 numRoomsLoaded++;
                 break;

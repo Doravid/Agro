@@ -131,6 +131,22 @@
 					"fieldInstances": [],
 					"__worldX": 32,
 					"__worldY": -304
+				},
+				{
+					"__identifier": "EnemySpawn",
+					"__grid": [7,8],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": null,
+					"__smartColor": "#BA7933",
+					"iid": "27651110-96d0-11f1-a7c7-779659e7d5d2",
+					"width": 16,
+					"height": 16,
+					"defUid": 5,
+					"px": [112,128],
+					"fieldInstances": [],
+					"__worldX": -48,
+					"__worldY": -192
 				}
 			]
 		},

@@ -65,6 +65,17 @@
 				"height": 16,
 				"color": 12220723,
 				"customFields" : {}
+			},
+			{
+				"id": "EnemySpawn",
+				"iid": "27651110-96d0-11f1-a7c7-779659e7d5d2",
+				"layer": "Entities",
+				"x": 112,
+				"y": 128,
+				"width": 16,
+				"height": 16,
+				"color": 12220723,
+				"customFields" : {}
 			}
 		]
 	}

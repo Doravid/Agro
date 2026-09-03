@@ -10,6 +10,7 @@
 #include "levelManager.h"
 #include "camera.h"
 #include "audio.h"
+#include "traps.h"
 
 int main(void)
 {
@@ -72,11 +73,12 @@ int main(void)
         updateRooms();
         updateEnemies();
         updateSound();
+        updateTraps();
 
         // Render
         BeginTextureMode(target);
 
-        ClearBackground(BLACK);
+        ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
 
         BeginMode2D(camera);
 
@@ -85,6 +87,7 @@ int main(void)
         drawPlayer(mainPlayer);
         drawEnemies();
         drawRooms();
+        drawTraps();
 
         EndMode2D();
         EndTextureMode();

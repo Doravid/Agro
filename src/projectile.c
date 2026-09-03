@@ -39,7 +39,7 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner)
         .moveSpeed = 250.f,
         .damage = parent.attackDamage,
         .owner = owner,
-
+        .lifetime = 50.f,
     });
 }
 
@@ -56,7 +56,7 @@ void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float si
         .moveSpeed = moveSpeed,
         .damage = parent.attackDamage,
         .owner = newOwner,
-
+        .lifetime = 50.f,
     });
 }
 
@@ -103,6 +103,7 @@ bool projectileHitsEntity(Projectile proj)
 
     return false;
 }
+
 void updateProjectiles()
 {
     for (uint16_t projectileIndex = 0; projectileIndex < numProjectiles; projectileIndex++)
@@ -112,7 +113,9 @@ void updateProjectiles()
         currentProjectile->position.x += currentProjectile->direction.x * currentProjectile->moveSpeed * GetFrameTime();
         currentProjectile->position.y += currentProjectile->direction.y * currentProjectile->moveSpeed * GetFrameTime();
 
-        if (projectileHitsEntity(*currentProjectile) || Vector2Distance(currentProjectile->position, mainPlayer.position) > 2500.)
+        currentProjectile->lifetime -= GetFrameTime();
+
+        if (currentProjectile->lifetime <= 0.0f || projectileHitsEntity(*currentProjectile) || Vector2Distance(currentProjectile->position, mainPlayer.position) > 2500.)
         {
             *currentProjectile = projectiles[numProjectiles - 1];
             numProjectiles--;

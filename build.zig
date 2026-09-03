@@ -24,6 +24,7 @@ pub fn build(b: *std.Build) void {
             "src/camera.c",
             "src/audio.c",
             "src/boss.c",
+            "src/traps.c",
         },
         .flags = &.{ "-std=gnu23", "-O3", "-march=native", "-D_DEFAULT_SOURCE", "-fms-extensions", "-Wno-microsoft-anon-tag", "-Wall", "-Werror" },
     });
