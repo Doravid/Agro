@@ -288,7 +288,7 @@ void updateRooms()
                     break;
                 }
                 const char *nextMaps[] = {"maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl", "maps/thing/Level_3.ldtkl", "maps/thing/Level_4.ldtkl"};
-                int randIndex = GetRandomValue(3, 3);
+                int randIndex = GetRandomValue(0, 3);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
                 numRoomsLoaded++;
                 break;
