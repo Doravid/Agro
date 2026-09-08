@@ -1,9 +1,17 @@
 
 #include "camera.h"
 #include "player.h"
+#include "projectile.h"
+#include "enemies.h"
+#include "levelManager.h"
+#include "traps.h"
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
+Camera2D camera;
+static Shader bloom;
+static RenderTexture2D target;
+static int sizeLoc;
 
 void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight)
 {
@@ -34,8 +42,44 @@ void triggerScreenShake(float duration, float intensity)
     shakeIntensity = intensity;
 }
 
+void initCamera()
+{
+    bloom = LoadShader(0, "resources/bloom.fs");
+    sizeLoc = GetShaderLocation(bloom, "size");
+    float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+    SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
+
+    target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
+}
+
 void updateCamera(Camera2D *camera)
 {
+    if (IsKeyPressed(KEY_F11) || (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER)))
+    {
+        int currentMonitor = GetCurrentMonitor();
+        if (IsWindowFullscreen())
+        {
+            ToggleFullscreen();
+            SetWindowSize(1280, 720);
+        }
+        else
+        {
+            SetWindowSize(GetMonitorWidth(currentMonitor), GetMonitorHeight(currentMonitor));
+            ToggleFullscreen();
+        }
+    }
+    if (IsWindowResized())
+    {
+        // Update the render texture.
+        UnloadRenderTexture(target);
+        target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+        SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
+        // Update the shader.
+        float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+        SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
+    }
+
     static float userZoom = 1.0f;
     userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
 
@@ -74,4 +118,36 @@ void updateCamera(Camera2D *camera)
             }
         }
     }
+}
+
+void drawGame()
+{
+    BeginTextureMode(target);
+
+    ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
+
+    BeginMode2D(camera);
+
+    // Draw Calls
+    drawProjectiles(projectiles, numProjectiles);
+    drawPlayer(mainPlayer);
+    drawEnemies();
+    drawRooms();
+    drawTraps();
+
+    EndMode2D();
+    EndTextureMode();
+
+    // Draw The Game
+    BeginDrawing();
+    BeginShaderMode(bloom);
+    DrawTextureRec(target.texture, (Rectangle){0, 0, (float)target.texture.width, (float)-target.texture.height}, (Vector2){0, 0}, WHITE);
+    EndShaderMode();
+
+    if (gameOver)
+        DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150, GOLD);
+    if (mainPlayer.currentHealth == 0)
+        DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4, 150, RED);
+
+    EndDrawing();
 }

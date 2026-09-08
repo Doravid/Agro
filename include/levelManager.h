@@ -1,6 +1,5 @@
 #include <raylib.h>
 #include <stdint.h>
-
 typedef enum
 {
     TILE_EMPTY = 0,
@@ -34,13 +33,13 @@ typedef struct
     uint32_t difficultyLevel;
 } Level;
 
-typedef struct
+typedef enum
 {
-    Vector2 position;
-    uint32_t maxHealth, currentHealth;
-    float size;
-    Color color;
-} Obstacle;
+    STATE_MAIN_MENU,
+    STATE_SETTINGS,
+    STATE_SHOP,
+    STATE_PLAYING,
+} GameState;
 
 void updateRooms();
 void initRoomTexture();
