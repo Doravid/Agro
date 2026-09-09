@@ -25,8 +25,18 @@ pub fn build(b: *std.Build) void {
             "src/audio.c",
             "src/boss.c",
             "src/traps.c",
+            "src/ui.c",
         },
-        .flags = &.{ "-std=gnu23", "-O3", "-march=native", "-D_DEFAULT_SOURCE", "-fms-extensions", "-Wno-microsoft-anon-tag", "-Wall", "-Werror" },
+        .flags = &.{
+            "-std=gnu23",
+            "-O3",
+            "-march=native",
+            "-D_DEFAULT_SOURCE",
+            "-fms-extensions",
+            "-Wno-microsoft-anon-tag",
+            "-Wall",
+            "-Werror",
+        },
     });
 
     exe.root_module.linkSystemLibrary("raylib", .{});
