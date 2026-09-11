@@ -42,7 +42,6 @@ void initGame() {
 void updateGame(Camera2D *camera) {
   updatePlayer(*camera);
   updateCamera(camera);
-
   updateProjectiles();
   updateRooms();
   updateEnemies();

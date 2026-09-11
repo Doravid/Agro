@@ -2,6 +2,7 @@
 
 #include "levelManager.h"
 #include "ui.h"
+#include "settings.h"
 #define CLAY_IMPLEMENTATION
 
 #pragma GCC diagnostic push
@@ -31,13 +32,20 @@ void initUi() {
   SetTextureFilter(grandover[1].texture, TEXTURE_FILTER_BILINEAR);
   Clay_SetMeasureTextFunction(Raylib_MeasureText, grandover);
 }
-void HandleStartButtonInteraction(Clay_ElementId elementId,
-                                  Clay_PointerData pointerData,
-                                  void *userData) {
+
+void startButtonHover(Clay_ElementId elementId, Clay_PointerData pointerData,
+                      void *userData) {
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     startGame();
 }
-Clay_ElementDeclaration GetInnerConfig(bool hovered) {
+
+void settingsButtonHover(Clay_ElementId elementId, Clay_PointerData pointerData,
+                         void *userData) {
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    currentState = STATE_SETTINGS;
+}
+
+Clay_ElementDeclaration getInnerConfig(bool hovered) {
   return (Clay_ElementDeclaration){
       .layout =
           {
@@ -89,23 +97,24 @@ void renderMainMenu() {
 
   CLAY(CLAY_ID("OuterBox"), rootConfig) {
     CLAY(CLAY_ID("ButtonContainer"), containerConfig) {
-      CLAY(CLAY_ID("InnerBox"), GetInnerConfig(Clay_Hovered())) {
-        Clay_OnHover(HandleStartButtonInteraction, 0);
+      CLAY(CLAY_ID("InnerBox"), getInnerConfig(Clay_Hovered())) {
+        Clay_OnHover(startButtonHover, 0);
         CLAY_TEXT(CLAY_STRING("Start"),
                   CLAY_TEXT_CONFIG(
                       {.fontSize = 100, .textColor = {255, 255, 255, 255}}));
       }
-      CLAY(CLAY_ID("InnerBox2"), GetInnerConfig(Clay_Hovered())) {
+      CLAY(CLAY_ID("InnerBox2"), getInnerConfig(Clay_Hovered())) {
         CLAY_TEXT(CLAY_STRING("Upgrades"),
                   CLAY_TEXT_CONFIG(
                       {.fontSize = 100, .textColor = {255, 255, 255, 255}}));
       }
-      CLAY(CLAY_ID("InnerBox3"), GetInnerConfig(Clay_Hovered())) {
+      CLAY(CLAY_ID("InnerBox3"), getInnerConfig(Clay_Hovered())) {
+        Clay_OnHover(settingsButtonHover, 0);
         CLAY_TEXT(CLAY_STRING("Config"),
                   CLAY_TEXT_CONFIG(
                       {.fontSize = 100, .textColor = {255, 255, 255, 255}}));
       }
-      CLAY(CLAY_ID("InnerBox4"), GetInnerConfig(Clay_Hovered())) {
+      CLAY(CLAY_ID("InnerBox4"), getInnerConfig(Clay_Hovered())) {
         CLAY_TEXT(CLAY_STRING("Exit"),
                   CLAY_TEXT_CONFIG(
                       {.fontSize = 100, .textColor = {255, 0, 12, 255}}));
@@ -116,3 +125,5 @@ void renderMainMenu() {
   Clay_RenderCommandArray renderCommands = Clay_EndLayout(GetFrameTime());
   Clay_Raylib_Render(renderCommands, grandover);
 }
+
+void renderSettingsMenu() { Clay_Raylib_Render(getSettingsMenu(), grandover); }

@@ -26,6 +26,7 @@ pub fn build(b: *std.Build) void {
             "src/boss.c",
             "src/traps.c",
             "src/ui.c",
+            "src/settings.c",
         },
         .flags = &.{
             "-std=gnu23",

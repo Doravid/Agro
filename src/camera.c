@@ -1,4 +1,3 @@
-
 #include "camera.h"
 #include "enemies.h"
 #include "levelManager.h"
@@ -6,6 +5,7 @@
 #include "projectile.h"
 #include "traps.h"
 #include "ui.h"
+#include <stdio.h>
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
@@ -140,6 +140,10 @@ void drawGame() {
   // Draw Menus
   if (currentState == STATE_MAIN_MENU) {
     renderMainMenu();
+  }
+
+  if (currentState == STATE_SETTINGS) {
+    renderSettingsMenu();
   }
 
   if (gameOver)
