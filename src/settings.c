@@ -30,7 +30,7 @@ Clay_ElementDeclaration settingsContainerConfig = {
 Clay_ElementDeclaration line = {
     .layout =
         {
-            .sizing = {.width = CLAY_SIZING_PERCENT(1.f),
+            .sizing = {.width = CLAY_SIZING_GROW(),
                        .height = CLAY_SIZING_FIXED(8.f)},
             .childAlignment = {.x = CLAY_ALIGN_X_LEFT,
                                .y = CLAY_ALIGN_Y_CENTER},
@@ -63,7 +63,7 @@ Clay_ElementDeclaration sliderHolder = {
     .backgroundColor = (Clay_Color){100, 0, 100, 0},
 };
 
-float sliderValue = 0.4f;
+float sliderValue = 0.0f;
 
 Clay_RenderCommandArray getSettingsMenu() {
 
@@ -81,6 +81,9 @@ Clay_RenderCommandArray getSettingsMenu() {
   CLAY(CLAY_ID("OuterBox"), settingsRootConfig) {
     CLAY(CLAY_ID("ButtonContainer"), settingsContainerConfig) {
       CLAY(CLAY_ID("Slider"), sliderHolder) {
+        CLAY_TEXT(CLAY_STRING("Volume"),
+                  CLAY_TEXT_CONFIG(
+                      {.fontSize = 100, .textColor = {200, 200, 200, 255}}));
         CLAY(CLAY_ID("InnerBox"), line) {
           float innerWidth =
               Clay_GetElementData(CLAY_ID("InnerBox")).boundingBox.width;
