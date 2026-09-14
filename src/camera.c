@@ -15,142 +15,146 @@ static RenderTexture2D target;
 static int sizeLoc;
 
 void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight) {
-  int spacing = 100;
-  Color gridColor = (Color){17, 17, 17, 255};
+    int spacing = 100;
+    Color gridColor = (Color){17, 17, 17, 255};
 
-  Vector2 topLeft = GetScreenToWorld2D((Vector2){0, 0}, camera);
-  Vector2 bottomRight = GetScreenToWorld2D(
-      (Vector2){(float)screenWidth, (float)screenHeight}, camera);
+    Vector2 topLeft = GetScreenToWorld2D((Vector2){0, 0}, camera);
+    Vector2 bottomRight = GetScreenToWorld2D(
+        (Vector2){(float)screenWidth, (float)screenHeight}, camera);
 
-  int startX = (int)(topLeft.x / spacing) * spacing - spacing;
-  int endX = (int)(bottomRight.x / spacing) * spacing + spacing;
-  int startY = (int)(topLeft.y / spacing) * spacing - spacing;
-  int endY = (int)(bottomRight.y / spacing) * spacing + spacing;
+    int startX = (int)(topLeft.x / spacing) * spacing - spacing;
+    int endX = (int)(bottomRight.x / spacing) * spacing + spacing;
+    int startY = (int)(topLeft.y / spacing) * spacing - spacing;
+    int endY = (int)(bottomRight.y / spacing) * spacing + spacing;
 
-  for (int i = startX; i <= endX; i += spacing) {
-    DrawLine(i, startY, i, endY, gridColor);
-  }
-  for (int i = startY; i <= endY; i += spacing) {
-    DrawLine(startX, i, endX, i, gridColor);
-  }
+    for (int i = startX; i <= endX; i += spacing) {
+        DrawLine(i, startY, i, endY, gridColor);
+    }
+    for (int i = startY; i <= endY; i += spacing) {
+        DrawLine(startX, i, endX, i, gridColor);
+    }
 }
 
 void triggerScreenShake(float duration, float intensity) {
-  shakeDuration = duration;
-  shakeIntensity = intensity;
+    shakeDuration = duration;
+    shakeIntensity = intensity;
 }
 
 void initCamera() {
-  bloom = LoadShader(0, "resources/bloom.fs");
-  sizeLoc = GetShaderLocation(bloom, "size");
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
+    bloom = LoadShader(0, "resources/bloom.fs");
+    sizeLoc = GetShaderLocation(bloom, "size");
+    float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+    SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-  SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
+    target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
 }
 
 void updateCamera(Camera2D *camera) {
-  if (IsKeyPressed(KEY_F11) ||
-      (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
-    int currentMonitor = GetCurrentMonitor();
-    if (IsWindowFullscreen()) {
-      ToggleFullscreen();
-      SetWindowSize(1280, 720);
-    } else {
-      SetWindowSize(GetMonitorWidth(currentMonitor),
-                    GetMonitorHeight(currentMonitor));
-      ToggleFullscreen();
+    if (IsKeyPressed(KEY_F11) ||
+        (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
+        int currentMonitor = GetCurrentMonitor();
+        if (IsWindowFullscreen()) {
+            ToggleFullscreen();
+            SetWindowSize(1280, 720);
+        } else {
+            SetWindowSize(GetMonitorWidth(currentMonitor),
+                          GetMonitorHeight(currentMonitor));
+            ToggleFullscreen();
+        }
     }
-  }
-  if (IsWindowResized()) {
-    // Update the render texture.
-    UnloadRenderTexture(target);
-    target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-    SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
-    // Update the shader.
-    float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-    SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
-  }
-
-  static float userZoom = 1.0f;
-  userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
-
-  if (userZoom > 2.0f)
-    userZoom = 2.0f;
-  if (userZoom < 0.5f)
-    userZoom = 0.6f;
-
-  // FOV Scaling
-  float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
-  float scaleY = (float)GetScreenHeight() / VIRTUAL_HEIGHT;
-  float windowScale = fminf(scaleX, scaleY);
-  camera->zoom = userZoom * windowScale;
-  camera->offset = (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
-  camera->target = mainPlayer.position;
-  camera->rotation = 0.0f;
-
-  // Screen Shake
-
-  if (shakeDuration > 0.f) {
-
-    if (shakeDuration > 0.0f) {
-      float offsetX = (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
-      float offsetY = (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
-
-      camera->offset.x += offsetX;
-      camera->offset.y += offsetY;
-
-      shakeDuration -= GetFrameTime();
-      if (shakeDuration < 0.0f) {
-        shakeDuration = 0.0f;
-        shakeIntensity = 0.0f;
-      }
+    if (IsWindowResized()) {
+        // Update the render texture.
+        UnloadRenderTexture(target);
+        target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+        SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
+        // Update the shader.
+        float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
+        SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     }
-  }
+
+    static float userZoom = 1.0f;
+    userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));
+
+    if (userZoom > 2.0f)
+        userZoom = 2.0f;
+    if (userZoom < 0.5f)
+        userZoom = 0.6f;
+
+    // FOV Scaling
+    float scaleX = (float)GetScreenWidth() / VIRTUAL_WIDTH;
+    float scaleY = (float)GetScreenHeight() / VIRTUAL_HEIGHT;
+    float windowScale = fminf(scaleX, scaleY);
+    camera->zoom = userZoom * windowScale;
+    camera->offset =
+        (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
+    camera->target = mainPlayer.position;
+    camera->rotation = 0.0f;
+
+    // Screen Shake
+
+    if (shakeDuration > 0.f) {
+
+        if (shakeDuration > 0.0f) {
+            float offsetX =
+                (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
+            float offsetY =
+                (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
+
+            camera->offset.x += offsetX;
+            camera->offset.y += offsetY;
+
+            shakeDuration -= GetFrameTime();
+            if (shakeDuration < 0.0f) {
+                shakeDuration = 0.0f;
+                shakeIntensity = 0.0f;
+            }
+        }
+    }
 }
 
 void drawGame() {
-  BeginTextureMode(target);
+    BeginTextureMode(target);
 
-  ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
-  if (currentState == STATE_PLAYING) {
-    BeginMode2D(camera);
-    drawProjectiles(projectiles, numProjectiles);
-    drawPlayer(mainPlayer);
-    drawEnemies();
-    drawRooms();
-    drawTraps();
+    ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
+    if (currentState == STATE_PLAYING) {
+        BeginMode2D(camera);
+        drawProjectiles(projectiles, numProjectiles);
+        drawPlayer(mainPlayer);
+        drawEnemies();
+        drawRooms();
+        drawTraps();
 
-    EndMode2D();
-  }
+        EndMode2D();
+    }
 
-  EndTextureMode();
+    EndTextureMode();
 
-  // Draw The Game
-  BeginDrawing();
-  BeginShaderMode(bloom);
+    // Draw The Game
+    BeginDrawing();
+    BeginShaderMode(bloom);
 
-  DrawTextureRec(target.texture,
-                 (Rectangle){0, 0, (float)target.texture.width,
-                             (float)-target.texture.height},
-                 (Vector2){0, 0}, WHITE);
-  EndShaderMode();
+    DrawTextureRec(target.texture,
+                   (Rectangle){0, 0, (float)target.texture.width,
+                               (float)-target.texture.height},
+                   (Vector2){0, 0}, WHITE);
+    EndShaderMode();
 
-  // Draw Menus
-  if (currentState == STATE_MAIN_MENU) {
-    renderMainMenu();
-  }
+    // Draw Menus
+    if (currentState == STATE_MAIN_MENU) {
+        renderMainMenu();
+    }
 
-  if (currentState == STATE_SETTINGS) {
-    renderSettingsMenu();
-  }
+    if (currentState == STATE_SETTINGS) {
+        renderSettingsMenu();
+    }
 
-  if (gameOver)
-    DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
-             GOLD);
-  if (mainPlayer.currentHealth == 0)
-    DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4, 150,
-             RED);
-  EndDrawing();
+    if (gameOver)
+        DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
+                 GOLD);
+    if (mainPlayer.currentHealth == 0)
+        DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4,
+                 150, RED);
+    EndDrawing();
 }

@@ -5,13 +5,12 @@
 
 #define MAX_PROJECTILES 99999
 
-typedef enum
-{
+typedef enum {
     PlayerProj,
     EnemyProj,
 } ProjectileOwner;
-typedef struct
-{
+
+typedef struct {
     Vector2 position, direction;
     Color color;
     float moveSpeed, size;
@@ -19,11 +18,13 @@ typedef struct
     ProjectileOwner owner;
     float lifetime;
 } Projectile;
+
 extern Projectile projectiles[MAX_PROJECTILES];
 extern uint32_t numProjectiles;
 
 void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner);
-void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size, float moveSpeed);
+void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner,
+                                  float size, float moveSpeed);
 void drawProjectiles(Projectile *projs, uint32_t numProjs);
 void updateProjectiles();
 void spawnProjectile(Projectile proj_to_spawn);

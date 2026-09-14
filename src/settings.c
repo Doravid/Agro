@@ -4,7 +4,7 @@
 #include "ui.h"
 
 #define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector)                                 \
-  (Clay_Vector2) { .x = vector.x, .y = vector.y }
+    (Clay_Vector2) { .x = vector.x, .y = vector.y }
 
 // Element Representing the Entire Screen.
 
@@ -67,38 +67,39 @@ float sliderValue = 0.0f;
 
 Clay_RenderCommandArray getSettingsMenu() {
 
-  Clay_SetPointerState(RAYLIB_VECTOR2_TO_CLAY_VECTOR2(GetMousePosition()),
-                       IsMouseButtonDown(0));
-  Clay_SetLayoutDimensions(
-      (Clay_Dimensions){(float)GetScreenWidth(), (float)GetScreenHeight()});
+    Clay_SetPointerState(RAYLIB_VECTOR2_TO_CLAY_VECTOR2(GetMousePosition()),
+                         IsMouseButtonDown(0));
+    Clay_SetLayoutDimensions(
+        (Clay_Dimensions){(float)GetScreenWidth(), (float)GetScreenHeight()});
 
-  Vector2 mousePos = GetMousePosition();
-  Clay_SetPointerState((Clay_Vector2){mousePos.x, mousePos.y},
-                       IsMouseButtonDown(MOUSE_LEFT_BUTTON));
+    Vector2 mousePos = GetMousePosition();
+    Clay_SetPointerState((Clay_Vector2){mousePos.x, mousePos.y},
+                         IsMouseButtonDown(MOUSE_LEFT_BUTTON));
 
-  Clay_BeginLayout();
+    Clay_BeginLayout();
 
-  CLAY(CLAY_ID("OuterBox"), settingsRootConfig) {
-    CLAY(CLAY_ID("ButtonContainer"), settingsContainerConfig) {
-      CLAY(CLAY_ID("Slider"), sliderHolder) {
-        CLAY_TEXT(CLAY_STRING("Volume"),
-                  CLAY_TEXT_CONFIG(
-                      {.fontSize = 100, .textColor = {200, 200, 200, 255}}));
-        CLAY(CLAY_ID("InnerBox"), line) {
-          float innerWidth =
-              Clay_GetElementData(CLAY_ID("InnerBox")).boundingBox.width;
-          float maxOffset = innerWidth - 50.0f;
-          if (maxOffset < 0.0f)
-            maxOffset = 0.0f;
+    CLAY(CLAY_ID("OuterBox"), settingsRootConfig) {
+        CLAY(CLAY_ID("ButtonContainer"), settingsContainerConfig) {
+            CLAY(CLAY_ID("Slider"), sliderHolder) {
+                CLAY_TEXT(
+                    CLAY_STRING("Volume"),
+                    CLAY_TEXT_CONFIG(
+                        {.fontSize = 100, .textColor = {200, 200, 200, 255}}));
+                CLAY(CLAY_ID("InnerBox"), line) {
+                    float innerWidth = Clay_GetElementData(CLAY_ID("InnerBox"))
+                                           .boundingBox.width;
+                    float maxOffset = innerWidth - 50.0f;
+                    if (maxOffset < 0.0f)
+                        maxOffset = 0.0f;
 
-          Clay_ElementDeclaration activeHandle = handle;
-          activeHandle.floating.offset.x = sliderValue * maxOffset;
+                    Clay_ElementDeclaration activeHandle = handle;
+                    activeHandle.floating.offset.x = sliderValue * maxOffset;
 
-          CLAY(CLAY_ID("Handle"), activeHandle) {}
+                    CLAY(CLAY_ID("Handle"), activeHandle) {}
+                }
+            }
         }
-      }
     }
-  }
 
-  return Clay_EndLayout(GetFrameTime());
+    return Clay_EndLayout(GetFrameTime());
 }

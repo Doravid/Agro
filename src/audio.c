@@ -5,8 +5,7 @@ Sound shoot, hit, dash;
 Music music;
 Music bossMusic;
 
-void initSounds()
-{
+void initSounds() {
     InitAudioDevice();
 
     shoot = LoadSound("resources/shoot.wav");
@@ -17,13 +16,11 @@ void initSounds()
 
     PlayMusicStream(music);
 }
-void playBossMusic()
-{
+void playBossMusic() {
     PauseMusicStream(music);
     PlayMusicStream(bossMusic);
 }
-void updateSound()
-{
+void updateSound() {
     UpdateMusicStream(music);
     UpdateMusicStream(bossMusic);
 }

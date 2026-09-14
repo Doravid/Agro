@@ -16,35 +16,35 @@ void updateGame(Camera2D *camera);
 void initGame();
 
 int main(void) {
-  // Init
-  initGame();
+    // Init
+    initGame();
 
-  // Main Game Loop
-  while (!WindowShouldClose()) {
-    // Update the game
-    updateGame(&camera);
-    // Render the game
-    drawGame();
-  }
+    // Main Game Loop
+    while (!WindowShouldClose()) {
+        // Update the game
+        updateGame(&camera);
+        // Render the game
+        drawGame();
+    }
 
-  CloseWindow();
-  return 0;
+    CloseWindow();
+    return 0;
 }
 
 void initGame() {
-  initUi();
-  SetTargetFPS(240);
-  initSounds();
-  initRoomTexture();
-  initCamera();
+    initUi();
+    SetTargetFPS(240);
+    initSounds();
+    initRoomTexture();
+    initCamera();
 }
 
 void updateGame(Camera2D *camera) {
-  updatePlayer(*camera);
-  updateCamera(camera);
-  updateProjectiles();
-  updateRooms();
-  updateEnemies();
-  updateSound();
-  updateTraps();
+    updatePlayer(*camera);
+    updateCamera(camera);
+    updateProjectiles();
+    updateRooms();
+    updateEnemies();
+    updateSound();
+    updateTraps();
 }

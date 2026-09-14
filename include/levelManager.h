@@ -52,7 +52,7 @@ typedef enum {
  *  - Burning Attacks (Your attacks deal BURN to enemies)
  *  - Freezing Attack (Your attacks momentarily freeze a non-boss enemy)
  *  - Flat Damage Boost
- *  - Flat Health Boost
+ *  - Max Health Boost
  *  Requires Dodge:
  *  - If you dodge through an attack gain +2 health
  *  - If you dodge through an attack gain damage for you next attack

@@ -7,10 +7,8 @@ FireTrap traps[MAX_TRAPS];
 uint32_t numTraps = 0;
 static const float myGridSize = 85.0f;
 
-static Vector2 directionToVector(Direction dir)
-{
-    switch (dir)
-    {
+static Vector2 directionToVector(Direction dir) {
+    switch (dir) {
     case DIRECTION_DOWN:
         return (Vector2){.x = 0, .y = 1.f};
         break;
@@ -27,67 +25,66 @@ static Vector2 directionToVector(Direction dir)
         break;
     }
 }
-void drawTraps()
-{
-    for (uint32_t trapIndex = 0; trapIndex < numTraps; trapIndex++)
-    {
+void drawTraps() {
+    for (uint32_t trapIndex = 0; trapIndex < numTraps; trapIndex++) {
         FireTrap trap = traps[trapIndex];
-        DrawRectangle(trap.position.x, trap.position.y, myGridSize, myGridSize, (Color){.r = 220, .b = 20, .g = 40, .a = 255});
+        DrawRectangle(trap.position.x, trap.position.y, myGridSize, myGridSize,
+                      (Color){.r = 220, .b = 20, .g = 40, .a = 255});
 
-        Vector2 center = {trap.position.x + myGridSize / 2.0f, trap.position.y + myGridSize / 2.0f};
-        Vector2 dirOffset = Vector2Scale(directionToVector(trap.direction), myGridSize / 2.0f);
+        Vector2 center = {trap.position.x + myGridSize / 2.0f,
+                          trap.position.y + myGridSize / 2.0f};
+        Vector2 dirOffset =
+            Vector2Scale(directionToVector(trap.direction), myGridSize / 2.0f);
         Vector2 nubinCenter = Vector2Add(center, dirOffset);
 
         float nubinSize = myGridSize / 4.0f;
-        DrawRectangle(nubinCenter.x - (nubinSize / 2.0f), nubinCenter.y - (nubinSize / 2.0f), nubinSize, nubinSize, (Color){.r = 220, .b = 20, .g = 20, .a = 255});
+        DrawRectangle(nubinCenter.x - (nubinSize / 2.0f),
+                      nubinCenter.y - (nubinSize / 2.0f), nubinSize, nubinSize,
+                      (Color){.r = 220, .b = 20, .g = 20, .a = 255});
 
-        DrawRectangle(trap.position.x, trap.position.y, myGridSize, myGridSize, (Color){.r = 200, .b = 30, .g = 40, .a = 255});
+        DrawRectangle(trap.position.x, trap.position.y, myGridSize, myGridSize,
+                      (Color){.r = 200, .b = 30, .g = 40, .a = 255});
     }
 }
 
-void addTrap(FireTrap trap)
-{
+void addTrap(FireTrap trap) {
     traps[numTraps] = trap;
     numTraps++;
 }
 
-void updateTraps()
-{
-    for (uint32_t trapIndex = 0; trapIndex < numTraps; trapIndex++)
-    {
+void updateTraps() {
+    for (uint32_t trapIndex = 0; trapIndex < numTraps; trapIndex++) {
         FireTrap *trap = &traps[trapIndex];
         trap->currentTimer -= GetFrameTime();
-        if (trap->state == FIRETRAP_IDLE)
-        {
-            if (trap->currentTimer <= 0)
-            {
+        if (trap->state == FIRETRAP_IDLE) {
+            if (trap->currentTimer <= 0) {
                 trap->state = FIRETRAP_FIRING;
                 trap->currentTimer = traps->maxTime;
             }
-        }
-        else if (trap->state == FIRETRAP_FIRING)
-        {
-            if (trap->currentTimer <= 0)
-            {
+        } else if (trap->state == FIRETRAP_FIRING) {
+            if (trap->currentTimer <= 0) {
                 trap->state = FIRETRAP_IDLE;
                 trap->currentTimer = trap->maxTime;
                 continue;
             }
             if (trap->fireTimer <= 0)
                 trap->fireTimer = trap->fireTimerMax;
-            else
-            {
+            else {
                 trap->fireTimer -= GetFrameTime();
                 continue;
             }
 
-            Vector2 center = {trap->position.x + myGridSize / 2.0f, trap->position.y + myGridSize / 2.0f};
-            Vector2 dirOffset = Vector2Scale(directionToVector(trap->direction), myGridSize / 1.8f);
+            Vector2 center = {trap->position.x + myGridSize / 2.0f,
+                              trap->position.y + myGridSize / 2.0f};
+            Vector2 dirOffset = Vector2Scale(directionToVector(trap->direction),
+                                             myGridSize / 1.8f);
             Vector2 spawnPos = Vector2Add(center, dirOffset);
 
             Vector2 baseDir = directionToVector(trap->direction);
-            float angle = atan2f(baseDir.y, baseDir.x) + (GetRandomValue(-11, 11) * DEG2RAD);
-            float angle2 = atan2f(baseDir.y, baseDir.x) + (GetRandomValue(-11, 12) * DEG2RAD);
+            float angle = atan2f(baseDir.y, baseDir.x) +
+                          (GetRandomValue(-11, 11) * DEG2RAD);
+            float angle2 = atan2f(baseDir.y, baseDir.x) +
+                           (GetRandomValue(-11, 12) * DEG2RAD);
             Vector2 projDir = {cosf(angle), sinf(angle)};
             Vector2 projDir2 = {cosf(angle2), sinf(angle2)};
 
