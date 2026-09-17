@@ -39,7 +39,7 @@ void initGame() {
     initCamera();
     initPlayer((PlayerHistory){
         .currentPlayerWeapon = WEAPON_BIGSHOT,
-        .playerUpgrades = NO_UPGRADES,
+        .playerUpgrades = UPGRADE_DASH_UNLOCK,
     });
 }
 

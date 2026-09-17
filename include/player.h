@@ -89,7 +89,7 @@ typedef struct {
     Color color;
     float rotation, moveSpeed, rotationSpeed, attackSpeed, attackCooldown;
     uint32_t maxHealth, currentHealth;
-    float dashTimer;
+    float dashTimer, dashCooldown, dashCooldownTimer;
     uint32_t attackDamage;
     PlayerItem currentItems; // Bitmask.
     PlayerWeapon currentWeapon;

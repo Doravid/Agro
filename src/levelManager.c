@@ -31,10 +31,10 @@ bool roomDone(RoomData *room) {
 void startGame() {
     loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
              (Vector2){0, 0});
-    mainPlayer.position = rooms[numRoomsLoaded].playerSpawn;
-    numRoomsLoaded++;
+    mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
 
     currentState = STATE_PLAYING;
+    printf("numRoomsLoaded1: %u\n", numRoomsLoaded);
 }
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
     *room = (RoomData){0};
@@ -192,7 +192,7 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
 
     cJSON_Delete(root);
     UnloadFileText(fileText);
-
+    numRoomsLoaded++;
     return;
 }
 
@@ -270,10 +270,10 @@ void updateRooms() {
                 CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds)) {
                 Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x,
                                           lastRoom->colliders[i].bounds.y};
+                printf("numRoomsLoaded: %u\n", numRoomsLoaded);
                 if (numRoomsLoaded == 5) {
                     loadRoom("maps/thing/BossLevel.ldtkl",
                              &rooms[numRoomsLoaded], targetEntrance);
-                    numRoomsLoaded++;
                     playBossMusic();
                     break;
                 }
@@ -283,7 +283,6 @@ void updateRooms() {
                 int randIndex = GetRandomValue(0, 3);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded],
                          targetEntrance);
-                numRoomsLoaded++;
                 break;
             }
         }

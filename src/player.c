@@ -9,24 +9,9 @@
 #include "camera.h"
 #include "levelManager.h"
 
-Player mainPlayer = {
-    .maxHealth = 100,
-    .currentHealth = 100,
-    .position = {400.0f, 200.0f},
-    .size = {40.0f, 40.0f},
-    .rotation = -90.f,
-    .rotationSpeed = 300.f,
-    .moveSpeed = 400.0f,
-    .color = GREEN,
-    .movementVector = (Vector2){0},
-    .dashTimer = 0.0f,
-    .attackDamage = 15,
-    .attackCooldown = 0.f,
-    .attackSpeed = 0.3,
-    .currentWeapon = WEAPON_SHOOTER,
-};
+Player mainPlayer;
 
-void initShooter(PlayerUpgrades upgrades) {
+static void initShooter(PlayerUpgrades upgrades) {
     mainPlayer = (Player){
         .maxHealth = 100,
         .currentHealth = 100,
@@ -45,7 +30,7 @@ void initShooter(PlayerUpgrades upgrades) {
     };
 }
 
-void initBigshot(PlayerUpgrades upgrades) {
+static void initBigshot(PlayerUpgrades upgrades) {
     mainPlayer = (Player){
         .maxHealth = 50,
         .currentHealth = 50,
@@ -57,11 +42,55 @@ void initBigshot(PlayerUpgrades upgrades) {
         .color = BLUE,
         .movementVector = (Vector2){0},
         .dashTimer = 0.0f,
-        .attackDamage = 50,
+        .attackDamage = 75,
         .attackCooldown = 0.f,
         .attackSpeed = 1.0,
         .currentWeapon = WEAPON_BIGSHOT,
     };
+}
+static void applyPlayerUpgrades(PlayerUpgrades upgrades) {
+    // Tell the player what upgrades it has.
+    mainPlayer.currentUpgrades = upgrades;
+    // For now we will just modify the values directly. In the future I way want
+    // to just adjust the attack damage when we actually attack given the
+    // current upgrades
+
+    // Damage Upgrades
+    if (upgrades & UPGRADE_DAMAGE_4) {
+        mainPlayer.attackDamage *= 2.00;
+    } else if (upgrades & UPGRADE_DAMAGE_3) {
+        mainPlayer.attackDamage *= 1.75;
+    } else if (upgrades & UPGRADE_DAMAGE_2) {
+        mainPlayer.attackDamage *= 1.50;
+    } else if (upgrades & UPGRADE_DAMAGE_1) {
+        mainPlayer.attackDamage *= 1.25;
+    }
+
+    // Health Upgrades
+    if (upgrades & UPGRADE_HEALTH_4) {
+        mainPlayer.maxHealth *= 2.00;
+    } else if (upgrades & UPGRADE_HEALTH_3) {
+        mainPlayer.maxHealth *= 1.75;
+    } else if (upgrades & UPGRADE_HEALTH_2) {
+        mainPlayer.maxHealth *= 1.50;
+    } else if (upgrades & UPGRADE_HEALTH_1) {
+        mainPlayer.maxHealth *= 1.25;
+    }
+    mainPlayer.currentHealth = mainPlayer.maxHealth;
+
+    // Dash Upgrades
+    if (upgrades & UPGRADE_DASH_COOLDOWN_2) {
+        mainPlayer.dashCooldown *= 0.5;
+    } else if (upgrades & UPGRADE_DASH_COOLDOWN_1) {
+        mainPlayer.dashCooldown *= 0.75;
+    }
+
+    // Move Speed Upgrades
+    if (upgrades & UPGRADE_MOVE_SPEED_2) {
+        mainPlayer.moveSpeed *= 1.25;
+    } else if (upgrades & UPGRADE_MOVE_SPEED_1) {
+        mainPlayer.moveSpeed *= 1.50;
+    }
 }
 
 void initPlayer(PlayerHistory history) {
@@ -83,6 +112,7 @@ void initPlayer(PlayerHistory history) {
             puts("ERROR: THIS SHOULD NOT BE POSSIBLE, INIT PLAYER");
             break;
     }
+    applyPlayerUpgrades(history.playerUpgrades);
 }
 
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
@@ -134,6 +164,34 @@ void drawShooterPlayer(Player player) {
                   (float)player.currentHealth / player.maxHealth, player.color);
 }
 
+void drawBigshot(Player player) {
+    const float fadeAmount = 0.3f;
+    Vector2 childOffset = {30.0f, 0.0f};
+    Vector2 childSize = {40.0f, 45.0f};
+
+    Vector2 rotatedOffset =
+        Vector2Rotate(childOffset, player.rotation * DEG2RAD);
+    Vector2 childWorldPos = Vector2Add(player.position, rotatedOffset);
+
+    Color barrelDrawColor =
+        player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
+    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x,
+                          childSize.y};
+    Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
+    DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
+
+    Color playerDrawColor =
+        player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
+
+    Rectangle playerRec = {player.position.x, player.position.y, player.size.x,
+                           player.size.y};
+    Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
+    DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
+
+    drawHealthBar(player.size, player.position,
+                  (float)player.currentHealth / player.maxHealth, player.color);
+}
+
 void drawPlayer(Player player) {
     switch (player.currentWeapon) {
         case WEAPON_SHOOTER:
@@ -146,7 +204,7 @@ void drawPlayer(Player player) {
             puts("Unimplemented");
             break;
         case WEAPON_BIGSHOT:
-            drawShooterPlayer(player);
+            drawBigshot(player);
             break;
         default:
             puts("CRITICAL ERROR, VALUE SHOULD BE IMPOSSIBLE");
@@ -201,7 +259,22 @@ static void handleBigshotAttack() {
 
     if (IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         PlaySound(shoot);
-        spawnProjectileFromPlayer(mainPlayer, PlayerProj);
+
+        Vector2 directionVector = {.x = cosf(mainPlayer.rotation * DEG2RAD),
+                                   .y = sinf(mainPlayer.rotation * DEG2RAD)};
+
+        spawnProjectile((Projectile){
+            .color = ColorLerp(PINK, mainPlayer.color, 0.5),
+            .direction = directionVector,
+            .position = {mainPlayer.position.x + directionVector.x * 40,
+                         mainPlayer.position.y + directionVector.y * 40},
+            .size = 20.f,
+            .moveSpeed = 150.f,
+            .damage = mainPlayer.attackDamage,
+            .owner = PlayerProj,
+            .lifetime = 50.f,
+        });
+
         mainPlayer.attackCooldown += mainPlayer.attackSpeed;
         triggerScreenShake(0.25, 4.5f);
     }
