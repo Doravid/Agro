@@ -21,8 +21,69 @@ Player mainPlayer = {
     .movementVector = (Vector2){0},
     .dashTimer = 0.0f,
     .attackDamage = 15,
+    .attackCooldown = 0.f,
+    .attackSpeed = 0.3,
     .currentWeapon = WEAPON_SHOOTER,
 };
+
+void initShooter(PlayerUpgrades upgrades) {
+    mainPlayer = (Player){
+        .maxHealth = 100,
+        .currentHealth = 100,
+        .position = {400.0f, 200.0f},
+        .size = {40.0f, 40.0f},
+        .rotation = -90.f,
+        .rotationSpeed = 300.f,
+        .moveSpeed = 400.0f,
+        .color = GREEN,
+        .movementVector = (Vector2){0},
+        .dashTimer = 0.0f,
+        .attackDamage = 15,
+        .attackCooldown = 0.f,
+        .attackSpeed = 0.3,
+        .currentWeapon = WEAPON_SHOOTER,
+    };
+}
+
+void initBigshot(PlayerUpgrades upgrades) {
+    mainPlayer = (Player){
+        .maxHealth = 50,
+        .currentHealth = 50,
+        .position = {400.0f, 200.0f},
+        .size = {60.0f, 60.0f},
+        .rotation = -90.f,
+        .rotationSpeed = 100.f,
+        .moveSpeed = 150.0f,
+        .color = BLUE,
+        .movementVector = (Vector2){0},
+        .dashTimer = 0.0f,
+        .attackDamage = 50,
+        .attackCooldown = 0.f,
+        .attackSpeed = 1.0,
+        .currentWeapon = WEAPON_BIGSHOT,
+    };
+}
+
+void initPlayer(PlayerHistory history) {
+    switch (history.currentPlayerWeapon) {
+        case WEAPON_SHOOTER:
+            initShooter(history.playerUpgrades);
+            break;
+        case WEAPON_FLAME:
+            puts("TODO");
+            break;
+        case WEAPON_KNIGHT:
+            puts("TODO");
+            break;
+        case WEAPON_BIGSHOT:
+            initBigshot(history.playerUpgrades);
+            break;
+
+        default:
+            puts("ERROR: THIS SHOULD NOT BE POSSIBLE, INIT PLAYER");
+            break;
+    }
+}
 
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
                    Color color) {
@@ -44,6 +105,7 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
     DrawRectanglePro(healthRec, playerOrigin, 0, color);
     DrawRectanglePro(redHealthRec, playerOrigin, 0, RED);
 }
+
 void drawShooterPlayer(Player player) {
     const float fadeAmount = 0.3f;
     Vector2 childOffset = {30.0f, 0.0f};
@@ -71,57 +133,40 @@ void drawShooterPlayer(Player player) {
     drawHealthBar(player.size, player.position,
                   (float)player.currentHealth / player.maxHealth, player.color);
 }
+
 void drawPlayer(Player player) {
     switch (player.currentWeapon) {
-    case WEAPON_SHOOTER:
-        drawShooterPlayer(player);
-        break;
-    case WEAPON_FLAME:
-        puts("Unimplemented");
-        break;
-    case WEAPON_KNIGHT:
-        puts("Unimplemented");
-        break;
-    case WEAPON_BIGSHOT:
-        puts("Unimplemented");
-        break;
-    default:
-        puts("CRITICAL ERROR, VALUE SHOULD BE IMPOSSIBLE");
-        break;
+        case WEAPON_SHOOTER:
+            drawShooterPlayer(player);
+            break;
+        case WEAPON_FLAME:
+            puts("Unimplemented");
+            break;
+        case WEAPON_KNIGHT:
+            puts("Unimplemented");
+            break;
+        case WEAPON_BIGSHOT:
+            drawShooterPlayer(player);
+            break;
+        default:
+            puts("CRITICAL ERROR, VALUE SHOULD BE IMPOSSIBLE");
+            break;
     }
 }
-void dashPlayer(Player *player) {
+
+static bool upgradeObtained(PlayerUpgrades upgrade) {
+    return mainPlayer.currentUpgrades & upgrade;
+}
+
+static void startPlayerDash(Player *player) {
     if (player->dashTimer > 0.f ||
         Vector2LengthSqr(player->movementVector) <= 0)
         return;
     PlaySound(dash);
     player->dashTimer = 0.15f;
 }
-void updatePlayer(Camera2D camera) {
-    if (mainPlayer.currentHealth == 0)
-        return;
-    // Input & Movement
-    if (IsKeyDown(KEY_D))
-        mainPlayer.movementVector.x = 1;
-    else if (IsKeyDown(KEY_A))
-        mainPlayer.movementVector.x = -1;
-    else
-        mainPlayer.movementVector.x = 0;
-    if (IsKeyDown(KEY_W))
-        mainPlayer.movementVector.y = -1;
-    else if (IsKeyDown(KEY_S))
-        mainPlayer.movementVector.y = 1;
-    else
-        mainPlayer.movementVector.y = 0;
 
-    if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        PlaySound(shoot);
-        spawnProjectileFromPlayer(mainPlayer, PlayerProj);
-    }
-
-    if (IsKeyPressed(KEY_LEFT_SHIFT))
-        dashPlayer(&mainPlayer);
-
+static bool updatePlayerDash() {
     if (mainPlayer.dashTimer > 0.f) {
         mainPlayer.dashTimer -= GetFrameTime();
 
@@ -130,15 +175,90 @@ void updatePlayer(Camera2D camera) {
                                       currentDashSpeed * GetFrameTime());
         mainPlayer.position =
             moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
+        return true;
+    }
+    return false;
+}
+
+static void handleShooterAttack() {
+    if (mainPlayer.attackCooldown > 0.f) {
+        mainPlayer.attackCooldown -= GetFrameTime();
         return;
     }
-    // Move
+
+    if (IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        PlaySound(shoot);
+        spawnProjectileFromPlayer(mainPlayer, PlayerProj);
+        mainPlayer.attackCooldown += mainPlayer.attackSpeed;
+    }
+}
+
+static void handleBigshotAttack() {
+    if (mainPlayer.attackCooldown > 0.f) {
+        mainPlayer.attackCooldown -= GetFrameTime();
+        return;
+    }
+
+    if (IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        PlaySound(shoot);
+        spawnProjectileFromPlayer(mainPlayer, PlayerProj);
+        mainPlayer.attackCooldown += mainPlayer.attackSpeed;
+        triggerScreenShake(0.25, 4.5f);
+    }
+}
+
+void updatePlayer(Camera2D camera) {
+    if (mainPlayer.currentHealth == 0)
+        return;
+    // Input & Movement
+
+    // X
+    if (IsKeyDown(KEY_D))
+        mainPlayer.movementVector.x = 1;
+    else if (IsKeyDown(KEY_A))
+        mainPlayer.movementVector.x = -1;
+    else
+        mainPlayer.movementVector.x = 0;
+    // Y
+    if (IsKeyDown(KEY_W))
+        mainPlayer.movementVector.y = -1;
+    else if (IsKeyDown(KEY_S))
+        mainPlayer.movementVector.y = 1;
+    else
+        mainPlayer.movementVector.y = 0;
+
+    // Handle the Dashing Logic.
+    if (IsKeyPressed(KEY_LEFT_SHIFT) && upgradeObtained(UPGRADE_DASH_UNLOCK)) {
+        startPlayerDash(&mainPlayer);
+    }
+    if (updatePlayerDash())
+        return;
+
+    switch (mainPlayer.currentWeapon) {
+        case WEAPON_SHOOTER:
+            handleShooterAttack();
+            break;
+        case WEAPON_FLAME:
+            puts("TODO");
+            break;
+        case WEAPON_KNIGHT:
+            puts("TODO");
+            break;
+        case WEAPON_BIGSHOT:
+            handleBigshotAttack();
+            break;
+        default:
+            puts("ERROR: State should not be possible.");
+            break;
+    }
+
+    // Movement
     Vector2 norm = Vector2Normalize(mainPlayer.movementVector);
     Vector2 offset = Vector2Scale(norm, GetFrameTime() * mainPlayer.moveSpeed);
     mainPlayer.position =
         moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
 
-    // Rotate
+    // Rotate the Player
     Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
     float ang = atan2f(mousePos.y - mainPlayer.position.y,
                        mousePos.x - mainPlayer.position.x);

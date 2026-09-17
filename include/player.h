@@ -50,8 +50,9 @@ typedef enum {
 } BigshotUpgradeLevel;
 
 typedef enum {
+    NO_UPGRADES = 0,
     // Health Upgrades
-    UPGRADE_HEALTH_1 = 0,
+    UPGRADE_HEALTH_1 = 1 << 17,
     UPGRADE_HEALTH_2 = 1 << 0,
     UPGRADE_HEALTH_3 = 1 << 1,
     UPGRADE_HEALTH_4 = 1 << 2,
@@ -71,26 +72,17 @@ typedef enum {
     UPGRADE_MOVE_SPEED_1 = 1 << 11,
     UPGRADE_MOVE_SPEED_2 = 1 << 12,
     // Dodge Upgrade
-    UPGRADE_DODGE_UNLOCK = 1 << 13,
-    UPGRADE_DODGE_COOLDOWN_1 = 1 << 14,
-    UPGRADE_DODGE_COOLDOWN_2 = 1 << 15,
+    UPGRADE_DASH_UNLOCK = 1 << 13,
+    UPGRADE_DASH_COOLDOWN_1 = 1 << 14,
+    UPGRADE_DASH_COOLDOWN_2 = 1 << 15,
     // Room Decrease Upgrade
     UPGRADE_REMOVE_ROOM = 1 << 16,
-
 } PlayerUpgrades;
 
-const int x = UPGRADE_HEALTH_3;
 typedef struct {
-    uint16_t healthUpgradeAmount;
-    uint16_t damageUpgradeAmount;
-    uint16_t moveSpeedUpgradeAmount;
-    ShooterUpgradeLevel shooterUpgradeLevel;
-    FlameShotUpgradeLevel flameShotUpgradeLevel;
-    KnightUpgradeLevel knightUpgradeLevel;
-    BigshotUpgradeLevel bigshotUpgradeLevel;
-    bool decreaseNumberOfRooms;
+    PlayerUpgrades playerUpgrades; // Bitmask.
     PlayerWeapon currentPlayerWeapon;
-} playerHistory;
+} PlayerHistory;
 
 typedef struct {
     Vector2 position, size, movementVector;
@@ -101,6 +93,7 @@ typedef struct {
     uint32_t attackDamage;
     PlayerItem currentItems; // Bitmask.
     PlayerWeapon currentWeapon;
+    PlayerUpgrades currentUpgrades;
 } Player;
 
 void drawPlayer(Player player);
@@ -108,5 +101,6 @@ void updatePlayer(Camera2D camera);
 void damagePlayer(uint32_t damage);
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
                    Color color);
+void initPlayer(PlayerHistory history);
 
 extern Player mainPlayer;

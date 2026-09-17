@@ -37,6 +37,10 @@ void initGame() {
     initSounds();
     initRoomTexture();
     initCamera();
+    initPlayer((PlayerHistory){
+        .currentPlayerWeapon = WEAPON_BIGSHOT,
+        .playerUpgrades = NO_UPGRADES,
+    });
 }
 
 void updateGame(Camera2D *camera) {
