@@ -149,7 +149,7 @@ void drawGame() {
     if (currentState == STATE_SETTINGS) {
         renderSettingsMenu();
     }
-
+    DrawFPS(10, 10);
     if (gameOver)
         DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
                  GOLD);

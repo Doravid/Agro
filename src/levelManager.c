@@ -34,7 +34,6 @@ void startGame() {
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
 
     currentState = STATE_PLAYING;
-    printf("numRoomsLoaded1: %u\n", numRoomsLoaded);
 }
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
     *room = (RoomData){0};

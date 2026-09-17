@@ -24,7 +24,7 @@ static void initShooter(PlayerUpgrades upgrades) {
         .movementVector = (Vector2){0},
         .dashTimer = 0.0f,
         .attackDamage = 15,
-        .attackCooldown = 0.f,
+        .attackCooldown = 0.1f,
         .attackSpeed = 0.3,
         .currentWeapon = WEAPON_SHOOTER,
     };
@@ -43,7 +43,7 @@ static void initBigshot(PlayerUpgrades upgrades) {
         .movementVector = (Vector2){0},
         .dashTimer = 0.0f,
         .attackDamage = 75,
-        .attackCooldown = 0.f,
+        .attackCooldown = 0.1f,
         .attackSpeed = 1.0,
         .currentWeapon = WEAPON_BIGSHOT,
     };

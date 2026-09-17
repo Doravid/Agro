@@ -33,7 +33,7 @@ int main(void) {
 
 void initGame() {
     initUi();
-    SetTargetFPS(240);
+    SetTargetFPS(0);
     initSounds();
     initRoomTexture();
     initCamera();
@@ -44,6 +44,9 @@ void initGame() {
 }
 
 void updateGame(Camera2D *camera) {
+    if (currentState != STATE_PLAYING) {
+        return;
+    }
     updatePlayer(*camera);
     updateCamera(camera);
     updateProjectiles();
