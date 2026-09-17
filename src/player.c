@@ -21,6 +21,7 @@ Player mainPlayer = {
     .movementVector = (Vector2){0},
     .dashTimer = 0.0f,
     .attackDamage = 15,
+    .currentWeapon = WEAPON_SHOOTER,
 };
 
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
@@ -43,8 +44,7 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
     DrawRectanglePro(healthRec, playerOrigin, 0, color);
     DrawRectanglePro(redHealthRec, playerOrigin, 0, RED);
 }
-
-void drawPlayer(Player player) {
+void drawShooterPlayer(Player player) {
     const float fadeAmount = 0.3f;
     Vector2 childOffset = {30.0f, 0.0f};
     Vector2 childSize = {20.0f, 15.0f};
@@ -70,6 +70,25 @@ void drawPlayer(Player player) {
 
     drawHealthBar(player.size, player.position,
                   (float)player.currentHealth / player.maxHealth, player.color);
+}
+void drawPlayer(Player player) {
+    switch (player.currentWeapon) {
+    case WEAPON_SHOOTER:
+        drawShooterPlayer(player);
+        break;
+    case WEAPON_FLAME:
+        puts("Unimplemented");
+        break;
+    case WEAPON_KNIGHT:
+        puts("Unimplemented");
+        break;
+    case WEAPON_BIGSHOT:
+        puts("Unimplemented");
+        break;
+    default:
+        puts("CRITICAL ERROR, VALUE SHOULD BE IMPOSSIBLE");
+        break;
+    }
 }
 void dashPlayer(Player *player) {
     if (player->dashTimer > 0.f ||
