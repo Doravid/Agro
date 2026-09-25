@@ -89,6 +89,8 @@ void startGame();
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance);
 bool roomDone(RoomData *room);
 Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset);
+bool getIsInGame();
+void endGame();
 
 extern RoomData currentRoom;
 extern uint32_t numRoomsLoaded;

@@ -15,6 +15,7 @@ RoomData rooms[16];
 uint32_t numRoomsLoaded = 0;
 static const float myGridSize = 85.0f;
 Texture2D whiteTexture;
+static bool isInGame = false;
 
 GameState currentState = STATE_MAIN_MENU;
 
@@ -32,9 +33,20 @@ void startGame() {
     loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
              (Vector2){0, 0});
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
-
+    isInGame = true;
     currentState = STATE_PLAYING;
 }
+
+bool getIsInGame() { return isInGame; }
+void endGame() {
+    gameOver = false;
+    isInGame = false;
+    currentState = STATE_MAIN_MENU;
+    numEnemies = 0;
+    numProjectiles = 0;
+    numRoomsLoaded = 0;
+}
+
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
     *room = (RoomData){0};
 

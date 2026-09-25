@@ -64,9 +64,21 @@ void myToggleFullscreen() {
     fullScreen = IsWindowFullscreen();
 }
 void updateScreen() {
-    if (IsKeyPressed(KEY_F11) ||
-        (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
+    if (IsKeyPressed(KEY_F11)) {
         myToggleFullscreen();
+    }
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        puts("Hello!");
+        if (currentState == STATE_PLAYING || currentState == STATE_MAIN_MENU) {
+            currentState = STATE_SETTINGS;
+            puts("Settings!");
+        } else if (currentState == STATE_SETTINGS) {
+            if (getIsInGame()) {
+                currentState = STATE_PLAYING;
+            } else {
+                currentState = STATE_MAIN_MENU;
+            }
+        }
     }
     if (IsWindowResized()) {
         // Update the render texture.

@@ -181,7 +181,20 @@ void RenderBackButton(Clay_ElementId id, Clay_String labelText) {
     if (Clay_PointerOver(id)) {
         config.backgroundColor = settingsOrange;
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            currentState = STATE_MAIN_MENU;
+            currentState = getIsInGame() ? STATE_PLAYING : STATE_MAIN_MENU;
+        }
+    }
+    CLAY(id, config) {
+        CLAY_TEXT(labelText,
+                  CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+    }
+}
+void RenderQuitButton(Clay_ElementId id, Clay_String labelText) {
+    Clay_ElementDeclaration config = backButtonConfig;
+    if (Clay_PointerOver(id)) {
+        config.backgroundColor = settingsOrange;
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            endGame();
         }
     }
     CLAY(id, config) {
@@ -214,8 +227,13 @@ Clay_RenderCommandArray getSettingsMenu() {
             RenderToggle(5, CLAY_ID("BloomToggle"), CLAY_STRING("Bloom"),
                          &bloomEnabled);
             RenderBackButton(CLAY_ID("BackButton"), CLAY_STRING("Back"));
+            if (getIsInGame()) {
+                RenderQuitButton(CLAY_ID("QuitButton"),
+                                 CLAY_STRING("Quit Game"));
+            }
         }
     }
+
     if (hasChanged) {
         hasChanged = false;
         if (IsWindowFullscreen() != fullScreen) {
@@ -224,6 +242,7 @@ Clay_RenderCommandArray getSettingsMenu() {
 
         if (getSoundVolumes() != sfxVolume) {
             setSoundVolumes(sfxVolume);
+            PlaySound(dash);
         }
         if (getMusicVolume() != musicVolume) {
             setMyMusicVolume(musicVolume);

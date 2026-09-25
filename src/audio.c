@@ -40,4 +40,5 @@ void setSoundVolumes(float volume) {
     SetSoundVolume(shoot, volume);
     SetSoundVolume(hit, volume);
     SetSoundVolume(dash, volume);
+    soundVolumes = volume;
 }
