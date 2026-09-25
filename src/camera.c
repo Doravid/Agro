@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "camera.h"
 #include "enemies.h"
 #include "levelManager.h"
@@ -5,7 +7,6 @@
 #include "projectile.h"
 #include "traps.h"
 #include "ui.h"
-#include <stdio.h>
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;

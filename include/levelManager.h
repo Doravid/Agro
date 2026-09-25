@@ -1,5 +1,8 @@
+#pragma once
+
 #include <raylib.h>
 #include <stdint.h>
+
 typedef enum {
     TILE_EMPTY = 0,
     TILE_WALL = 1,

@@ -5,10 +5,10 @@
 #include <raymath.h>
 
 typedef enum {
-    WEAPON_SHOOTER,
-    WEAPON_FLAME,
-    WEAPON_KNIGHT,
-    WEAPON_BIGSHOT
+    WEAPON_SHOOTER = 1,
+    WEAPON_FLAME = 2,
+    WEAPON_KNIGHT = 4,
+    WEAPON_BIGSHOT = 8
 } PlayerWeapon;
 
 typedef enum {

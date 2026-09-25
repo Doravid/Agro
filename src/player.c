@@ -39,7 +39,7 @@ static void initBigshot(PlayerUpgrades upgrades) {
         .rotation = -90.f,
         .rotationSpeed = 100.f,
         .moveSpeed = 150.0f,
-        .color = BLUE,
+        .color = ORANGE,
         .movementVector = (Vector2){0},
         .dashTimer = 0.0f,
         .attackDamage = 75,
