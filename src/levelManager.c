@@ -30,6 +30,10 @@ bool roomDone(RoomData *room) {
     return false;
 }
 void startGame() {
+    initPlayer((PlayerHistory){
+        .currentPlayerWeapon = WEAPON_BIGSHOT,
+        .playerUpgrades = UPGRADE_DASH_UNLOCK,
+    });
     loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
              (Vector2){0, 0});
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
@@ -41,6 +45,7 @@ bool getIsInGame() { return isInGame; }
 void endGame() {
     gameOver = false;
     isInGame = false;
+    mainPlayer.currentHealth = 100;
     currentState = STATE_MAIN_MENU;
     numEnemies = 0;
     numProjectiles = 0;

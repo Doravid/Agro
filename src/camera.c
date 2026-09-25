@@ -173,7 +173,7 @@ void drawGame() {
     if (gameOver)
         DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
                  GOLD);
-    if (mainPlayer.currentHealth == 0)
+    if (mainPlayer.currentHealth == 0 && currentState == STATE_PLAYING)
         DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4,
                  150, RED);
     EndDrawing();
