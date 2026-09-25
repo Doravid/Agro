@@ -8,6 +8,7 @@
 #include "traps.h"
 #include "ui.h"
 #include "settings.h"
+#include "upgrades.h"
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
@@ -68,18 +69,19 @@ void updateScreen() {
         myToggleFullscreen();
     }
     if (IsKeyPressed(KEY_ESCAPE)) {
-        puts("Hello!");
         if (currentState == STATE_PLAYING || currentState == STATE_MAIN_MENU) {
             currentState = STATE_SETTINGS;
-            puts("Settings!");
         } else if (currentState == STATE_SETTINGS) {
             if (getIsInGame()) {
                 currentState = STATE_PLAYING;
             } else {
                 currentState = STATE_MAIN_MENU;
             }
+        } else if (currentState == STATE_SHOP) {
+            currentState = STATE_MAIN_MENU;
         }
     }
+
     if (IsWindowResized()) {
         // Update the render texture.
         UnloadRenderTexture(target);
@@ -165,9 +167,11 @@ void drawGame() {
     if (currentState == STATE_MAIN_MENU) {
         renderMainMenu();
     }
-
     if (currentState == STATE_SETTINGS) {
         renderSettingsMenu();
+    }
+    if (currentState == STATE_SHOP) {
+        renderUpgradesMenu();
     }
     DrawFPS(10, 10);
     if (gameOver)

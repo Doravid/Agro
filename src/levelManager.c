@@ -30,10 +30,7 @@ bool roomDone(RoomData *room) {
     return false;
 }
 void startGame() {
-    initPlayer((PlayerHistory){
-        .currentPlayerWeapon = WEAPON_BIGSHOT,
-        .playerUpgrades = UPGRADE_DASH_UNLOCK,
-    });
+    initPlayer(history);
     loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
              (Vector2){0, 0});
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;

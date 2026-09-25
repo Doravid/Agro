@@ -10,7 +10,9 @@
 #include "levelManager.h"
 
 Player mainPlayer;
-
+PlayerHistory history = {
+    .currentPlayerWeapon = WEAPON_SHOOTER,
+};
 static void initShooter(PlayerUpgrades upgrades) {
     mainPlayer = (Player){
         .maxHealth = 100,

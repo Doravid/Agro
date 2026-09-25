@@ -22,31 +22,31 @@ typedef enum {
  * upgrades. They are in order, and must be unlocked in order.
  */
 typedef enum {
-    SHOOTER_NOT_UNLOCKED,
-    SHOOTER_ATTACK_SPEED,
-    SHOOTER_ROTATION_SPEED,
-    SHOOTER_COMBO,
+    SHOOTER_NOT_UNLOCKED = 0,
+    SHOOTER_ATTACK_SPEED = 1,
+    SHOOTER_ROTATION_SPEED = 2,
+    SHOOTER_COMBO = 4,
 } ShooterUpgradeLevel;
 
 typedef enum {
-    FLAME_SHOT_NOT_UNLOCKED,
-    FLAME_SHOT_MORE_BURN,
-    FLAME_SHOT_FASTER_FLAME,
-    FLAME_SHOT_ROTATION_SPEED,
+    FLAME_SHOT_NOT_UNLOCKED = 0,
+    FLAME_SHOT_MORE_BURN = 1,
+    FLAME_SHOT_FASTER_FLAME = 2,
+    FLAME_SHOT_ROTATION_SPEED = 4,
 } FlameShotUpgradeLevel;
 
 typedef enum {
-    KNIGHT_NOT_UNLOCKED,
-    KNIGHT_PARRY,
-    KNIGHT_COMBO_ATTACK,
-    KNIGHT_MINIONS,
+    KNIGHT_NOT_UNLOCKED = 0,
+    KNIGHT_PARRY = 1,
+    KNIGHT_COMBO_ATTACK = 2,
+    KNIGHT_MINIONS = 4,
 } KnightUpgradeLevel;
 
 typedef enum {
-    BIGSHOT_NOT_UNLOCKED,
-    BIGSHOT_ATTACK_SPEED,
-    BIGSHOT_ROTATION_SPEED,
-    BIGSHOT_COMBO,
+    BIGSHOT_NOT_UNLOCKED = 0,
+    BIGSHOT_ATTACK_SPEED = 1,
+    BIGSHOT_ROTATION_SPEED = 2,
+    BIGSHOT_COMBO = 4,
 } BigshotUpgradeLevel;
 
 typedef enum {
@@ -82,6 +82,10 @@ typedef enum {
 typedef struct {
     PlayerUpgrades playerUpgrades; // Bitmask.
     PlayerWeapon currentPlayerWeapon;
+    BigshotUpgradeLevel bigshotUpgradeLevel;
+    ShooterUpgradeLevel shooterUpgradeLevel;
+    KnightUpgradeLevel knightUpgradeLevel;
+    FlameShotUpgradeLevel flameShotUpgradeLevel;
 } PlayerHistory;
 
 typedef struct {
@@ -104,3 +108,4 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
 void initPlayer(PlayerHistory history);
 
 extern Player mainPlayer;
+extern PlayerHistory history;

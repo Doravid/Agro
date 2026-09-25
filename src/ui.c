@@ -2,6 +2,7 @@
 #include "levelManager.h"
 #include "ui.h"
 #include "settings.h"
+#include "upgrades.h"
 #define CLAY_IMPLEMENTATION
 
 #pragma GCC diagnostic push
@@ -59,6 +60,9 @@ void RenderMenuButton(Clay_ElementId id, Clay_String labelText,
                 startGame();
             if (actionType == 2)
                 currentState = STATE_SETTINGS;
+            if (actionType == 3) {
+                currentState = STATE_SHOP;
+            }
         }
     }
     CLAY(id, config) {
@@ -99,7 +103,7 @@ void renderMainMenu() {
                           {.fontSize = 60, .textColor = settingsOrange}));
             RenderMenuButton(CLAY_ID("StartButton"), CLAY_STRING("Start"), 1);
             RenderMenuButton(CLAY_ID("UpgradesButton"), CLAY_STRING("Upgrades"),
-                             0);
+                             3);
             RenderMenuButton(CLAY_ID("ConfigButton"), CLAY_STRING("Config"), 2);
             RenderMenuButton(CLAY_ID("ExitButton"), CLAY_STRING("Exit"), 0);
         }
@@ -110,3 +114,4 @@ void renderMainMenu() {
 }
 
 void renderSettingsMenu() { Clay_Raylib_Render(getSettingsMenu(), grandover); }
+void renderUpgradesMenu() { Clay_Raylib_Render(getUpgradesMenu(), grandover); }
