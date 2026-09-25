@@ -1,0 +1,27 @@
+{
+	"identifier": "Health_Level",
+	"uniqueIdentifer": "76dbe4d0-96d0-11f1-a661-03878caad43c",
+	"x": -352,
+	"y": -336,
+	"width": 112,
+	"height": 112,
+	"bgColor": "#696A79",
+	"neighbourLevels": [],
+	"customFields" : {},
+	"layers": [],
+	"entities": {
+		"Health_Item": [
+			{
+				"id": "Health_Item",
+				"iid": "a003ef60-96d0-11f1-a661-398f2f6bbb4c",
+				"layer": "Entities",
+				"x": 48,
+				"y": 48,
+				"width": 16,
+				"height": 16,
+				"color": 4098376,
+				"customFields" : {}
+			}
+		]
+	}
+}

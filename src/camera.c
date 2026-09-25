@@ -140,6 +140,8 @@ void drawGame() {
     BeginTextureMode(target);
 
     ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
+    char moneyString[100] = {0};
+    snprintf(moneyString, 100, "%u$", mainPlayer.coins);
     if (currentState == STATE_PLAYING) {
         BeginMode2D(camera);
         drawProjectiles(projectiles, numProjectiles);
@@ -149,6 +151,9 @@ void drawGame() {
         drawTraps();
 
         EndMode2D();
+
+        DrawText(moneyString, GetScreenWidth() - GetScreenWidth() / 10,
+                 GetScreenHeight() / 20, 40, ORANGE);
     }
 
     EndTextureMode();
@@ -173,7 +178,9 @@ void drawGame() {
     if (currentState == STATE_SHOP) {
         renderUpgradesMenu();
     }
+
     DrawFPS(10, 10);
+
     if (gameOver)
         DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
                  GOLD);

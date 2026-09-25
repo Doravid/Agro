@@ -213,7 +213,18 @@ void drawPlayer(Player player) {
             break;
     }
 }
+void handleRegeneration() {
+    if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_1)
+        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
+    if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_2)
+        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
+    if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_3)
+        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
 
+    if (mainPlayer.currentHealth > mainPlayer.maxHealth) {
+        mainPlayer.currentHealth = mainPlayer.maxHealth;
+    }
+}
 static bool upgradeObtained(PlayerUpgrades upgrade) {
     return mainPlayer.currentUpgrades & upgrade;
 }

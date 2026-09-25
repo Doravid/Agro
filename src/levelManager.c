@@ -9,6 +9,7 @@
 #include "enemies.h"
 #include "levelManager.h"
 #include "traps.h"
+uint8_t numRoomsTillBoss = 5;
 
 Level currentLevel;
 RoomData rooms[16];
@@ -36,6 +37,9 @@ void startGame() {
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
     isInGame = true;
     currentState = STATE_PLAYING;
+    if (mainPlayer.currentUpgrades & UPGRADE_REMOVE_ROOM) {
+        numRoomsTillBoss -= 1;
+    }
 }
 
 bool getIsInGame() { return isInGame; }
@@ -47,6 +51,7 @@ void endGame() {
     numEnemies = 0;
     numProjectiles = 0;
     numRoomsLoaded = 0;
+    numTraps = 0;
 }
 
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
@@ -281,9 +286,9 @@ void updateRooms() {
         for (uint32_t i = 0; i < lastRoom->numColliders; i++) {
             if (lastRoom->colliders[i].type == TILE_EXIT &&
                 CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds)) {
+                handleRegeneration();
                 Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x,
                                           lastRoom->colliders[i].bounds.y};
-                printf("numRoomsLoaded: %u\n", numRoomsLoaded);
                 if (numRoomsLoaded == 5) {
                     loadRoom("maps/thing/BossLevel.ldtkl",
                              &rooms[numRoomsLoaded], targetEntrance);
@@ -291,8 +296,11 @@ void updateRooms() {
                     break;
                 }
                 const char *nextMaps[] = {
-                    "maps/thing/Level_1.ldtkl", "maps/thing/Level_2.ldtkl",
-                    "maps/thing/Level_3.ldtkl", "maps/thing/Level_4.ldtkl"};
+                    "maps/thing/Level_1.ldtkl",
+                    "maps/thing/Level_2.ldtkl",
+                    "maps/thing/Level_3.ldtkl",
+                    "maps/thing/Level_4.ldtkl",
+                };
                 int randIndex = GetRandomValue(0, 3);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded],
                          targetEntrance);

@@ -98,6 +98,7 @@ typedef struct {
     PlayerItem currentItems; // Bitmask.
     PlayerWeapon currentWeapon;
     PlayerUpgrades currentUpgrades;
+    uint32_t coins;
 } Player;
 
 void drawPlayer(Player player);
@@ -106,6 +107,7 @@ void damagePlayer(uint32_t damage);
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
                    Color color);
 void initPlayer(PlayerHistory history);
+void handleRegeneration();
 
 extern Player mainPlayer;
 extern PlayerHistory history;

@@ -21,6 +21,9 @@ void damageEnemy(uint32_t enemyIndex, uint32_t damage) {
         numEnemies--;
         if (enemies[enemyIndex].type == ENEMY_BOSS1) {
             gameOver = true;
+            mainPlayer.coins += 50;
+        } else {
+            mainPlayer.coins += 3;
         }
     } else
         enemies[enemyIndex].currentHealth -= damage;

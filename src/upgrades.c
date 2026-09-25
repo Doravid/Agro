@@ -43,6 +43,7 @@ typedef struct {
     const char *desc;
     uint32_t currentLevel;
     uint32_t maxLevel;
+    uint32_t price;
 } UIUpgradeData;
 
 static UpgradeCategory selectedCategory = UPGRADE_CATEGORY_NONE;
@@ -59,6 +60,7 @@ static UIUpgradeData characterData[] = {
             "Speed\n- Scatter Shot\n- Big Third Shot",
         .currentLevel = 1,
         .maxLevel = 4,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_CHARACTER,
@@ -69,6 +71,7 @@ static UIUpgradeData characterData[] = {
             "Shots\n- Faster Flame\n- Rotation Speed",
         .currentLevel = 0,
         .maxLevel = 4,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_CHARACTER,
@@ -78,6 +81,7 @@ static UIUpgradeData characterData[] = {
                 "Attack\n- Parry\n- Minions",
         .currentLevel = 0,
         .maxLevel = 4,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_CHARACTER,
@@ -87,6 +91,7 @@ static UIUpgradeData characterData[] = {
                 "Explosive Shot\n- Stationary Bonus",
         .currentLevel = 0,
         .maxLevel = 4,
+        .price = 50,
     },
 };
 
@@ -98,6 +103,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Flat Health Upgrade (+)",
         .currentLevel = 0,
         .maxLevel = 4,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -106,6 +112,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Flat Damage Upgrade (+)",
         .currentLevel = 0,
         .maxLevel = 4,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -114,6 +121,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Heal 5 health after each room.",
         .currentLevel = 0,
         .maxLevel = 3,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -122,6 +130,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "New Room: Heals to Full, adds 15 max HP.",
         .currentLevel = 0,
         .maxLevel = 1,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -130,6 +139,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "New Room: Gives a random item.",
         .currentLevel = 0,
         .maxLevel = 1,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -138,6 +148,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Increase flat Move Speed.",
         .currentLevel = 0,
         .maxLevel = 2,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -146,6 +157,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Gain the ability to dodge.",
         .currentLevel = 0,
         .maxLevel = 1,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -154,6 +166,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Decrease dodge cooldown time.",
         .currentLevel = 0,
         .maxLevel = 2,
+        .price = 50,
     },
     {
         .category = UPGRADE_CATEGORY_GENERAL,
@@ -162,6 +175,7 @@ static UIUpgradeData upgradeData[] = {
         .desc = "Decrease rooms per floor by 1.",
         .currentLevel = 0,
         .maxLevel = 1,
+        .price = 50,
     },
 };
 void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
@@ -207,7 +221,6 @@ void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
                 break;
             case GENERAL_UPGRADE_DASH_UNLOCK:
                 history.playerUpgrades |= UPGRADE_DASH_UNLOCK;
-                puts("Hi mom!");
                 break;
             case GENERAL_UPGRADE_DASH_COOLDOWN:
                 history.playerUpgrades |= UPGRADE_DASH_COOLDOWN_1
@@ -254,10 +267,14 @@ Clay_ElementDeclaration rightPanelConfig = {
     .border = {.color = settingsBlue, .width = CLAY_BORDER_OUTSIDE(2)}};
 
 Clay_ElementDeclaration gridRowConfig = {
-    .layout = {
-        .sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIT(0)},
-        .layoutDirection = CLAY_LEFT_TO_RIGHT,
-        .childGap = 20}};
+    .layout =
+        {
+            .sizing = {.width = CLAY_SIZING_GROW(0),
+                       .height = CLAY_SIZING_FIT(0)},
+            .layoutDirection = CLAY_LEFT_TO_RIGHT,
+            .childGap = 0,
+        },
+};
 
 Clay_ElementDeclaration itemBoxConfig = {
     .layout = {.sizing = {.width = CLAY_SIZING_FIXED(160),
@@ -392,6 +409,7 @@ void renderRightPanel(void) {
 
     if (!item)
         return;
+    uint32_t cost = (1 + item->currentLevel) * item->price;
 
     CLAY_TEXT(CLAY_STR(item->name),
               CLAY_TEXT_CONFIG({.fontSize = 50, .textColor = settingsOrange}));
@@ -407,25 +425,44 @@ void renderRightPanel(void) {
 
     CLAY_TEXT(CLAY_STR(panelLevelBuf),
               CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
+    static char priceBuf[64];
+    snprintf(priceBuf, 64, "Price: %u$", cost);
+    CLAY_TEXT(CLAY_STR(priceBuf),
+              CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
 
     CLAY(CLAY_ID("BtnSpacer"), btnSpacerConfig) {}
 
     bool canBuy = item->currentLevel < item->maxLevel;
+    bool hasMoney = mainPlayer.coins >= cost;
     Clay_ElementDeclaration buyCfg = buttonConfig;
 
-    if (!canBuy) {
+    if (!canBuy || !hasMoney) {
         buyCfg.backgroundColor = settingsBlack;
     } else if (Clay_PointerOver(CLAY_ID("BuyBtn"))) {
         buyCfg.backgroundColor = settingsOrange;
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            mainPlayer.coins -= cost;
             item->currentLevel++;
             updatePlayerHistoryFromPurchase(item);
         }
     }
 
     CLAY(CLAY_ID("BuyBtn"), buyCfg) {
-        CLAY_TEXT(canBuy ? CLAY_STRING("BUY") : CLAY_STRING("MAXED"),
-                  CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+        if (!canBuy) {
+            CLAY_TEXT(
+                CLAY_STRING("MAXED"),
+                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+        } else if (!hasMoney) {
+            CLAY_TEXT(
+                CLAY_STRING("NOT ENOUGH MONEY"),
+                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+        } else {
+            static char buyBuf[32];
+            snprintf(buyBuf, 32, "BUY (%u$)", cost);
+            CLAY_TEXT(
+                CLAY_STR(buyBuf),
+                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+        }
     }
 
     if (item->category == 0 && item->currentLevel > 0) {
@@ -464,33 +501,44 @@ Clay_RenderCommandArray getUpgradesMenu(void) {
     CLAY(CLAY_ID("UpgradesRoot"), upgradesRootConfig) {
         CLAY(CLAY_ID("LeftPanel"), leftPanelConfig) {
 
-            Clay_ElementDeclaration backCfg = upgradesBackButtonConfig;
-            if (Clay_PointerOver(CLAY_ID("UpgradesBackBtn"))) {
-                backCfg.backgroundColor = settingsOrange;
-                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                    currentState = STATE_MAIN_MENU;
+            CLAY(CLAY_ID("HeaderRow"), gridRowConfig) {
+                Clay_ElementDeclaration backCfg = upgradesBackButtonConfig;
+                if (Clay_PointerOver(CLAY_ID("UpgradesBackBtn"))) {
+                    backCfg.backgroundColor = settingsOrange;
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        currentState = STATE_MAIN_MENU;
+                    }
                 }
+                CLAY(CLAY_ID("UpgradesBackBtn"), backCfg) {
+                    CLAY_TEXT(CLAY_STRING("BACK"),
+                              CLAY_TEXT_CONFIG(
+                                  {.fontSize = 30, .textColor = textColor}));
+                }
+                CLAY(
+                    CLAY_ID("Spacer"),
+                    (Clay_ElementDeclaration){
+                        .layout = {.sizing = {.width = CLAY_SIZING_GROW(0)}}}) {
+                }
+                static char balanceBuf[32];
+                snprintf(balanceBuf, 32, "%d$", mainPlayer.coins);
+                CLAY_TEXT(CLAY_STR(balanceBuf),
+                          CLAY_TEXT_CONFIG(
+                              {.fontSize = 48, .textColor = settingsOrange}));
             }
-            CLAY(CLAY_ID("UpgradesBackBtn"), backCfg) {
-                CLAY_TEXT(
-                    CLAY_STRING("BACK"),
-                    CLAY_TEXT_CONFIG({.fontSize = 30, .textColor = textColor}));
-            }
-
             CLAY(CLAY_ID("CharHeader"), sectionHeaderConfig) {
-                CLAY_TEXT(CLAY_STRING("CHARACTERS"),
+                CLAY_TEXT(CLAY_STRING("Characters"),
                           CLAY_TEXT_CONFIG(
                               {.fontSize = 40, .textColor = settingsOrange}));
             }
-            drawGrid(0, characterData, 4, 4);
-
-            CLAY(CLAY_ID("UpgradesHeader"), sectionHeaderConfig) {
+            drawGrid(1, characterData,
+                     sizeof(characterData) / sizeof(UIUpgradeData), 5);
+            CLAY(CLAY_ID("UpgradeHeader"), sectionHeaderConfig) {
                 CLAY_TEXT(CLAY_STRING("UPGRADES"),
                           CLAY_TEXT_CONFIG(
                               {.fontSize = 40, .textColor = settingsOrange}));
             }
             drawGrid(1, upgradeData,
-                     sizeof(upgradeData) / sizeof(UIUpgradeData), 4);
+                     sizeof(upgradeData) / sizeof(UIUpgradeData), 5);
         }
 
         CLAY(CLAY_ID("RightPanel"), rightPanelConfig) { renderRightPanel(); }
