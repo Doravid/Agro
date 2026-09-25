@@ -68,21 +68,21 @@ void drawBuffshot(Enemy enemy) {
 void drawEnemies() {
     for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
         switch (enemies[enemyIndex].type) {
-        case ENEMY_SHOOTER:
-            drawShooter(&enemies[enemyIndex]);
-            break;
-        case ENEMY_MELEE:
-            drawMeleeEnemy(&enemies[enemyIndex]);
-            break;
-        case ENEMY_BUFFSHOT:
-            drawBuffshot(enemies[enemyIndex]);
-            break;
+            case ENEMY_SHOOTER:
+                drawShooter(&enemies[enemyIndex]);
+                break;
+            case ENEMY_MELEE:
+                drawMeleeEnemy(&enemies[enemyIndex]);
+                break;
+            case ENEMY_BUFFSHOT:
+                drawBuffshot(enemies[enemyIndex]);
+                break;
 
-        case ENEMY_BOSS1:
-            drawBoss1(&enemies[enemyIndex]);
-            break;
-        default:
-            break;
+            case ENEMY_BOSS1:
+                drawBoss1(&enemies[enemyIndex]);
+                break;
+            default:
+                break;
         }
     }
 }
@@ -119,6 +119,7 @@ void spawnShooterPos(uint32_t difficulty, Vector2 spawnPos) {
                baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
                ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos,
                ENEMY_SHOOTER, baseAttackDamage);
+    enemies[numEnemies - 1].currentWeapon = WEAPON_SHOOTER;
 }
 void spawnMeleePos(uint32_t difficulty, Vector2 spawnPos) {
     int randValue = GetRandomValue(0, 100);
@@ -151,17 +152,17 @@ void spawnBuffshotPos(uint32_t difficulty, Vector2 spawnPos) {
 void spawnRandomEnemyPos(uint32_t difficulty, Vector2 spawnPos) {
     int randValue = GetRandomValue(ENEMY_SHOOTER, ENEMY_BUFFSHOT);
     switch (randValue) {
-    case ENEMY_SHOOTER:
-        spawnShooterPos(difficulty, spawnPos);
-        break;
-    case ENEMY_MELEE:
-        spawnMeleePos(difficulty, spawnPos);
-        break;
-    case ENEMY_BUFFSHOT:
-        spawnBuffshotPos(difficulty, spawnPos);
-        break;
-    default:
-        break;
+        case ENEMY_SHOOTER:
+            spawnShooterPos(difficulty, spawnPos);
+            break;
+        case ENEMY_MELEE:
+            spawnMeleePos(difficulty, spawnPos);
+            break;
+        case ENEMY_BUFFSHOT:
+            spawnBuffshotPos(difficulty, spawnPos);
+            break;
+        default:
+            break;
     }
 }
 
@@ -260,21 +261,21 @@ void updateEnemies() {
     for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
         Enemy *currentEnemy = &enemies[enemyIndex];
         switch (currentEnemy->type) {
-        case ENEMY_SHOOTER:
-            updateShooter(currentEnemy);
-            break;
-        case ENEMY_MELEE:
-            updateMelee(currentEnemy);
-            break;
-        case ENEMY_BUFFSHOT:
-            updateBuffshot(currentEnemy);
-            break;
+            case ENEMY_SHOOTER:
+                updateShooter(currentEnemy);
+                break;
+            case ENEMY_MELEE:
+                updateMelee(currentEnemy);
+                break;
+            case ENEMY_BUFFSHOT:
+                updateBuffshot(currentEnemy);
+                break;
 
-        case ENEMY_BOSS1:
-            updateBoss1(currentEnemy);
-            break;
-        default:
-            break;
+            case ENEMY_BOSS1:
+                updateBoss1(currentEnemy);
+                break;
+            default:
+                break;
         }
 
         // Rotate towards the player
