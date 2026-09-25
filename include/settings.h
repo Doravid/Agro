@@ -9,10 +9,8 @@ static const Clay_Color textColor = {200, 200, 200, 255};
 static const Clay_Color settingsBlue = {255, 255, 255, 255};
 static const Clay_Color toggleBackgroundColor = {40, 40, 50, 255};
 
-extern float musicVolume;
-extern float sfxVolume;
 extern bool fullScreen;
-extern float screenShake;
+extern float userScreenShake;
 extern bool bloomEnabled;
 
 Clay_RenderCommandArray getSettingsMenu();

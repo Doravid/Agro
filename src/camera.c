@@ -7,6 +7,7 @@
 #include "projectile.h"
 #include "traps.h"
 #include "ui.h"
+#include "settings.h"
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
@@ -38,7 +39,7 @@ void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight) {
 
 void triggerScreenShake(float duration, float intensity) {
     shakeDuration = duration;
-    shakeIntensity = intensity;
+    shakeIntensity = intensity * userScreenShake;
 }
 
 void initCamera() {
@@ -50,19 +51,22 @@ void initCamera() {
     target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
 }
-
-void updateCamera(Camera2D *camera) {
+void myToggleFullscreen() {
+    int currentMonitor = GetCurrentMonitor();
+    if (IsWindowFullscreen()) {
+        ToggleFullscreen();
+        SetWindowSize(1280, 720);
+    } else {
+        SetWindowSize(GetMonitorWidth(currentMonitor),
+                      GetMonitorHeight(currentMonitor));
+        ToggleFullscreen();
+    }
+    fullScreen = IsWindowFullscreen();
+}
+void updateScreen() {
     if (IsKeyPressed(KEY_F11) ||
         (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
-        int currentMonitor = GetCurrentMonitor();
-        if (IsWindowFullscreen()) {
-            ToggleFullscreen();
-            SetWindowSize(1280, 720);
-        } else {
-            SetWindowSize(GetMonitorWidth(currentMonitor),
-                          GetMonitorHeight(currentMonitor));
-            ToggleFullscreen();
-        }
+        myToggleFullscreen();
     }
     if (IsWindowResized()) {
         // Update the render texture.
@@ -74,6 +78,9 @@ void updateCamera(Camera2D *camera) {
                                (float)GetScreenHeight()};
         SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     }
+}
+
+void updateCamera(Camera2D *camera) {
 
     static float userZoom = 1.0f;
     userZoom = expf(logf(userZoom) + ((float)GetMouseWheelMove() * 0.1f));

@@ -9,3 +9,5 @@ void initCamera();
 void updateCamera(Camera2D *camera);
 void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight);
 void drawGame();
+void myToggleFullscreen();
+void updateScreen();

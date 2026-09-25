@@ -44,6 +44,7 @@ void initGame() {
 }
 
 void updateGame(Camera2D *camera) {
+    updateScreen();
     if (currentState != STATE_PLAYING) {
         return;
     }

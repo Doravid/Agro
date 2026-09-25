@@ -5,6 +5,9 @@ Sound shoot, hit, dash;
 Music music;
 Music bossMusic;
 
+static float soundVolumes = 1.0;
+static float musicVolume = 1.0;
+
 void initSounds() {
     InitAudioDevice();
 
@@ -23,4 +26,18 @@ void playBossMusic() {
 void updateSound() {
     UpdateMusicStream(music);
     UpdateMusicStream(bossMusic);
+}
+float getSoundVolumes() { return soundVolumes; }
+float getMusicVolume() { return musicVolume; }
+
+void setMyMusicVolume(float volume) {
+    SetMusicVolume(music, volume);
+    SetMusicVolume(bossMusic, volume);
+    musicVolume = volume;
+}
+
+void setSoundVolumes(float volume) {
+    SetSoundVolume(shoot, volume);
+    SetSoundVolume(hit, volume);
+    SetSoundVolume(dash, volume);
 }

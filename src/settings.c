@@ -2,16 +2,20 @@
 #include <raylib.h>
 #include "settings.h"
 #include "levelManager.h"
+#include "camera.h"
+#include "audio.h"
 
 #define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector)                                 \
     (Clay_Vector2) { .x = vector.x, .y = vector.y }
 
-float musicVolume = 1.0f;
-float sfxVolume = 1.0f;
+static float musicVolume = 1.0f;
+static float sfxVolume = 1.0f;
 bool fullScreen = false;
-float screenShake = 0.5f;
+float userScreenShake = 0.5f;
 bool bloomEnabled = true;
 bool backClicked = false;
+
+bool hasChanged = false;
 
 // Element Representing the Entire Screen.
 Clay_ElementDeclaration settingsRootConfig = {
@@ -121,6 +125,7 @@ void RenderSlider(int index, Clay_ElementId id, Clay_String labelText,
                         *value = 0.0f;
                     if (*value > 1.0f)
                         *value = 1.0f;
+                    hasChanged = true;
                 }
             }
             Clay_ElementId innerBoxId =
@@ -157,6 +162,7 @@ void RenderToggle(int index, Clay_ElementId id, Clay_String labelText,
             if ((Clay_PointerOver(id) || Clay_PointerOver(subElemId)) &&
                 IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 *value = !(*value);
+                hasChanged = true;
             }
             Clay_ElementDeclaration activeKnob = toggleKnob;
             if (*value) {
@@ -204,12 +210,24 @@ Clay_RenderCommandArray getSettingsMenu() {
             RenderToggle(3, CLAY_ID("FullScreenToggle"),
                          CLAY_STRING("Full Screen"), &fullScreen);
             RenderSlider(4, CLAY_ID("ShakeSlider"), CLAY_STRING("Screen Shake"),
-                         &screenShake);
+                         &userScreenShake);
             RenderToggle(5, CLAY_ID("BloomToggle"), CLAY_STRING("Bloom"),
                          &bloomEnabled);
             RenderBackButton(CLAY_ID("BackButton"), CLAY_STRING("Back"));
         }
     }
+    if (hasChanged) {
+        hasChanged = false;
+        if (IsWindowFullscreen() != fullScreen) {
+            myToggleFullscreen();
+        }
 
+        if (getSoundVolumes() != sfxVolume) {
+            setSoundVolumes(sfxVolume);
+        }
+        if (getMusicVolume() != musicVolume) {
+            setMyMusicVolume(musicVolume);
+        }
+    }
     return Clay_EndLayout(GetFrameTime());
 }
