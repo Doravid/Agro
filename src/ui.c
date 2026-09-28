@@ -63,6 +63,7 @@ void RenderMenuButton(Clay_ElementId id, Clay_String labelText,
             if (actionType == 3) {
                 currentState = STATE_SHOP;
             }
+            saveGame();
         }
     }
     CLAY(id, config) {

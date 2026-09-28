@@ -91,6 +91,8 @@ bool roomDone(RoomData *room);
 Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset);
 bool getIsInGame();
 void endGame();
+void saveGame(void);
+void loadGame(void);
 
 extern RoomData currentRoom;
 extern uint32_t numRoomsLoaded;

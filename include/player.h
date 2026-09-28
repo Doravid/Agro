@@ -86,6 +86,7 @@ typedef struct {
     ShooterUpgradeLevel shooterUpgradeLevel;
     KnightUpgradeLevel knightUpgradeLevel;
     FlameShotUpgradeLevel flameShotUpgradeLevel;
+    uint32_t coins;
 } PlayerHistory;
 
 typedef struct {
@@ -98,7 +99,6 @@ typedef struct {
     PlayerItem currentItems; // Bitmask.
     PlayerWeapon currentWeapon;
     PlayerUpgrades currentUpgrades;
-    uint32_t coins;
 } Player;
 
 void drawPlayer(Player player);

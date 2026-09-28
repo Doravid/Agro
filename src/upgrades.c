@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #include "upgrades.h"
 #include "settings.h"
@@ -10,9 +12,6 @@
     (Clay_Vector2) { .x = vector.x, .y = vector.y }
 #define CLAY_STR(str)                                                          \
     ((Clay_String){.length = (uint32_t)strlen(str), .chars = (str)})
-
-#include <stdint.h>
-#include <stdio.h>
 
 typedef enum {
     UPGRADE_CATEGORY_NONE = -1,
@@ -182,16 +181,16 @@ void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
     if (item->category == UPGRADE_CATEGORY_CHARACTER) {
         switch (item->weaponId) {
             case WEAPON_SHOOTER:
-                history.shooterUpgradeLevel |= 0 << (item->currentLevel - 1);
+                history.shooterUpgradeLevel |= 1 << (item->currentLevel - 1);
                 break;
             case WEAPON_BIGSHOT:
-                history.bigshotUpgradeLevel |= 0 << (item->currentLevel - 1);
+                history.bigshotUpgradeLevel |= 1 << (item->currentLevel - 1);
                 break;
             case WEAPON_FLAME:
-                history.flameShotUpgradeLevel |= 0 << (item->currentLevel - 1);
+                history.flameShotUpgradeLevel |= 1 << (item->currentLevel - 1);
                 break;
             case WEAPON_KNIGHT:
-                history.knightUpgradeLevel |= 0 << (item->currentLevel - 1);
+                history.knightUpgradeLevel |= 1 << (item->currentLevel - 1);
                 break;
             default:
                 break;
@@ -433,7 +432,7 @@ void renderRightPanel(void) {
     CLAY(CLAY_ID("BtnSpacer"), btnSpacerConfig) {}
 
     bool canBuy = item->currentLevel < item->maxLevel;
-    bool hasMoney = mainPlayer.coins >= cost;
+    bool hasMoney = history.coins >= cost;
     Clay_ElementDeclaration buyCfg = buttonConfig;
 
     if (!canBuy || !hasMoney) {
@@ -441,7 +440,7 @@ void renderRightPanel(void) {
     } else if (Clay_PointerOver(CLAY_ID("BuyBtn"))) {
         buyCfg.backgroundColor = settingsOrange;
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            mainPlayer.coins -= cost;
+            history.coins -= cost;
             item->currentLevel++;
             updatePlayerHistoryFromPurchase(item);
         }
@@ -520,7 +519,7 @@ Clay_RenderCommandArray getUpgradesMenu(void) {
                         .layout = {.sizing = {.width = CLAY_SIZING_GROW(0)}}}) {
                 }
                 static char balanceBuf[32];
-                snprintf(balanceBuf, 32, "%d$", mainPlayer.coins);
+                snprintf(balanceBuf, 32, "%d$", history.coins);
                 CLAY_TEXT(CLAY_STR(balanceBuf),
                           CLAY_TEXT_CONFIG(
                               {.fontSize = 48, .textColor = settingsOrange}));
@@ -545,4 +544,80 @@ Clay_RenderCommandArray getUpgradesMenu(void) {
     }
 
     return Clay_EndLayout(GetFrameTime());
+}
+
+void syncUpgradesUI(void) {
+    equippedCharacter = history.currentPlayerWeapon;
+
+    for (int i = 0; i < 4; i++) {
+        UIUpgradeData *item = &characterData[i];
+        item->currentLevel = (item->weaponId == WEAPON_SHOOTER) ? 1 : 0;
+
+        uint32_t mask = 0;
+        switch (item->weaponId) {
+            case WEAPON_SHOOTER:
+                mask = history.shooterUpgradeLevel;
+                break;
+            case WEAPON_BIGSHOT:
+                mask = history.bigshotUpgradeLevel;
+                break;
+            case WEAPON_FLAME:
+                mask = history.flameShotUpgradeLevel;
+                break;
+            case WEAPON_KNIGHT:
+                mask = history.knightUpgradeLevel;
+                break;
+            default:
+                break;
+        }
+
+        for (uint32_t lvl = item->currentLevel + 1; lvl <= item->maxLevel;
+             lvl++) {
+            if (mask & (1 << (lvl - 1))) {
+                item->currentLevel = lvl;
+            }
+        }
+    }
+
+    int count = sizeof(upgradeData) / sizeof(UIUpgradeData);
+    for (int i = 0; i < count; i++) {
+        UIUpgradeData *item = &upgradeData[i];
+        item->currentLevel = 0;
+
+        for (uint32_t lvl = 1; lvl <= item->maxLevel; lvl++) {
+            uint32_t flag = 0;
+            switch (item->upgradeId) {
+                case GENERAL_UPGRADE_DAMAGE:
+                    flag = UPGRADE_DAMAGE_1 << (lvl - 1);
+                    break;
+                case GENERAL_UPGRADE_REGENERATION:
+                    flag = UPGRADE_REGENERATION_1 << (lvl - 1);
+                    break;
+                case GENERAL_UPGRADE_HEALING_ROOM:
+                    flag = UPGRADE_HEALING_ROOM;
+                    break;
+                case GENERAL_UPGRADE_LOOT_ROOM:
+                    flag = UPGRADE_LOOT_ROOM;
+                    break;
+                case GENERAL_UPGRADE_MOVE_SPEED:
+                    flag = UPGRADE_MOVE_SPEED_1 << (lvl - 1);
+                    break;
+                case GENERAL_UPGRADE_DASH_UNLOCK:
+                    flag = UPGRADE_DASH_UNLOCK;
+                    break;
+                case GENERAL_UPGRADE_DASH_COOLDOWN:
+                    flag = UPGRADE_DASH_COOLDOWN_1 << (lvl - 1);
+                    break;
+                case GENERAL_UPGRADE_REMOVE_ROOM:
+                    flag = UPGRADE_REMOVE_ROOM;
+                    break;
+                default:
+                    break;
+            }
+
+            if (history.playerUpgrades & flag) {
+                item->currentLevel = lvl;
+            }
+        }
+    }
 }

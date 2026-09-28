@@ -32,6 +32,7 @@ int main(void) {
 }
 
 void initGame() {
+    loadGame();
     initUi();
     SetTargetFPS(0);
     SetExitKey(KEY_DELETE);

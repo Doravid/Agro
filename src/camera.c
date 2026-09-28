@@ -141,7 +141,7 @@ void drawGame() {
 
     ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
     char moneyString[100] = {0};
-    snprintf(moneyString, 100, "%u$", mainPlayer.coins);
+    snprintf(moneyString, 100, "%u$", history.coins);
     if (currentState == STATE_PLAYING) {
         BeginMode2D(camera);
         drawProjectiles(projectiles, numProjectiles);

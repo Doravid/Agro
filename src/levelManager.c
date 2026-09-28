@@ -9,6 +9,8 @@
 #include "enemies.h"
 #include "levelManager.h"
 #include "traps.h"
+#include "upgrades.h"
+
 uint8_t numRoomsTillBoss = 5;
 
 Level currentLevel;
@@ -307,5 +309,22 @@ void updateRooms() {
                 break;
             }
         }
+    }
+}
+
+void saveGame(void) {
+    FILE *file = fopen("game.save", "wb");
+    if (file) {
+        fwrite(&history, sizeof(history), 1, file);
+        fclose(file);
+    }
+}
+
+void loadGame(void) {
+    FILE *file = fopen("game.save", "rb");
+    if (file) {
+        fread(&history, sizeof(history), 1, file);
+        fclose(file);
+        syncUpgradesUI();
     }
 }
