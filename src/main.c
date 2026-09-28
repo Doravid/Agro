@@ -32,7 +32,6 @@ int main(void) {
 }
 
 void initGame() {
-    loadGame();
     initUi();
     SetTargetFPS(0);
     SetExitKey(KEY_DELETE);
@@ -43,6 +42,7 @@ void initGame() {
         .currentPlayerWeapon = WEAPON_BIGSHOT,
         .playerUpgrades = UPGRADE_DASH_UNLOCK,
     });
+    loadGame();
 }
 
 void updateGame(Camera2D *camera) {

@@ -14,7 +14,6 @@ bool fullScreen = false;
 float userScreenShake = 0.5f;
 bool bloomEnabled = true;
 bool backClicked = false;
-
 bool hasChanged = false;
 
 // Element Representing the Entire Screen.
@@ -249,4 +248,9 @@ Clay_RenderCommandArray getSettingsMenu() {
         }
     }
     return Clay_EndLayout(GetFrameTime());
+}
+
+void initSoundUI() {
+    sfxVolume = getSoundVolumes();
+    musicVolume = getMusicVolume();
 }

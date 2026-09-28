@@ -10,6 +10,7 @@
 #include "levelManager.h"
 #include "traps.h"
 #include "upgrades.h"
+#include "settings.h"
 
 uint8_t numRoomsTillBoss = 5;
 
@@ -313,6 +314,8 @@ void updateRooms() {
 }
 
 void saveGame(void) {
+    history.musicVolume = getMusicVolume();
+    history.soundVolume = getSoundVolumes();
     FILE *file = fopen("game.save", "wb");
     if (file) {
         fwrite(&history, sizeof(history), 1, file);
@@ -327,4 +330,7 @@ void loadGame(void) {
         fclose(file);
         syncUpgradesUI();
     }
+    setMyMusicVolume(history.musicVolume);
+    setSoundVolumes(history.soundVolume);
+    initSoundUI();
 }

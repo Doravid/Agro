@@ -29,6 +29,7 @@ void updateSound() {
 }
 float getSoundVolumes() { return soundVolumes; }
 float getMusicVolume() { return musicVolume; }
+float *getMusicVolumePointer() { return &musicVolume; }
 
 void setMyMusicVolume(float volume) {
     SetMusicVolume(music, volume);

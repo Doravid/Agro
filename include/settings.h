@@ -14,3 +14,4 @@ extern float userScreenShake;
 extern bool bloomEnabled;
 
 Clay_RenderCommandArray getSettingsMenu();
+void initSoundUI();

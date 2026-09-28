@@ -11,3 +11,5 @@ float getSoundVolumes();
 // Music getter / setter.
 float getMusicVolume();
 void setMyMusicVolume(float volume);
+
+float *getMusicVolumePointer();
