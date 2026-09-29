@@ -28,6 +28,7 @@ pub fn build(b: *std.Build) void {
             "src/ui.c",
             "src/settings.c",
             "src/upgrades.c",
+            "src/items.c",
         },
         .flags = &.{
             "-std=gnu23",

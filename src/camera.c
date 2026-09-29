@@ -9,6 +9,7 @@
 #include "ui.h"
 #include "settings.h"
 #include "upgrades.h"
+#include "items.h"
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
@@ -149,7 +150,7 @@ void drawGame() {
         drawEnemies();
         drawRooms();
         drawTraps();
-
+        drawItems();
         EndMode2D();
 
         DrawText(moneyString, GetScreenWidth() - GetScreenWidth() / 10,
