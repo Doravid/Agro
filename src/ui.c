@@ -54,8 +54,10 @@ void RenderMenuButton(Clay_ElementId id, Clay_String labelText,
     if (Clay_PointerOver(id)) {
         config.backgroundColor = settingsOrange;
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            if (actionType == 0)
+            if (actionType == 0) {
                 CloseWindow();
+                exit(0);
+            }
             if (actionType == 1)
                 startGame();
             if (actionType == 2)

@@ -12,11 +12,14 @@
 #include "upgrades.h"
 #include "settings.h"
 #include "items.h"
+#define ARRAY_LENGTH(array) (sizeof((array)) / sizeof((array)[0]))
 
-uint8_t numRoomsTillBoss = 5;
+#define MAX_LOADED_ROOMS 16
+#define BOSS_ROOM_THRESHOLD 5
 
+uint8_t numRoomsTillBoss = BOSS_ROOM_THRESHOLD;
 Level currentLevel;
-RoomData rooms[16];
+RoomData rooms[MAX_LOADED_ROOMS];
 uint32_t numRoomsLoaded = 0;
 static const float myGridSize = 85.0f;
 Texture2D whiteTexture;
@@ -25,7 +28,8 @@ static bool isInGame = false;
 GameState currentState = STATE_MAIN_MENU;
 
 void initRoomTexture() { whiteTexture = LoadTexture("resources/image.png"); }
-bool roomDone(RoomData *room) {
+
+static bool roomDone(RoomData *room) {
     if (room->isCleared)
         return true;
     if (numEnemies == 0) {
@@ -34,6 +38,7 @@ bool roomDone(RoomData *room) {
     }
     return false;
 }
+
 void startGame() {
     initPlayer(history);
     loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
@@ -47,7 +52,12 @@ void startGame() {
 }
 
 bool getIsInGame() { return isInGame; }
+
 void endGame() {
+    for (uint32_t i = 0; i < numRoomsLoaded; i++) {
+        if (rooms[i].colliders)
+            free(rooms[i].colliders);
+    }
     gameOver = false;
     isInGame = false;
     mainPlayer.currentHealth = 100;
@@ -56,6 +66,19 @@ void endGame() {
     numProjectiles = 0;
     numRoomsLoaded = 0;
     numTraps = 0;
+}
+
+static const char *getFieldValue(cJSON *entity, const char *fieldName) {
+    cJSON *fields = cJSON_GetObjectItemCaseSensitive(entity, "fieldInstances");
+    cJSON *field = NULL;
+    cJSON_ArrayForEach(field, fields) {
+        cJSON *id = cJSON_GetObjectItemCaseSensitive(field, "__identifier");
+        if (cJSON_IsString(id) && strcmp(id->valuestring, fieldName) == 0) {
+            return cJSON_GetObjectItemCaseSensitive(field, "__value")
+                ->valuestring;
+        }
+    }
+    return NULL;
 }
 
 void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
@@ -112,6 +135,10 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
 
             int totalTiles = cJSON_GetArraySize(gridCsv);
             room->colliders = malloc(sizeof(Collider) * totalTiles);
+            if (!room->colliders) {
+                perror("Failed to allocate memory for colliders.");
+                return;
+            }
 
             cJSON *tileValue = NULL;
             int tileIndex = 0;
@@ -165,22 +192,10 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                 } else if (strcmp(entId->valuestring, "Boss1") == 0) {
                     spawnBoss1Pos((Vector2){.x = scaledX, scaledY});
                 } else if (strcmp(entId->valuestring, "FireTrap") == 0) {
-                    cJSON *fieldInstances = cJSON_GetObjectItemCaseSensitive(
-                        entity, "fieldInstances");
-                    const char *directionStr;
-                    int size = cJSON_GetArraySize(fieldInstances);
-
-                    for (int i = 0; i < size; i++) {
-                        cJSON *field = cJSON_GetArrayItem(fieldInstances, i);
-                        cJSON *id = cJSON_GetObjectItemCaseSensitive(
-                            field, "__identifier");
-                        if (cJSON_IsString(id) &&
-                            strcmp(id->valuestring, "Direction") == 0) {
-                            directionStr = cJSON_GetObjectItemCaseSensitive(
-                                               field, "__value")
-                                               ->valuestring;
-                        }
-                    }
+                    const char *directionStr =
+                        getFieldValue(entity, "Direction");
+                    if (!directionStr)
+                        continue;
                     Direction dir;
                     if (strcmp(directionStr, "LEFT") == 0) {
                         dir = DIRECTION_LEFT;
@@ -208,30 +223,14 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                         .fireTimerMax = 0.04,
                     });
                 } else if (strcmp(entId->valuestring, "Item") == 0) {
-                    cJSON *fieldInstances = cJSON_GetObjectItemCaseSensitive(
-                        entity, "fieldInstances");
-                    const char *itemNameString;
-                    int size = cJSON_GetArraySize(fieldInstances);
-
-                    for (int i = 0; i < size; i++) {
-                        cJSON *field = cJSON_GetArrayItem(fieldInstances, i);
-                        cJSON *id = cJSON_GetObjectItemCaseSensitive(
-                            field, "__identifier");
-                        if (cJSON_IsString(id) &&
-                            strcmp(id->valuestring, "ItemName") == 0) {
-                            itemNameString = cJSON_GetObjectItemCaseSensitive(
-                                                 field, "__value")
-                                                 ->valuestring;
-                        }
-                    }
-                    puts(itemNameString);
+                    const char *itemNameString =
+                        getFieldValue(entity, "ItemName");
                     if (strcmp(itemNameString, "MaxHealthItem") == 0) {
                         addItem((Item){.itemType = ITEM_MAX_HEALTH,
                                        .position = {
                                            .x = scaledX,
                                            .y = scaledY,
                                        }});
-                        puts("Hii!!!");
                     }
                 }
             }
@@ -302,41 +301,50 @@ Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset) {
     return nextPos;
 }
 
+static int checkPlayerExitCollision(RoomData *room) {
+    Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f,
+                           mainPlayer.position.y - mainPlayer.size.y / 2.0f,
+                           mainPlayer.size.x, mainPlayer.size.y};
+    for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders;
+         colliderIndex++) {
+        if (room->colliders[colliderIndex].type == TILE_EXIT &&
+            CheckCollisionRecs(playerRec,
+                               room->colliders[colliderIndex].bounds)) {
+            return colliderIndex;
+        }
+    }
+    return -1;
+}
+
+static void loadNextRoom(RoomData *lastRoom, int colliderIndex) {
+    if (colliderIndex < 0)
+        return;
+    Vector2 targetEntrance = {lastRoom->colliders[colliderIndex].bounds.x,
+                              lastRoom->colliders[colliderIndex].bounds.y};
+    if (numRoomsLoaded == BOSS_ROOM_THRESHOLD) {
+        loadRoom("maps/thing/BossLevel.ldtkl", &rooms[numRoomsLoaded],
+                 targetEntrance);
+        playBossMusic();
+        return;
+    }
+    const char *nextMaps[] = {
+        "maps/thing/Level_1.ldtkl",      "maps/thing/Level_2.ldtkl",
+        "maps/thing/Level_3.ldtkl",      "maps/thing/Level_4.ldtkl",
+        "maps/thing/Health_Level.ldtkl",
+    };
+    int randIndex = GetRandomValue(0, ARRAY_LENGTH(nextMaps) - 1);
+    loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
+}
+
 void updateRooms() {
-    if (numRoomsLoaded == 0 || numRoomsLoaded >= 16)
+    if (numRoomsLoaded == 0 || numRoomsLoaded >= MAX_LOADED_ROOMS)
         return;
 
     RoomData *lastRoom = &rooms[numRoomsLoaded - 1];
 
     if (roomDone(lastRoom)) {
-        Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f,
-                               mainPlayer.position.y - mainPlayer.size.y / 2.0f,
-                               mainPlayer.size.x, mainPlayer.size.y};
-
-        for (uint32_t i = 0; i < lastRoom->numColliders; i++) {
-            if (lastRoom->colliders[i].type == TILE_EXIT &&
-                CheckCollisionRecs(playerRec, lastRoom->colliders[i].bounds)) {
-                handleRegeneration();
-                Vector2 targetEntrance = {lastRoom->colliders[i].bounds.x,
-                                          lastRoom->colliders[i].bounds.y};
-                if (numRoomsLoaded == 5) {
-                    loadRoom("maps/thing/BossLevel.ldtkl",
-                             &rooms[numRoomsLoaded], targetEntrance);
-                    playBossMusic();
-                    break;
-                }
-
-                const char *nextMaps[] = {
-                    "maps/thing/Level_1.ldtkl",      "maps/thing/Level_2.ldtkl",
-                    "maps/thing/Level_3.ldtkl",      "maps/thing/Level_4.ldtkl",
-                    "maps/thing/Health_Level.ldtkl",
-                };
-                int randIndex = GetRandomValue(0, 3);
-                loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded],
-                         targetEntrance);
-                break;
-            }
-        }
+        int index = checkPlayerExitCollision(lastRoom);
+        loadNextRoom(lastRoom, index);
     }
 }
 
@@ -347,6 +355,8 @@ void saveGame(void) {
     if (file) {
         fwrite(&history, sizeof(history), 1, file);
         fclose(file);
+    } else {
+        perror("Failed to save game.");
     }
 }
 
@@ -356,6 +366,9 @@ void loadGame(void) {
         fread(&history, sizeof(history), 1, file);
         fclose(file);
         syncUpgradesUI();
+    } else {
+        puts("Failed to load game. If this is not your first time booting that "
+             "game, that is very weird and should not happen.");
     }
     setMyMusicVolume(history.musicVolume);
     setSoundVolumes(history.soundVolume);
