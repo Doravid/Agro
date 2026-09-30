@@ -11,8 +11,8 @@
 	"identifier": "Level_4",
 	"iid": "46e66990-96d0-11f1-a4bb-51e72d21e9a8",
 	"uid": 13,
-	"worldX": 144,
-	"worldY": -432,
+	"worldX": 368,
+	"worldY": -464,
 	"worldDepth": 0,
 	"pxWid": 144,
 	"pxHei": 288,
@@ -68,8 +68,8 @@
 						"id": "V_String",
 						"params": ["RIGHT"]
 					}] }],
-					"__worldX": 176,
-					"__worldY": -224
+					"__worldX": 400,
+					"__worldY": -256
 				},
 				{
 					"__identifier": "FireTrap",
@@ -87,8 +87,8 @@
 						"id": "V_String",
 						"params": ["LEFT"]
 					}] }],
-					"__worldX": 240,
-					"__worldY": -224
+					"__worldX": 464,
+					"__worldY": -256
 				},
 				{
 					"__identifier": "FireTrap",
@@ -106,8 +106,8 @@
 						"id": "V_String",
 						"params": ["RIGHT"]
 					}] }],
-					"__worldX": 176,
-					"__worldY": -272
+					"__worldX": 400,
+					"__worldY": -304
 				},
 				{
 					"__identifier": "FireTrap",
@@ -125,8 +125,8 @@
 						"id": "V_String",
 						"params": ["LEFT"]
 					}] }],
-					"__worldX": 240,
-					"__worldY": -272
+					"__worldX": 464,
+					"__worldY": -304
 				},
 				{
 					"__identifier": "FireTrap",
@@ -144,8 +144,8 @@
 						"id": "V_String",
 						"params": ["RIGHT"]
 					}] }],
-					"__worldX": 176,
-					"__worldY": -304
+					"__worldX": 400,
+					"__worldY": -336
 				},
 				{
 					"__identifier": "FireTrap",
@@ -163,8 +163,8 @@
 						"id": "V_String",
 						"params": ["LEFT"]
 					}] }],
-					"__worldX": 240,
-					"__worldY": -320
+					"__worldX": 464,
+					"__worldY": -352
 				},
 				{
 					"__identifier": "FireTrap",
@@ -182,8 +182,8 @@
 						"id": "V_String",
 						"params": ["RIGHT"]
 					}] }],
-					"__worldX": 176,
-					"__worldY": -336
+					"__worldX": 400,
+					"__worldY": -368
 				},
 				{
 					"__identifier": "FireTrap",
@@ -201,8 +201,8 @@
 						"id": "V_String",
 						"params": ["LEFT"]
 					}] }],
-					"__worldX": 240,
-					"__worldY": -352
+					"__worldX": 464,
+					"__worldY": -384
 				},
 				{
 					"__identifier": "EnemySpawn",
@@ -217,8 +217,8 @@
 					"defUid": 5,
 					"px": [16,32],
 					"fieldInstances": [],
-					"__worldX": 160,
-					"__worldY": -400
+					"__worldX": 384,
+					"__worldY": -432
 				},
 				{
 					"__identifier": "EnemySpawn",
@@ -233,8 +233,8 @@
 					"defUid": 5,
 					"px": [112,240],
 					"fieldInstances": [],
-					"__worldX": 256,
-					"__worldY": -192
+					"__worldX": 480,
+					"__worldY": -224
 				},
 				{
 					"__identifier": "EnemySpawn",
@@ -249,8 +249,8 @@
 					"defUid": 5,
 					"px": [16,240],
 					"fieldInstances": [],
-					"__worldX": 160,
-					"__worldY": -192
+					"__worldX": 384,
+					"__worldY": -224
 				}
 			]
 		},

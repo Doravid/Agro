@@ -12,6 +12,8 @@
 #include "projectile.h"
 #include "traps.h"
 #include "ui.h"
+#include "items.h"
+
 void updateGame(Camera2D *camera);
 void initGame();
 
@@ -58,4 +60,5 @@ void updateGame(Camera2D *camera) {
     updateRooms();
     updateEnemies();
     updateTraps();
+    updateItems();
 }

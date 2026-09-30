@@ -13,3 +13,5 @@ typedef struct {
 } Item;
 
 void drawItems();
+void updateItems();
+bool addItem(Item item);

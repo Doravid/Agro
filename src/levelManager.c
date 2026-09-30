@@ -11,6 +11,7 @@
 #include "traps.h"
 #include "upgrades.h"
 #include "settings.h"
+#include "items.h"
 
 uint8_t numRoomsTillBoss = 5;
 
@@ -206,6 +207,32 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                         .fireTimer = 0,
                         .fireTimerMax = 0.04,
                     });
+                } else if (strcmp(entId->valuestring, "Item") == 0) {
+                    cJSON *fieldInstances = cJSON_GetObjectItemCaseSensitive(
+                        entity, "fieldInstances");
+                    const char *itemNameString;
+                    int size = cJSON_GetArraySize(fieldInstances);
+
+                    for (int i = 0; i < size; i++) {
+                        cJSON *field = cJSON_GetArrayItem(fieldInstances, i);
+                        cJSON *id = cJSON_GetObjectItemCaseSensitive(
+                            field, "__identifier");
+                        if (cJSON_IsString(id) &&
+                            strcmp(id->valuestring, "ItemName") == 0) {
+                            itemNameString = cJSON_GetObjectItemCaseSensitive(
+                                                 field, "__value")
+                                                 ->valuestring;
+                        }
+                    }
+                    puts(itemNameString);
+                    if (strcmp(itemNameString, "MaxHealthItem") == 0) {
+                        addItem((Item){.itemType = ITEM_MAX_HEALTH,
+                                       .position = {
+                                           .x = scaledX,
+                                           .y = scaledY,
+                                       }});
+                        puts("Hii!!!");
+                    }
                 }
             }
         }
@@ -298,11 +325,11 @@ void updateRooms() {
                     playBossMusic();
                     break;
                 }
+
                 const char *nextMaps[] = {
-                    "maps/thing/Level_1.ldtkl",
-                    "maps/thing/Level_2.ldtkl",
-                    "maps/thing/Level_3.ldtkl",
-                    "maps/thing/Level_4.ldtkl",
+                    "maps/thing/Level_1.ldtkl",      "maps/thing/Level_2.ldtkl",
+                    "maps/thing/Level_3.ldtkl",      "maps/thing/Level_4.ldtkl",
+                    "maps/thing/Health_Level.ldtkl",
                 };
                 int randIndex = GetRandomValue(0, 3);
                 loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded],

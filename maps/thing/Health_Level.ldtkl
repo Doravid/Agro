@@ -53,7 +53,7 @@
 			"gridTiles": [],
 			"entityInstances": [
 				{
-					"__identifier": "Health_Item",
+					"__identifier": "Item",
 					"__grid": [3,3],
 					"__pivot": [0,0],
 					"__tags": [],
@@ -64,7 +64,10 @@
 					"height": 16,
 					"defUid": 18,
 					"px": [48,48],
-					"fieldInstances": [],
+					"fieldInstances": [{ "__identifier": "ItemName", "__type": "String", "__value": "MaxHealthItem", "__tile": null, "defUid": 19, "realEditorValues": [{
+						"id": "V_String",
+						"params": ["MaxHealthItem"]
+					}] }],
 					"__worldX": -304,
 					"__worldY": -288
 				}

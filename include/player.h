@@ -11,12 +11,6 @@ typedef enum {
     WEAPON_BIGSHOT = 8
 } PlayerWeapon;
 
-typedef enum {
-    ITEM_BURN = 1,
-    ITEM_FLAME = 2,
-    ITEM_DAMAGE = 4,
-    ITEM_HEALTH = 8,
-} PlayerItem;
 /**
  * @brief The Following ENUMS represents the UNLOCK level for each of the
  * upgrades. They are in order, and must be unlocked in order.
@@ -97,7 +91,6 @@ typedef struct {
     uint32_t maxHealth, currentHealth;
     float dashTimer, dashCooldown, dashCooldownTimer;
     uint32_t attackDamage;
-    PlayerItem currentItems; // Bitmask.
     PlayerWeapon currentWeapon;
     PlayerUpgrades currentUpgrades;
 } Player;
