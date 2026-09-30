@@ -15,7 +15,7 @@
 #define ARRAY_LENGTH(array) (sizeof((array)) / sizeof((array)[0]))
 
 #define MAX_LOADED_ROOMS 16
-#define BOSS_ROOM_THRESHOLD 5
+#define BOSS_ROOM_THRESHOLD 1
 
 uint8_t numRoomsTillBoss = BOSS_ROOM_THRESHOLD;
 Level currentLevel;
@@ -41,8 +41,7 @@ static bool roomDone(RoomData *room) {
 
 void startGame() {
     initPlayer(history);
-    loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded],
-             (Vector2){0, 0});
+    loadRoom("maps/thing/Level_0.ldtkl", &rooms[numRoomsLoaded], (Vector2){0, 0});
     mainPlayer.position = rooms[numRoomsLoaded - 1].playerSpawn;
     isInGame = true;
     currentState = STATE_PLAYING;
@@ -66,6 +65,7 @@ void endGame() {
     numProjectiles = 0;
     numRoomsLoaded = 0;
     numTraps = 0;
+    numItems = 0;
 }
 
 static const char *getFieldValue(cJSON *entity, const char *fieldName) {
@@ -74,8 +74,7 @@ static const char *getFieldValue(cJSON *entity, const char *fieldName) {
     cJSON_ArrayForEach(field, fields) {
         cJSON *id = cJSON_GetObjectItemCaseSensitive(field, "__identifier");
         if (cJSON_IsString(id) && strcmp(id->valuestring, fieldName) == 0) {
-            return cJSON_GetObjectItemCaseSensitive(field, "__value")
-                ->valuestring;
+            return cJSON_GetObjectItemCaseSensitive(field, "__value")->valuestring;
         }
     }
     return NULL;
@@ -99,13 +98,10 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
     cJSON *layer = NULL;
 
     cJSON_ArrayForEach(layer, layers) {
-        cJSON *layerId =
-            cJSON_GetObjectItemCaseSensitive(layer, "__identifier");
+        cJSON *layerId = cJSON_GetObjectItemCaseSensitive(layer, "__identifier");
         if (strcmp(layerId->valuestring, "IntGrid") == 0) {
-            int gridWid =
-                cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
-            cJSON *gridCsv =
-                cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
+            int gridWid = cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
+            cJSON *gridCsv = cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
             cJSON *tileValue = NULL;
             int tileIndex = 0;
             cJSON_ArrayForEach(tileValue, gridCsv) {
@@ -118,20 +114,16 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
         }
     }
 
-    Vector2 offset = {targetEntrance.x - entranceLocal.x,
-                      targetEntrance.y - entranceLocal.y};
+    Vector2 offset = {targetEntrance.x - entranceLocal.x, targetEntrance.y - entranceLocal.y};
 
     cJSON_ArrayForEach(layer, layers) {
-        cJSON *layerId =
-            cJSON_GetObjectItemCaseSensitive(layer, "__identifier");
+        cJSON *layerId = cJSON_GetObjectItemCaseSensitive(layer, "__identifier");
 
         // parse grid
         if (strcmp(layerId->valuestring, "IntGrid") == 0) {
-            int gridWid =
-                cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
+            int gridWid = cJSON_GetObjectItemCaseSensitive(layer, "__cWid")->valueint;
 
-            cJSON *gridCsv =
-                cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
+            cJSON *gridCsv = cJSON_GetObjectItemCaseSensitive(layer, "intGridCsv");
 
             int totalTiles = cJSON_GetArraySize(gridCsv);
             room->colliders = malloc(sizeof(Collider) * totalTiles);
@@ -146,14 +138,12 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
             cJSON_ArrayForEach(tileValue, gridCsv) {
                 int type = tileValue->valueint;
 
-                if (type == TILE_WALL || type == TILE_ENTRANCE ||
-                    type == TILE_EXIT) {
+                if (type == TILE_WALL || type == TILE_ENTRANCE || type == TILE_EXIT) {
                     int x = (tileIndex % gridWid) * myGridSize + offset.x;
                     int y = (tileIndex / gridWid) * myGridSize + offset.y;
 
                     room->colliders[room->numColliders].bounds =
-                        (Rectangle){(float)x, (float)y, (float)myGridSize,
-                                    (float)myGridSize};
+                        (Rectangle){(float)x, (float)y, (float)myGridSize, (float)myGridSize};
                     room->colliders[room->numColliders].type = type;
                     room->numColliders++;
                 }
@@ -163,27 +153,22 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
 
         // PARSE THE ENTITIES
         else if (strcmp(layerId->valuestring, "Entities") == 0) {
-            int ldtkGridSize =
-                cJSON_GetObjectItemCaseSensitive(layer, "__gridSize")->valueint;
+            int ldtkGridSize = cJSON_GetObjectItemCaseSensitive(layer, "__gridSize")->valueint;
 
             float scaleFactor = myGridSize / (float)ldtkGridSize;
 
-            cJSON *entities =
-                cJSON_GetObjectItemCaseSensitive(layer, "entityInstances");
+            cJSON *entities = cJSON_GetObjectItemCaseSensitive(layer, "entityInstances");
             cJSON *entity = NULL;
 
             cJSON_ArrayForEach(entity, entities) {
-                cJSON *entId =
-                    cJSON_GetObjectItemCaseSensitive(entity, "__identifier");
+                cJSON *entId = cJSON_GetObjectItemCaseSensitive(entity, "__identifier");
                 cJSON *pxArray = cJSON_GetObjectItemCaseSensitive(entity, "px");
 
                 float rawX = (float)cJSON_GetArrayItem(pxArray, 0)->valueint;
                 float rawY = (float)cJSON_GetArrayItem(pxArray, 1)->valueint;
 
-                float scaledX =
-                    rawX * scaleFactor + myGridSize / 2.0f + offset.x;
-                float scaledY =
-                    rawY * scaleFactor + myGridSize / 2.0f + offset.y;
+                float scaledX = rawX * scaleFactor + myGridSize / 2.0f + offset.x;
+                float scaledY = rawY * scaleFactor + myGridSize / 2.0f + offset.y;
 
                 if (strcmp(entId->valuestring, "PlayerSpawn") == 0) {
                     room->playerSpawn = (Vector2){scaledX, scaledY};
@@ -192,8 +177,7 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                 } else if (strcmp(entId->valuestring, "Boss1") == 0) {
                     spawnBoss1Pos((Vector2){.x = scaledX, scaledY});
                 } else if (strcmp(entId->valuestring, "FireTrap") == 0) {
-                    const char *directionStr =
-                        getFieldValue(entity, "Direction");
+                    const char *directionStr = getFieldValue(entity, "Direction");
                     if (!directionStr)
                         continue;
                     Direction dir;
@@ -223,10 +207,15 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                         .fireTimerMax = 0.04,
                     });
                 } else if (strcmp(entId->valuestring, "Item") == 0) {
-                    const char *itemNameString =
-                        getFieldValue(entity, "ItemName");
+                    const char *itemNameString = getFieldValue(entity, "ItemName");
                     if (strcmp(itemNameString, "MaxHealthItem") == 0) {
                         addItem((Item){.itemType = ITEM_MAX_HEALTH,
+                                       .position = {
+                                           .x = scaledX,
+                                           .y = scaledY,
+                                       }});
+                    } else if (strcmp(itemNameString, "RandomItem") == 0) {
+                        addItem((Item){.itemType = GetRandomValue(ITEM_CURRENT_HEALTH, ITEM_DAMAGE),
                                        .position = {
                                            .x = scaledX,
                                            .y = scaledY,
@@ -246,24 +235,19 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
 void drawRooms() {
     for (uint32_t r = 0; r < numRoomsLoaded; r++) {
         RoomData *room = &rooms[r];
-        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders;
-             colliderIndex++) {
+        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++) {
             if (room->colliders[colliderIndex].type == TILE_WALL)
                 DrawTexturePro(whiteTexture, (Rectangle){0, 0, 16, 16},
-                               room->colliders[colliderIndex].bounds,
-                               (Vector2){0, 0}, 0.0f,
+                               room->colliders[colliderIndex].bounds, (Vector2){0, 0}, 0.0f,
                                (Color){.r = 120, .g = 120, .b = 130, .a = 255});
-            if (room->colliders[colliderIndex].type == TILE_EXIT &&
-                !roomDone(room))
-                DrawRectangleRec(room->colliders[colliderIndex].bounds,
-                                 DARKBROWN);
+            if (room->colliders[colliderIndex].type == TILE_EXIT && !roomDone(room))
+                DrawRectangleRec(room->colliders[colliderIndex].bounds, DARKBROWN);
         }
     }
 }
 
 static bool checkEntityCollision(Vector2 pos, Vector2 size) {
-    Rectangle entityRec = {pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, size.x,
-                           size.y};
+    Rectangle entityRec = {pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, size.x, size.y};
 
     for (uint32_t r = 0; r < numRoomsLoaded; r++) {
         RoomData *room = &rooms[r];
@@ -303,13 +287,11 @@ Vector2 moveWithCollision(Vector2 currentPos, Vector2 size, Vector2 offset) {
 
 static int checkPlayerExitCollision(RoomData *room) {
     Rectangle playerRec = {mainPlayer.position.x - mainPlayer.size.x / 2.0f,
-                           mainPlayer.position.y - mainPlayer.size.y / 2.0f,
-                           mainPlayer.size.x, mainPlayer.size.y};
-    for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders;
-         colliderIndex++) {
+                           mainPlayer.position.y - mainPlayer.size.y / 2.0f, mainPlayer.size.x,
+                           mainPlayer.size.y};
+    for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++) {
         if (room->colliders[colliderIndex].type == TILE_EXIT &&
-            CheckCollisionRecs(playerRec,
-                               room->colliders[colliderIndex].bounds)) {
+            CheckCollisionRecs(playerRec, room->colliders[colliderIndex].bounds)) {
             return colliderIndex;
         }
     }
@@ -322,17 +304,43 @@ static void loadNextRoom(RoomData *lastRoom, int colliderIndex) {
     Vector2 targetEntrance = {lastRoom->colliders[colliderIndex].bounds.x,
                               lastRoom->colliders[colliderIndex].bounds.y};
     if (numRoomsLoaded == BOSS_ROOM_THRESHOLD) {
-        loadRoom("maps/thing/BossLevel.ldtkl", &rooms[numRoomsLoaded],
-                 targetEntrance);
+        loadRoom("maps/thing/BossLevel.ldtkl", &rooms[numRoomsLoaded], targetEntrance);
         playBossMusic();
         return;
     }
     const char *nextMaps[] = {
-        "maps/thing/Level_1.ldtkl",      "maps/thing/Level_2.ldtkl",
-        "maps/thing/Level_3.ldtkl",      "maps/thing/Level_4.ldtkl",
-        "maps/thing/Health_Level.ldtkl",
+        "maps/thing/Level_1.ldtkl",
+        "maps/thing/Level_2.ldtkl",
+        "maps/thing/Level_3.ldtkl",
+        "maps/thing/Level_4.ldtkl",
     };
-    int randIndex = GetRandomValue(0, ARRAY_LENGTH(nextMaps) - 1);
+    const char *extraMaps[] = {
+        "maps/thing/Health_Level.ldtkl",
+        "maps/thing/Item_Level.ldtkl",
+    };
+
+    int extraRooms = 0;
+    if (history.playerUpgrades & UPGRADE_HEALING_ROOM)
+        extraRooms++;
+    if (history.playerUpgrades & UPGRADE_LOOT_ROOM)
+        extraRooms++;
+    int randIndex = GetRandomValue(0, ARRAY_LENGTH(nextMaps) - 1 + extraRooms);
+
+    if (randIndex >= ARRAY_LENGTH(nextMaps)) {
+        if (extraRooms == ARRAY_LENGTH(extraMaps))
+            loadRoom(extraMaps[randIndex - ARRAY_LENGTH(nextMaps)], &rooms[numRoomsLoaded],
+                     targetEntrance);
+        else {
+            if (history.playerUpgrades & UPGRADE_HEALING_ROOM) {
+                loadRoom(extraMaps[0], &rooms[numRoomsLoaded], targetEntrance);
+            } else if (history.playerUpgrades & UPGRADE_LOOT_ROOM) {
+                loadRoom(extraMaps[1], &rooms[numRoomsLoaded], targetEntrance);
+            } else {
+                puts("IMPOSSIBLE STATE! CRITICAL ERROR I GUESS.");
+            }
+        }
+        return;
+    }
     loadRoom(nextMaps[randIndex], &rooms[numRoomsLoaded], targetEntrance);
 }
 

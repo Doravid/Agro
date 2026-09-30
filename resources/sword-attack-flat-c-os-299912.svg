@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Icon: sword-attack-flat
+  Set: Sharp color icons
+  Author: Streamline (https://github.com/webalys-hq/streamline-vectors)
+  License: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+  Source: https://iconify.design
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 24 24"
+     width="24"
+     height="24">
+  <title>Blue Sword Icon for Gaming and Fantasy</title>
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+             xmlns:dc="http://purl.org/dc/elements/1.1/"
+             xmlns:cc="http://creativecommons.org/ns#">
+      <cc:Work rdf:about="">
+        <dc:title>Blue Sword Icon for Gaming and Fantasy</dc:title>
+        <dc:description>A minimalist blue sword icon, perfect for use in gaming, fantasy themes, medieval designs, or app interfaces. Ideal for representing weapons, battles, or adventure concepts.</dc:description>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Streamline</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>https://github.com/webalys-hq/streamline-vectors</dc:source>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Streamline</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <cc:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>sword</rdf:li>
+            <rdf:li>weapon</rdf:li>
+            <rdf:li>blade</rdf:li>
+            <rdf:li>gaming-icon</rdf:li>
+            <rdf:li>fantasy-icon</rdf:li>
+            <rdf:li>medieval-sword</rdf:li>
+            <rdf:li>adventure-icon</rdf:li>
+            <rdf:li>battle-icon</rdf:li>
+            <rdf:li>blue-sword</rdf:li>
+            <rdf:li>RPG-icon</rdf:li>
+            <rdf:li>game-design</rdf:li>
+            <rdf:li>knight-weapon</rdf:li>
+            <rdf:li>combat-icon</rdf:li>
+            <rdf:li>sharp-blade</rdf:li>
+            <rdf:li>medieval-weapon</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="https://creativecommons.org/licenses/by/4.0/">
+        <dc:title>CC BY 4.0 (CC-BY-4.0)</dc:title>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g fill="none"><path fill="#2859c5" d="m19.01 16.182l2.475-2.475l-1.414-1.414l-7.778 7.778l1.414 1.414l2.475-2.474l3.99 3.99H23v-2.83z"/><path fill="#8fbffa" fill-rule="evenodd" d="M1.372 1.371h5.303L18.834 13.53l-5.303 5.303L1.37 6.674z" clip-rule="evenodd"/></g>
+</svg>

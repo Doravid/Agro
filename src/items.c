@@ -20,8 +20,46 @@ static void drawMaxHealthItem(Vector2 pos) {
     Vector2 playerOriginFlipped = {size.y * 0.5f, size.x * 0.5f};
 
     DrawRectanglePro(playerRec, playerOrigin, rotation, drawColor);
-    DrawRectanglePro(playerRecFlipped, playerOriginFlipped, rotation,
-                     drawColor);
+    DrawRectanglePro(playerRecFlipped, playerOriginFlipped, rotation, drawColor);
+}
+static void drawCurrentHealthItem(Vector2 pos) {
+
+    const Vector2 size = {.x = 32, .y = 8};
+
+    const float rotation = 0.f;
+    const Color drawColor = GREEN;
+    Rectangle playerRec = {pos.x, pos.y, size.x, size.y};
+    Vector2 playerOrigin = {size.x * 0.5f, size.y * 0.5f};
+
+    Rectangle playerRecFlipped = {pos.x, pos.y, size.y, size.x};
+    Vector2 playerOriginFlipped = {size.y * 0.5f, size.x * 0.5f};
+
+    DrawRectanglePro(playerRec, playerOrigin, rotation, drawColor);
+    DrawRectanglePro(playerRecFlipped, playerOriginFlipped, rotation, drawColor);
+}
+
+static void drawDamageHealthItem(Vector2 pos) {
+
+    const float rotation = -45.0f;
+    Color bladeColor = (Color){143, 191, 250, 255};
+    Color hiltColor = (Color){40, 89, 197, 255};
+
+    Rectangle bladeRec = {pos.x, pos.y, 10, 24};
+    Vector2 bladeOrigin = {5, 22};
+
+    Rectangle guardRec = {pos.x, pos.y, 18, 4};
+    Vector2 guardOrigin = {9, -2};
+
+    Rectangle handleRec = {pos.x, pos.y, 6, 8};
+    Vector2 handleOrigin = {3, -6};
+
+    Rectangle pommelRec = {pos.x, pos.y, 8, 4};
+    Vector2 pommelOrigin = {4, -14};
+
+    DrawRectanglePro(bladeRec, bladeOrigin, rotation, bladeColor);
+    DrawRectanglePro(guardRec, guardOrigin, rotation, hiltColor);
+    DrawRectanglePro(handleRec, handleOrigin, rotation, hiltColor);
+    DrawRectanglePro(pommelRec, pommelOrigin, rotation, hiltColor);
 }
 
 bool addItem(Item item) {
@@ -44,8 +82,10 @@ void drawItems() {
                 drawMaxHealthItem(items[itemIndex].position);
                 break;
             case ITEM_CURRENT_HEALTH:
+                drawCurrentHealthItem(items[itemIndex].position);
                 break;
             case ITEM_DAMAGE:
+                drawDamageHealthItem(items[itemIndex].position);
                 break;
 
             default:
@@ -65,8 +105,7 @@ void updateItems() {
     // This is mostly for collision checks with the player.
 
     for (uint32_t itemIndex = 0; itemIndex < numItems; itemIndex++) {
-        if (Vector2Distance(items[itemIndex].position, mainPlayer.position) <
-            40.0)
+        if (Vector2Distance(items[itemIndex].position, mainPlayer.position) < 40.0)
             switch (items[itemIndex].itemType) {
                 case ITEM_MAX_HEALTH:
                     mainPlayer.maxHealth += 15;
@@ -74,8 +113,12 @@ void updateItems() {
                     removeItem(itemIndex);
                     break;
                 case ITEM_CURRENT_HEALTH:
+                    mainPlayer.currentHealth += 25;
+                    removeItem(itemIndex);
                     break;
                 case ITEM_DAMAGE:
+                    mainPlayer.attackDamage += 10;
+                    removeItem(itemIndex);
                     break;
                 default:
                     puts("ERROR: Impossible Item Type");

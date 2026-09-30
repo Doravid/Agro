@@ -1,0 +1,29 @@
+{
+	"identifier": "Item_Level",
+	"uniqueIdentifer": "378a6602-96d0-11f1-b589-8f2aea5b560b",
+	"x": -528,
+	"y": -336,
+	"width": 112,
+	"height": 112,
+	"bgColor": "#696A79",
+	"neighbourLevels": [],
+	"customFields" : {},
+	"layers": [],
+	"entities": {
+		"Item": [
+			{
+				"id": "Item",
+				"iid": "378a6604-96d0-11f1-b589-0b032473203f",
+				"layer": "Entities",
+				"x": 48,
+				"y": 48,
+				"width": 16,
+				"height": 16,
+				"color": 4098376,
+				"customFields": {
+					"ItemName": "RandomItem"
+				}
+			}
+		]
+	}
+}

@@ -8,10 +8,9 @@
 #include "levelManager.h"
 #include "player.h"
 
-#define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector)                                 \
+#define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector)                                                     \
     (Clay_Vector2) { .x = vector.x, .y = vector.y }
-#define CLAY_STR(str)                                                          \
-    ((Clay_String){.length = (uint32_t)strlen(str), .chars = (str)})
+#define CLAY_STR(str) ((Clay_String){.length = (uint32_t)strlen(str), .chars = (str)})
 
 typedef enum {
     UPGRADE_CATEGORY_NONE = -1,
@@ -54,9 +53,8 @@ static UIUpgradeData characterData[] = {
         .category = UPGRADE_CATEGORY_CHARACTER,
         .weaponId = WEAPON_SHOOTER,
         .name = "Shooter",
-        .desc =
-            "Fast Attack Speed, Normal Damage, Ranged.\n\nUpgrades:\n- Attack "
-            "Speed\n- Scatter Shot\n- Big Third Shot",
+        .desc = "Fast Attack Speed, Normal Damage, Ranged.\n\nUpgrades:\n- Attack "
+                "Speed\n- Scatter Shot\n- Big Third Shot",
         .currentLevel = 1,
         .maxLevel = 4,
         .price = 50,
@@ -65,9 +63,8 @@ static UIUpgradeData characterData[] = {
         .category = UPGRADE_CATEGORY_CHARACTER,
         .weaponId = WEAPON_FLAME,
         .name = "Flame Shot",
-        .desc =
-            "Fast Attack, Normal Damage, Applies Burn.\n\nUpgrades:\n- Hotter "
-            "Shots\n- Faster Flame\n- Rotation Speed",
+        .desc = "Fast Attack, Normal Damage, Applies Burn.\n\nUpgrades:\n- Hotter "
+                "Shots\n- Faster Flame\n- Rotation Speed",
         .currentLevel = 0,
         .maxLevel = 4,
         .price = 50,
@@ -198,15 +195,12 @@ void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
     }
 
     if (item->category == UPGRADE_CATEGORY_GENERAL) {
-        puts("Unlock!!");
         switch (item->upgradeId) {
             case GENERAL_UPGRADE_DAMAGE:
-                history.playerUpgrades |= UPGRADE_DAMAGE_1
-                                          << (item->currentLevel - 1);
+                history.playerUpgrades |= UPGRADE_DAMAGE_1 << (item->currentLevel - 1);
                 break;
             case GENERAL_UPGRADE_REGENERATION:
-                history.playerUpgrades |= UPGRADE_REGENERATION_1
-                                          << (item->currentLevel - 1);
+                history.playerUpgrades |= UPGRADE_REGENERATION_1 << (item->currentLevel - 1);
                 break;
             case GENERAL_UPGRADE_HEALING_ROOM:
                 history.playerUpgrades |= UPGRADE_HEALING_ROOM;
@@ -215,15 +209,13 @@ void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
                 history.playerUpgrades |= UPGRADE_LOOT_ROOM;
                 break;
             case GENERAL_UPGRADE_MOVE_SPEED:
-                history.playerUpgrades |= UPGRADE_MOVE_SPEED_1
-                                          << (item->currentLevel - 1);
+                history.playerUpgrades |= UPGRADE_MOVE_SPEED_1 << (item->currentLevel - 1);
                 break;
             case GENERAL_UPGRADE_DASH_UNLOCK:
                 history.playerUpgrades |= UPGRADE_DASH_UNLOCK;
                 break;
             case GENERAL_UPGRADE_DASH_COOLDOWN:
-                history.playerUpgrades |= UPGRADE_DASH_COOLDOWN_1
-                                          << (item->currentLevel - 1);
+                history.playerUpgrades |= UPGRADE_DASH_COOLDOWN_1 << (item->currentLevel - 1);
                 break;
             case GENERAL_UPGRADE_REMOVE_ROOM:
                 history.playerUpgrades |= UPGRADE_REMOVE_ROOM;
@@ -231,34 +223,24 @@ void updatePlayerHistoryFromPurchase(UIUpgradeData *item) {
             default:
                 break;
         }
-
-        printf("%s\n", ((history.playerUpgrades & UPGRADE_DASH_UNLOCK) != 0)
-                           ? "true"
-                           : "false");
-        printf("%d\n", item->upgradeId);
     }
 }
 
 Clay_ElementDeclaration upgradesRootConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_GROW(0)},
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_GROW(0)},
                .layoutDirection = CLAY_LEFT_TO_RIGHT},
     .backgroundColor = settingsBlack};
 
 Clay_ElementDeclaration leftPanelConfig = {
-    .layout = {
-        .sizing = {.width = CLAY_SIZING_PERCENT(0.65),
-                   .height = CLAY_SIZING_GROW(0)},
-        .childAlignment = {.x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_TOP},
-        .layoutDirection = CLAY_TOP_TO_BOTTOM,
-        .childGap = 30,
-        .padding = {40, 40, 40, 40}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_PERCENT(0.65), .height = CLAY_SIZING_GROW(0)},
+               .childAlignment = {.x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_TOP},
+               .layoutDirection = CLAY_TOP_TO_BOTTOM,
+               .childGap = 30,
+               .padding = {40, 40, 40, 40}}};
 
 Clay_ElementDeclaration rightPanelConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_PERCENT(0.35),
-                          .height = CLAY_SIZING_GROW(0)},
-               .childAlignment = {.x = CLAY_ALIGN_X_CENTER,
-                                  .y = CLAY_ALIGN_Y_TOP},
+    .layout = {.sizing = {.width = CLAY_SIZING_PERCENT(0.35), .height = CLAY_SIZING_GROW(0)},
+               .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_TOP},
                .layoutDirection = CLAY_TOP_TO_BOTTOM,
                .childGap = 20,
                .padding = {40, 40, 40, 40}},
@@ -268,18 +250,15 @@ Clay_ElementDeclaration rightPanelConfig = {
 Clay_ElementDeclaration gridRowConfig = {
     .layout =
         {
-            .sizing = {.width = CLAY_SIZING_GROW(0),
-                       .height = CLAY_SIZING_FIT(0)},
+            .sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIT(0)},
             .layoutDirection = CLAY_LEFT_TO_RIGHT,
             .childGap = 0,
         },
 };
 
 Clay_ElementDeclaration itemBoxConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_FIXED(160),
-                          .height = CLAY_SIZING_FIXED(120)},
-               .childAlignment = {.x = CLAY_ALIGN_X_CENTER,
-                                  .y = CLAY_ALIGN_Y_CENTER},
+    .layout = {.sizing = {.width = CLAY_SIZING_FIXED(160), .height = CLAY_SIZING_FIXED(120)},
+               .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER},
                .layoutDirection = CLAY_TOP_TO_BOTTOM,
                .childGap = 15,
                .padding = {10, 10, 10, 10}},
@@ -288,56 +267,45 @@ Clay_ElementDeclaration itemBoxConfig = {
     .border = {.color = settingsBlue, .width = CLAY_BORDER_OUTSIDE(2)}};
 
 Clay_ElementDeclaration sectionHeaderConfig = {
-    .layout = {
-        .sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIT(0)},
-        .childAlignment = {.x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_CENTER},
-        .padding = {.bottom = 10}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIT(0)},
+               .childAlignment = {.x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_CENTER},
+               .padding = {.bottom = 10}}};
 
 Clay_ElementDeclaration buttonConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_FIXED(60)},
-               .childAlignment = {.x = CLAY_ALIGN_X_CENTER,
-                                  .y = CLAY_ALIGN_Y_CENTER}},
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIXED(60)},
+               .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}},
     .backgroundColor = toggleBackgroundColor,
     .cornerRadius = CLAY_CORNER_RADIUS(8),
     .border = {.color = settingsBlue, .width = CLAY_BORDER_OUTSIDE(2)}};
 
 Clay_ElementDeclaration upgradesBackButtonConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_FIXED(150),
-                          .height = CLAY_SIZING_FIXED(50)},
-               .childAlignment = {.x = CLAY_ALIGN_X_CENTER,
-                                  .y = CLAY_ALIGN_Y_CENTER}},
+    .layout = {.sizing = {.width = CLAY_SIZING_FIXED(150), .height = CLAY_SIZING_FIXED(50)},
+               .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}},
     .backgroundColor = toggleBackgroundColor,
     .cornerRadius = CLAY_CORNER_RADIUS(8),
     .border = {.color = settingsBlue, .width = CLAY_BORDER_OUTSIDE(2)}};
 
 Clay_ElementDeclaration descSpacerConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_FIXED(10)}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIXED(10)}}};
 
 Clay_ElementDeclaration descSpacer2Config = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_FIXED(20)}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIXED(20)}}};
 
 Clay_ElementDeclaration btnSpacerConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_GROW(0)}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_GROW(0)}}};
 
 Clay_ElementDeclaration selectSpacerConfig = {
-    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0),
-                          .height = CLAY_SIZING_FIXED(20)}}};
+    .layout = {.sizing = {.width = CLAY_SIZING_GROW(0), .height = CLAY_SIZING_FIXED(20)}}};
 
 void renderItemBox(UIUpgradeData *item) {
     Clay_ElementDeclaration config = itemBoxConfig;
 
-    bool isSelected =
-        (selectedCategory == item->category && selectedId == item->id);
+    bool isSelected = (selectedCategory == item->category && selectedId == item->id);
     if (isSelected) {
         config.border.color = settingsOrange;
     }
 
-    Clay_ElementId clayId =
-        CLAY_IDI("ItemBox", item->category * 1000 + item->id);
+    Clay_ElementId clayId = CLAY_IDI("ItemBox", item->category * 1000 + item->id);
 
     if (Clay_PointerOver(clayId) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         selectedCategory = item->category;
@@ -345,30 +313,24 @@ void renderItemBox(UIUpgradeData *item) {
     }
 
     CLAY(clayId, config) {
-        CLAY_TEXT(CLAY_STR(item->name),
-                  CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = textColor}));
+        CLAY_TEXT(CLAY_STR(item->name), CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = textColor}));
 
         if (item->category == 0) {
             if (equippedCharacter == item->id) {
                 CLAY_TEXT(CLAY_STRING("EQUIPPED"),
-                          CLAY_TEXT_CONFIG(
-                              {.fontSize = 20, .textColor = settingsOrange}));
+                          CLAY_TEXT_CONFIG({.fontSize = 20, .textColor = settingsOrange}));
             } else {
-                CLAY_TEXT(
-                    item->currentLevel > 0 ? CLAY_STRING("OWNED")
-                                           : CLAY_STRING("LOCKED"),
-                    CLAY_TEXT_CONFIG({.fontSize = 20, .textColor = textColor}));
+                CLAY_TEXT(item->currentLevel > 0 ? CLAY_STRING("OWNED") : CLAY_STRING("LOCKED"),
+                          CLAY_TEXT_CONFIG({.fontSize = 20, .textColor = textColor}));
             }
         } else {
             static char levelBuf[64][32];
             static int levelIdx = 0;
             levelIdx = (levelIdx + 1) % 64;
-            snprintf(levelBuf[levelIdx], 32, "%d / %d", item->currentLevel,
-                     item->maxLevel);
+            snprintf(levelBuf[levelIdx], 32, "%d / %d", item->currentLevel, item->maxLevel);
 
-            CLAY_TEXT(
-                CLAY_STR(levelBuf[levelIdx]),
-                CLAY_TEXT_CONFIG({.fontSize = 20, .textColor = textColor}));
+            CLAY_TEXT(CLAY_STR(levelBuf[levelIdx]),
+                      CLAY_TEXT_CONFIG({.fontSize = 20, .textColor = textColor}));
         }
     }
 }
@@ -414,20 +376,16 @@ void renderRightPanel(void) {
               CLAY_TEXT_CONFIG({.fontSize = 50, .textColor = settingsOrange}));
 
     CLAY(CLAY_ID("DescSpacer"), descSpacerConfig) {}
-    CLAY_TEXT(CLAY_STR(item->desc),
-              CLAY_TEXT_CONFIG({.fontSize = 30, .textColor = textColor}));
+    CLAY_TEXT(CLAY_STR(item->desc), CLAY_TEXT_CONFIG({.fontSize = 30, .textColor = textColor}));
     CLAY(CLAY_ID("DescSpacer2"), descSpacer2Config) {}
 
     static char panelLevelBuf[64];
-    snprintf(panelLevelBuf, 64, "Level: %d / %d", item->currentLevel,
-             item->maxLevel);
+    snprintf(panelLevelBuf, 64, "Level: %d / %d", item->currentLevel, item->maxLevel);
 
-    CLAY_TEXT(CLAY_STR(panelLevelBuf),
-              CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
+    CLAY_TEXT(CLAY_STR(panelLevelBuf), CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
     static char priceBuf[64];
     snprintf(priceBuf, 64, "Price: %u$", cost);
-    CLAY_TEXT(CLAY_STR(priceBuf),
-              CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
+    CLAY_TEXT(CLAY_STR(priceBuf), CLAY_TEXT_CONFIG({.fontSize = 35, .textColor = textColor}));
 
     CLAY(CLAY_ID("BtnSpacer"), btnSpacerConfig) {}
 
@@ -448,19 +406,15 @@ void renderRightPanel(void) {
 
     CLAY(CLAY_ID("BuyBtn"), buyCfg) {
         if (!canBuy) {
-            CLAY_TEXT(
-                CLAY_STRING("MAXED"),
-                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+            CLAY_TEXT(CLAY_STRING("MAXED"),
+                      CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
         } else if (!hasMoney) {
-            CLAY_TEXT(
-                CLAY_STRING("NOT ENOUGH MONEY"),
-                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+            CLAY_TEXT(CLAY_STRING("NOT ENOUGH MONEY"),
+                      CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
         } else {
             static char buyBuf[32];
             snprintf(buyBuf, 32, "BUY (%u$)", cost);
-            CLAY_TEXT(
-                CLAY_STR(buyBuf),
-                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+            CLAY_TEXT(CLAY_STR(buyBuf), CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
         }
     }
 
@@ -481,10 +435,8 @@ void renderRightPanel(void) {
         }
 
         CLAY(CLAY_ID("SelectBtn"), selectCfg) {
-            CLAY_TEXT(
-                isEquipped ? CLAY_STRING("EQUIPPED")
-                           : CLAY_STRING("SELECT CHARACTER"),
-                CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
+            CLAY_TEXT(isEquipped ? CLAY_STRING("EQUIPPED") : CLAY_STRING("SELECT CHARACTER"),
+                      CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = textColor}));
         }
     }
 }
@@ -492,8 +444,7 @@ void renderRightPanel(void) {
 Clay_RenderCommandArray getUpgradesMenu(void) {
     Clay_SetPointerState(RAYLIB_VECTOR2_TO_CLAY_VECTOR2(GetMousePosition()),
                          IsMouseButtonDown(MOUSE_LEFT_BUTTON));
-    Clay_SetLayoutDimensions(
-        (Clay_Dimensions){(float)GetScreenWidth(), (float)GetScreenHeight()});
+    Clay_SetLayoutDimensions((Clay_Dimensions){(float)GetScreenWidth(), (float)GetScreenHeight()});
 
     Clay_BeginLayout();
 
@@ -510,34 +461,26 @@ Clay_RenderCommandArray getUpgradesMenu(void) {
                 }
                 CLAY(CLAY_ID("UpgradesBackBtn"), backCfg) {
                     CLAY_TEXT(CLAY_STRING("BACK"),
-                              CLAY_TEXT_CONFIG(
-                                  {.fontSize = 30, .textColor = textColor}));
+                              CLAY_TEXT_CONFIG({.fontSize = 30, .textColor = textColor}));
                 }
-                CLAY(
-                    CLAY_ID("Spacer"),
-                    (Clay_ElementDeclaration){
-                        .layout = {.sizing = {.width = CLAY_SIZING_GROW(0)}}}) {
-                }
+                CLAY(CLAY_ID("Spacer"),
+                     (Clay_ElementDeclaration){
+                         .layout = {.sizing = {.width = CLAY_SIZING_GROW(0)}}}) {}
                 static char balanceBuf[32];
                 snprintf(balanceBuf, 32, "%d$", history.coins);
                 CLAY_TEXT(CLAY_STR(balanceBuf),
-                          CLAY_TEXT_CONFIG(
-                              {.fontSize = 48, .textColor = settingsOrange}));
+                          CLAY_TEXT_CONFIG({.fontSize = 48, .textColor = settingsOrange}));
             }
             CLAY(CLAY_ID("CharHeader"), sectionHeaderConfig) {
                 CLAY_TEXT(CLAY_STRING("Characters"),
-                          CLAY_TEXT_CONFIG(
-                              {.fontSize = 40, .textColor = settingsOrange}));
+                          CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = settingsOrange}));
             }
-            drawGrid(1, characterData,
-                     sizeof(characterData) / sizeof(UIUpgradeData), 5);
+            drawGrid(1, characterData, sizeof(characterData) / sizeof(UIUpgradeData), 5);
             CLAY(CLAY_ID("UpgradeHeader"), sectionHeaderConfig) {
                 CLAY_TEXT(CLAY_STRING("UPGRADES"),
-                          CLAY_TEXT_CONFIG(
-                              {.fontSize = 40, .textColor = settingsOrange}));
+                          CLAY_TEXT_CONFIG({.fontSize = 40, .textColor = settingsOrange}));
             }
-            drawGrid(1, upgradeData,
-                     sizeof(upgradeData) / sizeof(UIUpgradeData), 5);
+            drawGrid(1, upgradeData, sizeof(upgradeData) / sizeof(UIUpgradeData), 5);
         }
 
         CLAY(CLAY_ID("RightPanel"), rightPanelConfig) { renderRightPanel(); }
@@ -571,8 +514,7 @@ void syncUpgradesUI(void) {
                 break;
         }
 
-        for (uint32_t lvl = item->currentLevel + 1; lvl <= item->maxLevel;
-             lvl++) {
+        for (uint32_t lvl = item->currentLevel + 1; lvl <= item->maxLevel; lvl++) {
             if (mask & (1 << (lvl - 1))) {
                 item->currentLevel = lvl;
             }

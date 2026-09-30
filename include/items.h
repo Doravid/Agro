@@ -2,9 +2,9 @@
 #include <raylib.h>
 
 typedef enum {
-    ITEM_MAX_HEALTH,
-    ITEM_CURRENT_HEALTH,
-    ITEM_DAMAGE,
+    ITEM_MAX_HEALTH = 1,
+    ITEM_CURRENT_HEALTH = 2,
+    ITEM_DAMAGE = 3,
 } ItemType;
 
 typedef struct {
@@ -15,3 +15,5 @@ typedef struct {
 void drawItems();
 void updateItems();
 bool addItem(Item item);
+
+extern uint32_t numItems;

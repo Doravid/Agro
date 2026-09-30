@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
 
 #include "projectile.h"
 #include "player.h"
@@ -11,18 +12,20 @@ Projectile projectiles[MAX_PROJECTILES];
 uint32_t numProjectiles = 0;
 
 void spawnProjectile(Projectile proj_to_spawn) {
+    puts("Hii");
     if (numProjectiles < MAX_PROJECTILES) {
         projectiles[numProjectiles] = proj_to_spawn;
         numProjectiles++;
+        puts("Hello");
     }
 }
 
 void drawProjectiles(Projectile *projs, uint32_t numProjs) {
-    for (uint16_t projectileIndex = 0; projectileIndex < numProjs;
-         projectileIndex++) {
+    for (uint16_t projectileIndex = 0; projectileIndex < numProjs; projectileIndex++) {
         Projectile currentProjectile = projs[projectileIndex];
         DrawCircle(currentProjectile.position.x, currentProjectile.position.y,
                    currentProjectile.size, currentProjectile.color);
+        puts("drawing!");
     }
 }
 void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner) {
@@ -42,8 +45,8 @@ void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner) {
     });
 }
 
-void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner,
-                                  float size, float moveSpeed) {
+void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner, float size,
+                                  float moveSpeed) {
     Vector2 directionVector = {.x = cosf(parent.rotation * DEG2RAD),
                                .y = sinf(parent.rotation * DEG2RAD)};
     ProjectileOwner newOwner = owner;
@@ -63,8 +66,7 @@ void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner,
 
 bool projectileHitsEntity(Projectile proj) {
     if (proj.owner == EnemyProj &&
-        Vector2Distance(proj.position, mainPlayer.position) <
-            proj.size + mainPlayer.size.x / 2) {
+        Vector2Distance(proj.position, mainPlayer.position) < proj.size + mainPlayer.size.x / 2) {
         if (mainPlayer.dashTimer > 0)
             return false;
 
@@ -84,20 +86,16 @@ bool projectileHitsEntity(Projectile proj) {
 
     for (uint32_t r = 0; r < numRoomsLoaded; r++) {
         RoomData *room = &rooms[r];
-        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders;
-             colliderIndex++) {
+        for (uint32_t colliderIndex = 0; colliderIndex < room->numColliders; colliderIndex++) {
             if (room->colliders[colliderIndex].type == TILE_ENTRANCE ||
-                (room->colliders[colliderIndex].type == TILE_EXIT &&
-                 roomDone(room)))
+                (room->colliders[colliderIndex].type == TILE_EXIT && roomDone(room)))
                 continue;
             Rectangle bounds = room->colliders[colliderIndex].bounds;
 
-            bool isInXRange =
-                proj.position.x + proj.size / 2 >= bounds.x &&
-                proj.position.x <= bounds.x + bounds.width + proj.size / 2;
-            bool isInYRange =
-                proj.position.y + proj.size / 2 >= bounds.y &&
-                proj.position.y <= bounds.y + bounds.height + proj.size / 2;
+            bool isInXRange = proj.position.x + proj.size / 2 >= bounds.x &&
+                              proj.position.x <= bounds.x + bounds.width + proj.size / 2;
+            bool isInYRange = proj.position.y + proj.size / 2 >= bounds.y &&
+                              proj.position.y <= bounds.y + bounds.height + proj.size / 2;
             if (isInXRange && isInYRange) {
                 return true;
             }
@@ -108,23 +106,18 @@ bool projectileHitsEntity(Projectile proj) {
 }
 
 void updateProjectiles() {
-    for (uint16_t projectileIndex = 0; projectileIndex < numProjectiles;
-         projectileIndex++) {
+    for (uint16_t projectileIndex = 0; projectileIndex < numProjectiles; projectileIndex++) {
         Projectile *currentProjectile = &projectiles[projectileIndex];
 
-        currentProjectile->position.x += currentProjectile->direction.x *
-                                         currentProjectile->moveSpeed *
-                                         GetFrameTime();
-        currentProjectile->position.y += currentProjectile->direction.y *
-                                         currentProjectile->moveSpeed *
-                                         GetFrameTime();
+        currentProjectile->position.x +=
+            currentProjectile->direction.x * currentProjectile->moveSpeed * GetFrameTime();
+        currentProjectile->position.y +=
+            currentProjectile->direction.y * currentProjectile->moveSpeed * GetFrameTime();
 
         currentProjectile->lifetime -= GetFrameTime();
 
-        if (currentProjectile->lifetime <= 0.0f ||
-            projectileHitsEntity(*currentProjectile) ||
-            Vector2Distance(currentProjectile->position, mainPlayer.position) >
-                2500.) {
+        if (currentProjectile->lifetime <= 0.0f || projectileHitsEntity(*currentProjectile) ||
+            Vector2Distance(currentProjectile->position, mainPlayer.position) > 2500.) {
             *currentProjectile = projectiles[numProjectiles - 1];
             numProjectiles--;
             projectileIndex--;
