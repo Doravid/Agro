@@ -5,13 +5,15 @@ A lightweight Raylib game. Pew pew pew.
 
 # Dependencies
 
-Requires Raylib to be installed as a system library. This should be possible using 
-- `brew install raylib` on mac.
-- `sudo pacman -S raylib` on arch linux.
-- install a better OS if you are on anything else.
+This project uses Zig as it's build system. [Zig Installation](https://zig.guide/getting-started/installation/). The project requires zig 0.16.0 to work, no other versions are guaranteed to work.  
 
-It also requires Zig 0.16.0 to be installed. 
-I recommend using [Zig Version Manager](https://www.zvm.app/) and then using `zvm use 0.16.0`
+## Linux
+I recommend using [Zig Version Manager](https://www.zvm.app/) if you are on arch. e.g `yay zvm` and then `zvm use 0.16.0`. Other versions of zig may work. Feel free to try your local linux package. 
+## Mac
+On MacOS I recommend just doing `brew install zig@0.16`.
+ 
+## Windows 
+On Windows `choco install zig` **WARNING:** I do not have a windows machine and it seems like choco doesn't let you specify which version you want so this might not work. 
 
 # How to build / run
 
