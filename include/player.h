@@ -85,7 +85,7 @@ typedef struct {
 } PlayerHistory;
 
 typedef struct {
-    Vector2 position, size, movementVector;
+    Vector2 position, size, movementVector, impactVector;
     Color color;
     float rotation, moveSpeed, rotationSpeed, attackSpeed, attackCooldown;
     uint32_t maxHealth, currentHealth;
@@ -98,8 +98,7 @@ typedef struct {
 void drawPlayer(Player player);
 void updatePlayer(Camera2D camera);
 void damagePlayer(uint32_t damage);
-void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
-                   Color color);
+void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color);
 void initPlayer(PlayerHistory history);
 void handleRegeneration();
 

@@ -25,7 +25,6 @@ void drawProjectiles(Projectile *projs, uint32_t numProjs) {
         Projectile currentProjectile = projs[projectileIndex];
         DrawCircle(currentProjectile.position.x, currentProjectile.position.y,
                    currentProjectile.size, currentProjectile.color);
-        puts("drawing!");
     }
 }
 void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner) {

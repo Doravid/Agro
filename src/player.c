@@ -24,6 +24,7 @@ static void initShooter(PlayerUpgrades upgrades) {
         .moveSpeed = 400.0f,
         .color = GREEN,
         .movementVector = (Vector2){0},
+        .impactVector = {0},
         .dashTimer = 0.0f,
         .attackDamage = 15,
         .attackCooldown = 0.1f,
@@ -43,6 +44,7 @@ static void initBigshot(PlayerUpgrades upgrades) {
         .moveSpeed = 150.0f,
         .color = ORANGE,
         .movementVector = (Vector2){0},
+        .impactVector = {0},
         .dashTimer = 0.0f,
         .attackDamage = 75,
         .attackCooldown = 0.1f,
@@ -117,8 +119,7 @@ void initPlayer(PlayerHistory history) {
     applyPlayerUpgrades(history.playerUpgrades);
 }
 
-void drawHealthBar(Vector2 size, Vector2 position, float healthPercent,
-                   Color color) {
+void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color) {
     Vector2 playerOrigin = {size.x * 0.5f, size.y * 0.5f};
     const float healthBarStart = (position.x - size.x / 4);
     const float healthBarMaxWidth = size.x * 1.5;
@@ -143,27 +144,22 @@ void drawShooterPlayer(Player player) {
     Vector2 childOffset = {30.0f, 0.0f};
     Vector2 childSize = {20.0f, 15.0f};
 
-    Vector2 rotatedOffset =
-        Vector2Rotate(childOffset, player.rotation * DEG2RAD);
+    Vector2 rotatedOffset = Vector2Rotate(childOffset, player.rotation * DEG2RAD);
     Vector2 childWorldPos = Vector2Add(player.position, rotatedOffset);
 
-    Color barrelDrawColor =
-        player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
-    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x,
-                          childSize.y};
+    Color barrelDrawColor = player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
+    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x, childSize.y};
     Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
     DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
 
-    Color playerDrawColor =
-        player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
+    Color playerDrawColor = player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
 
-    Rectangle playerRec = {player.position.x, player.position.y, player.size.x,
-                           player.size.y};
+    Rectangle playerRec = {player.position.x, player.position.y, player.size.x, player.size.y};
     Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
     DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
 
-    drawHealthBar(player.size, player.position,
-                  (float)player.currentHealth / player.maxHealth, player.color);
+    drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth,
+                  player.color);
 }
 
 void drawBigshot(Player player) {
@@ -171,27 +167,22 @@ void drawBigshot(Player player) {
     Vector2 childOffset = {30.0f, 0.0f};
     Vector2 childSize = {40.0f, 45.0f};
 
-    Vector2 rotatedOffset =
-        Vector2Rotate(childOffset, player.rotation * DEG2RAD);
+    Vector2 rotatedOffset = Vector2Rotate(childOffset, player.rotation * DEG2RAD);
     Vector2 childWorldPos = Vector2Add(player.position, rotatedOffset);
 
-    Color barrelDrawColor =
-        player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
-    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x,
-                          childSize.y};
+    Color barrelDrawColor = player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
+    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x, childSize.y};
     Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
     DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
 
-    Color playerDrawColor =
-        player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
+    Color playerDrawColor = player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
 
-    Rectangle playerRec = {player.position.x, player.position.y, player.size.x,
-                           player.size.y};
+    Rectangle playerRec = {player.position.x, player.position.y, player.size.x, player.size.y};
     Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
     DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
 
-    drawHealthBar(player.size, player.position,
-                  (float)player.currentHealth / player.maxHealth, player.color);
+    drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth,
+                  player.color);
 }
 
 void drawPlayer(Player player) {
@@ -225,13 +216,10 @@ void handleRegeneration() {
         mainPlayer.currentHealth = mainPlayer.maxHealth;
     }
 }
-static bool upgradeObtained(PlayerUpgrades upgrade) {
-    return mainPlayer.currentUpgrades & upgrade;
-}
+static bool upgradeObtained(PlayerUpgrades upgrade) { return mainPlayer.currentUpgrades & upgrade; }
 
 static void startPlayerDash(Player *player) {
-    if (player->dashTimer > 0.f ||
-        Vector2LengthSqr(player->movementVector) <= 0)
+    if (player->dashTimer > 0.f || Vector2LengthSqr(player->movementVector) <= 0)
         return;
     PlaySound(dash);
     player->dashTimer = 0.15f;
@@ -242,10 +230,8 @@ static bool updatePlayerDash() {
         mainPlayer.dashTimer -= GetFrameTime();
 
         float currentDashSpeed = mainPlayer.moveSpeed * 3.5f;
-        Vector2 offset = Vector2Scale(mainPlayer.movementVector,
-                                      currentDashSpeed * GetFrameTime());
-        mainPlayer.position =
-            moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
+        Vector2 offset = Vector2Scale(mainPlayer.movementVector, currentDashSpeed * GetFrameTime());
+        mainPlayer.position = moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
         return true;
     }
     return false;
@@ -261,6 +247,8 @@ static void handleShooterAttack() {
         PlaySound(shoot);
         spawnProjectileFromPlayer(mainPlayer, PlayerProj);
         mainPlayer.attackCooldown += mainPlayer.attackSpeed;
+        mainPlayer.impactVector =
+            (Vector2){-cosf(mainPlayer.rotation * DEG2RAD), -sinf(mainPlayer.rotation * DEG2RAD)};
     }
 }
 
@@ -304,14 +292,17 @@ void updatePlayer(Camera2D camera) {
     else if (IsKeyDown(KEY_A))
         mainPlayer.movementVector.x = -1;
     else
-        mainPlayer.movementVector.x = 0;
+        mainPlayer.movementVector.x = mainPlayer.movementVector.x * pow(0.003f, GetFrameTime());
     // Y
     if (IsKeyDown(KEY_W))
         mainPlayer.movementVector.y = -1;
     else if (IsKeyDown(KEY_S))
         mainPlayer.movementVector.y = 1;
     else
-        mainPlayer.movementVector.y = 0;
+        mainPlayer.movementVector.y = mainPlayer.movementVector.y * pow(0.003f, GetFrameTime());
+
+    if (Vector2Length(mainPlayer.movementVector) < 0.25f)
+        mainPlayer.movementVector = Vector2Scale(mainPlayer.movementVector, 0);
 
     // Handle the Dashing Logic.
     if (IsKeyPressed(KEY_LEFT_SHIFT) && upgradeObtained(UPGRADE_DASH_UNLOCK)) {
@@ -339,15 +330,21 @@ void updatePlayer(Camera2D camera) {
     }
 
     // Movement
-    Vector2 norm = Vector2Normalize(mainPlayer.movementVector);
-    Vector2 offset = Vector2Scale(norm, GetFrameTime() * mainPlayer.moveSpeed);
-    mainPlayer.position =
-        moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
+    const float impactScalingFactor = 100.f;
+    Vector2 norm = Vector2ClampValue(mainPlayer.movementVector, 0.0f, 1.0f);
+    Vector2 baseMove = Vector2Scale(norm, mainPlayer.moveSpeed * GetFrameTime());
+    Vector2 impactMove =
+        Vector2Scale(mainPlayer.impactVector, impactScalingFactor * GetFrameTime());
+
+    mainPlayer.impactVector = Vector2Scale(mainPlayer.impactVector, pow(0.05f, GetFrameTime()));
+    if (Vector2Length(mainPlayer.impactVector) < 0.2)
+        mainPlayer.impactVector = Vector2Scale(mainPlayer.impactVector, 0);
+    Vector2 offset = Vector2Add(baseMove, impactMove);
+    mainPlayer.position = moveWithCollision(mainPlayer.position, mainPlayer.size, offset);
 
     // Rotate the Player
     Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
-    float ang = atan2f(mousePos.y - mainPlayer.position.y,
-                       mousePos.x - mainPlayer.position.x);
+    float ang = atan2f(mousePos.y - mainPlayer.position.y, mousePos.x - mainPlayer.position.x);
     float enemyAngle = mainPlayer.rotation * DEG2RAD;
     float delta = enemyAngle - ang;
     delta = atan2f(sinf(delta), cosf(delta));
