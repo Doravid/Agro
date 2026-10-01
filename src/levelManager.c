@@ -1,4 +1,4 @@
-#include <cjson/cJSON.h>
+#include <cJSON.h>
 #include <raylib.h>
 #include <raymath.h>
 #include <stdio.h>
