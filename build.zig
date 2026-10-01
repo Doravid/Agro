@@ -29,6 +29,7 @@ pub fn build(b: *std.Build) void {
             "src/settings.c",
             "src/upgrades.c",
             "src/items.c",
+            "src/cJSON.c",
         },
         .flags = &.{
             "-std=gnu23",
@@ -42,8 +43,11 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    exe.root_module.linkSystemLibrary("raylib", .{});
-    exe.root_module.linkSystemLibrary("cJSON", .{});
+    const raylib = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    exe.root_module.linkLibrary(raylib.artifact("raylib"));
     b.installArtifact(exe);
 
     const run_tests = b.addRunArtifact(exe);

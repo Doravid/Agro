@@ -12,11 +12,9 @@ Projectile projectiles[MAX_PROJECTILES];
 uint32_t numProjectiles = 0;
 
 void spawnProjectile(Projectile proj_to_spawn) {
-    puts("Hii");
     if (numProjectiles < MAX_PROJECTILES) {
         projectiles[numProjectiles] = proj_to_spawn;
         numProjectiles++;
-        puts("Hello");
     }
 }
 
