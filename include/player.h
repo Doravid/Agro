@@ -82,6 +82,7 @@ typedef struct {
     FlameShotUpgradeLevel flameShotUpgradeLevel;
     uint32_t coins;
     float musicVolume, soundVolume;
+    float screenShakeAmount;
 } PlayerHistory;
 
 typedef struct {
