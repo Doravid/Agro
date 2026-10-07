@@ -359,20 +359,18 @@ void updateRooms() {
 void saveGame(void) {
     history.musicVolume = getMusicVolume();
     history.soundVolume = getSoundVolumes();
-    FILE *file = fopen("game.save", "wb");
-    if (file) {
-        fwrite(&history, sizeof(history), 1, file);
-        fclose(file);
-    } else {
+    if (!SaveFileData("game.save", &history, sizeof(history)))
         perror("Failed to save game.");
-    }
 }
 
 void loadGame(void) {
-    FILE *file = fopen("game.save", "rb");
-    if (file) {
-        fread(&history, sizeof(history), 1, file);
-        fclose(file);
+    int dataSize = 0;
+    unsigned char *fileData = LoadFileData("game.save", &dataSize);
+    if (fileData) {
+        if (dataSize >= sizeof(history)) {
+            memcpy(&history, fileData, sizeof(history));
+        }
+        UnloadFileData(fileData);
         syncUpgradesUI();
     } else {
         puts("Failed to load game. If this is not your first time booting that "

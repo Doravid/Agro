@@ -46,31 +46,31 @@ typedef enum {
 typedef enum {
     NO_UPGRADES = 0,
     // Health Upgrades
-    UPGRADE_HEALTH_1 = 1 << 17,
-    UPGRADE_HEALTH_2 = 1 << 0,
-    UPGRADE_HEALTH_3 = 1 << 1,
-    UPGRADE_HEALTH_4 = 1 << 2,
+    UPGRADE_HEALTH_1 = 1 << 0,
+    UPGRADE_HEALTH_2 = 1 << 1,
+    UPGRADE_HEALTH_3 = 1 << 2,
+    UPGRADE_HEALTH_4 = 1 << 3,
     // Damage Upgrades
-    UPGRADE_DAMAGE_1 = 1 << 3,
-    UPGRADE_DAMAGE_2 = 1 << 4,
-    UPGRADE_DAMAGE_3 = 1 << 5,
-    UPGRADE_DAMAGE_4 = 1 << 6,
+    UPGRADE_DAMAGE_1 = 1 << 4,
+    UPGRADE_DAMAGE_2 = 1 << 5,
+    UPGRADE_DAMAGE_3 = 1 << 6,
+    UPGRADE_DAMAGE_4 = 1 << 7,
     // Regeneration Upgrades
-    UPGRADE_REGENERATION_1 = 1 << 7,
-    UPGRADE_REGENERATION_2 = 1 << 8,
-    UPGRADE_REGENERATION_3 = 1 << 9,
+    UPGRADE_REGENERATION_1 = 1 << 8,
+    UPGRADE_REGENERATION_2 = 1 << 9,
+    UPGRADE_REGENERATION_3 = 1 << 10,
     // New Room Upgrades
-    UPGRADE_HEALING_ROOM = 1 << 10,
+    UPGRADE_HEALING_ROOM = 1 << 11,
     UPGRADE_LOOT_ROOM,
     // MOVE SPEED UPGRADE
-    UPGRADE_MOVE_SPEED_1 = 1 << 11,
-    UPGRADE_MOVE_SPEED_2 = 1 << 12,
+    UPGRADE_MOVE_SPEED_1 = 1 << 12,
+    UPGRADE_MOVE_SPEED_2 = 1 << 13,
     // Dodge Upgrade
-    UPGRADE_DASH_UNLOCK = 1 << 13,
-    UPGRADE_DASH_COOLDOWN_1 = 1 << 14,
-    UPGRADE_DASH_COOLDOWN_2 = 1 << 15,
+    UPGRADE_DASH_UNLOCK = 1 << 14,
+    UPGRADE_DASH_COOLDOWN_1 = 1 << 15,
+    UPGRADE_DASH_COOLDOWN_2 = 1 << 16,
     // Room Decrease Upgrade
-    UPGRADE_REMOVE_ROOM = 1 << 16,
+    UPGRADE_REMOVE_ROOM = 1 << 17,
 } PlayerUpgrades;
 
 typedef struct {
@@ -102,6 +102,8 @@ void damagePlayer(uint32_t damage);
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color);
 void initPlayer(PlayerHistory history);
 void handleRegeneration();
+void drawEntityWithBarrel(Vector2 pos, Vector2 size, float rotation, Vector2 barrelSize,
+                          Color bodyColor, Color barrelColor, float healthPercent);
 
 extern Player mainPlayer;
 extern PlayerHistory history;

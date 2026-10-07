@@ -40,7 +40,7 @@ typedef enum {
 } GameState;
 
 /**
- * Upgrades:
+ * Upgrades (DONE!):
  * - Flat Health Upgrade
  * - Flat Damage Upgrade
  * - Regeneration Upgrade (Per Room, e.g Heal 5 health after each room).

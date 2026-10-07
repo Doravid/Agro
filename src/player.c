@@ -120,6 +120,7 @@ void initPlayer(PlayerHistory history) {
 }
 
 void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color color) {
+
     Vector2 playerOrigin = {size.x * 0.5f, size.y * 0.5f};
     const float healthBarStart = (position.x - size.x / 4);
     const float healthBarMaxWidth = size.x * 1.5;
@@ -141,48 +142,23 @@ void drawHealthBar(Vector2 size, Vector2 position, float healthPercent, Color co
 
 void drawShooterPlayer(Player player) {
     const float fadeAmount = 0.3f;
-    Vector2 childOffset = {30.0f, 0.0f};
-    Vector2 childSize = {20.0f, 15.0f};
-
-    Vector2 rotatedOffset = Vector2Rotate(childOffset, player.rotation * DEG2RAD);
-    Vector2 childWorldPos = Vector2Add(player.position, rotatedOffset);
-
+    Vector2 barrelSize = {20.0f, 15.0f};
     Color barrelDrawColor = player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
-    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x, childSize.y};
-    Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
-    DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
-
     Color playerDrawColor = player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
 
-    Rectangle playerRec = {player.position.x, player.position.y, player.size.x, player.size.y};
-    Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
-    DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
-
-    drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth,
-                  player.color);
+    drawEntityWithBarrel(player.position, player.size, player.rotation, barrelSize, playerDrawColor,
+                         barrelDrawColor, (float)player.currentHealth / player.maxHealth);
 }
 
 void drawBigshot(Player player) {
     const float fadeAmount = 0.3f;
-    Vector2 childOffset = {30.0f, 0.0f};
-    Vector2 childSize = {40.0f, 45.0f};
-
-    Vector2 rotatedOffset = Vector2Rotate(childOffset, player.rotation * DEG2RAD);
-    Vector2 childWorldPos = Vector2Add(player.position, rotatedOffset);
+    Vector2 barrelSize = {40.0f, 45.0f};
 
     Color barrelDrawColor = player.dashTimer <= 0.f ? DARKPURPLE : Fade(DARKPURPLE, fadeAmount);
-    Rectangle childRec = {childWorldPos.x, childWorldPos.y, childSize.x, childSize.y};
-    Vector2 childOrigin = {childSize.x * 0.5f, childSize.y * 0.5f};
-    DrawRectanglePro(childRec, childOrigin, player.rotation, barrelDrawColor);
-
     Color playerDrawColor = player.dashTimer <= 0.f ? player.color : Fade(player.color, fadeAmount);
 
-    Rectangle playerRec = {player.position.x, player.position.y, player.size.x, player.size.y};
-    Vector2 playerOrigin = {player.size.x * 0.5f, player.size.y * 0.5f};
-    DrawRectanglePro(playerRec, playerOrigin, player.rotation, playerDrawColor);
-
-    drawHealthBar(player.size, player.position, (float)player.currentHealth / player.maxHealth,
-                  player.color);
+    drawEntityWithBarrel(player.position, player.size, player.rotation, barrelSize, playerDrawColor,
+                         barrelDrawColor, (float)player.currentHealth / player.maxHealth);
 }
 
 void drawPlayer(Player player) {
@@ -206,15 +182,14 @@ void drawPlayer(Player player) {
 }
 void handleRegeneration() {
     if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_1)
-        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
+        mainPlayer.currentHealth += 5;
     if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_2)
-        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
+        mainPlayer.currentHealth += 5;
     if (mainPlayer.currentUpgrades & UPGRADE_REGENERATION_3)
-        mainPlayer.currentHealth = (mainPlayer.currentHealth + 5);
-
-    if (mainPlayer.currentHealth > mainPlayer.maxHealth) {
+        mainPlayer.currentHealth += 5;
+    // Bound the health to the max.
+    if (mainPlayer.currentHealth > mainPlayer.maxHealth)
         mainPlayer.currentHealth = mainPlayer.maxHealth;
-    }
 }
 static bool upgradeObtained(PlayerUpgrades upgrade) { return mainPlayer.currentUpgrades & upgrade; }
 
@@ -330,7 +305,7 @@ void updatePlayer(Camera2D camera) {
     }
 
     // Movement
-    const float impactScalingFactor = 100.f;
+    const float impactScalingFactor = 80.f;
     Vector2 norm = Vector2ClampValue(mainPlayer.movementVector, 0.0f, 1.0f);
     Vector2 baseMove = Vector2Scale(norm, mainPlayer.moveSpeed * GetFrameTime());
     Vector2 impactMove =
@@ -364,4 +339,19 @@ void damagePlayer(uint32_t damage) {
         mainPlayer.currentHealth -= damage;
     triggerScreenShake(0.25, 4.5f);
     PlaySound(hit);
+}
+void drawEntityWithBarrel(Vector2 pos, Vector2 size, float rotation, Vector2 barrelSize,
+                          Color bodyColor, Color barrelColor, float healthPercent) {
+    Vector2 barrelOffset = {size.x * .66, 0.0f};
+    Vector2 rotatedOffset = Vector2Rotate(barrelOffset, rotation * DEG2RAD);
+    Vector2 childWorldPos = Vector2Add(pos, rotatedOffset);
+
+    Rectangle childRec = {childWorldPos.x, childWorldPos.y, barrelSize.x, barrelSize.y};
+    Vector2 childOrigin = {barrelSize.x * 0.5f, barrelSize.y * 0.5f};
+    DrawRectanglePro(childRec, childOrigin, rotation, barrelColor);
+
+    Rectangle playerRec = {pos.x, pos.y, size.x, size.y};
+    Vector2 playerOrigin = {size.x * 0.5f, size.y * 0.5f};
+    DrawRectanglePro(playerRec, playerOrigin, rotation, bodyColor);
+    drawHealthBar(size, pos, healthPercent, Fade(bodyColor, 1.0));
 }

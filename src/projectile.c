@@ -74,9 +74,7 @@ bool projectileHitsEntity(Projectile proj) {
         for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
             if (Vector2Distance(proj.position, enemies[enemyIndex].position) <
                 proj.size + enemies[enemyIndex].size.x / 2) {
-                damageEnemy(enemyIndex, proj.damage);
-
-                return true;
+                return damageEnemy(enemyIndex, proj.damage);
             }
         }
     }
