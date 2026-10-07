@@ -38,6 +38,7 @@ void initGame() {
     SetTargetFPS(0);
     SetExitKey(KEY_DELETE);
     initSounds();
+    initProjectiles();
     initRoomTexture();
     initCamera();
     initPlayer((PlayerHistory){

@@ -10,6 +10,7 @@
 #include "settings.h"
 #include "upgrades.h"
 #include "items.h"
+#include <time.h>
 
 static float shakeDuration = 0.0f;
 static float shakeIntensity = 0.0f;
@@ -23,8 +24,8 @@ void drawGraphPaper(Camera2D camera, int screenWidth, int screenHeight) {
     Color gridColor = (Color){17, 17, 17, 255};
 
     Vector2 topLeft = GetScreenToWorld2D((Vector2){0, 0}, camera);
-    Vector2 bottomRight = GetScreenToWorld2D(
-        (Vector2){(float)screenWidth, (float)screenHeight}, camera);
+    Vector2 bottomRight =
+        GetScreenToWorld2D((Vector2){(float)screenWidth, (float)screenHeight}, camera);
 
     int startX = (int)(topLeft.x / spacing) * spacing - spacing;
     int endX = (int)(bottomRight.x / spacing) * spacing + spacing;
@@ -59,8 +60,7 @@ void myToggleFullscreen() {
         ToggleFullscreen();
         SetWindowSize(1280, 720);
     } else {
-        SetWindowSize(GetMonitorWidth(currentMonitor),
-                      GetMonitorHeight(currentMonitor));
+        SetWindowSize(GetMonitorWidth(currentMonitor), GetMonitorHeight(currentMonitor));
         ToggleFullscreen();
     }
     fullScreen = IsWindowFullscreen();
@@ -89,8 +89,7 @@ void updateScreen() {
         target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
         SetTextureWrap(target.texture, TEXTURE_WRAP_CLAMP);
         // Update the shader.
-        float resolution[2] = {(float)GetScreenWidth(),
-                               (float)GetScreenHeight()};
+        float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
         SetShaderValue(bloom, sizeLoc, resolution, SHADER_UNIFORM_VEC2);
     }
 }
@@ -110,8 +109,7 @@ void updateCamera(Camera2D *camera) {
     float scaleY = (float)GetScreenHeight() / VIRTUAL_HEIGHT;
     float windowScale = fminf(scaleX, scaleY);
     camera->zoom = userZoom * windowScale;
-    camera->offset =
-        (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
+    camera->offset = (Vector2){GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f};
     camera->target = mainPlayer.position;
     camera->rotation = 0.0f;
 
@@ -120,10 +118,8 @@ void updateCamera(Camera2D *camera) {
     if (shakeDuration > 0.f) {
 
         if (shakeDuration > 0.0f) {
-            float offsetX =
-                (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
-            float offsetY =
-                (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
+            float offsetX = (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
+            float offsetY = (GetRandomValue(-100, 100) / 100.0f) * shakeIntensity;
 
             camera->offset.x += offsetX;
             camera->offset.y += offsetY;
@@ -136,15 +132,30 @@ void updateCamera(Camera2D *camera) {
         }
     }
 }
-
+enum { NS_PER_SECOND = 1000000000 };
+void sub_timespec(struct timespec t1, struct timespec t2, struct timespec *td) {
+    td->tv_nsec = t2.tv_nsec - t1.tv_nsec;
+    td->tv_sec = t2.tv_sec - t1.tv_sec;
+    if (td->tv_sec > 0 && td->tv_nsec < 0) {
+        td->tv_nsec += NS_PER_SECOND;
+        td->tv_sec--;
+    } else if (td->tv_sec < 0 && td->tv_nsec > 0) {
+        td->tv_nsec -= NS_PER_SECOND;
+        td->tv_sec++;
+    }
+}
 void drawGame() {
+    struct timespec start, finish, delta;
+
     BeginTextureMode(target);
 
     ClearBackground((Color){.r = 7, .g = 7, .b = 7, .a = 255});
     char moneyString[100] = {0};
     snprintf(moneyString, 100, "%u$", history.coins);
+    clock_gettime(CLOCK_REALTIME, &start);
     if (currentState == STATE_PLAYING) {
         BeginMode2D(camera);
+
         drawProjectiles(projectiles, numProjectiles);
         drawPlayer(mainPlayer);
         drawEnemies();
@@ -153,8 +164,8 @@ void drawGame() {
         drawItems();
         EndMode2D();
 
-        DrawText(moneyString, GetScreenWidth() - GetScreenWidth() / 10,
-                 GetScreenHeight() / 20, 40, ORANGE);
+        DrawText(moneyString, GetScreenWidth() - GetScreenWidth() / 10, GetScreenHeight() / 20, 40,
+                 ORANGE);
     }
 
     EndTextureMode();
@@ -164,8 +175,7 @@ void drawGame() {
     BeginShaderMode(bloom);
 
     DrawTextureRec(target.texture,
-                   (Rectangle){0, 0, (float)target.texture.width,
-                               (float)-target.texture.height},
+                   (Rectangle){0, 0, (float)target.texture.width, (float)-target.texture.height},
                    (Vector2){0, 0}, WHITE);
     EndShaderMode();
 
@@ -183,10 +193,12 @@ void drawGame() {
     DrawFPS(10, 10);
 
     if (gameOver)
-        DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150,
-                 GOLD);
+        DrawText("YOU WIN!", GetScreenWidth() / 4, GetScreenHeight() / 3, 150, GOLD);
     if (mainPlayer.currentHealth == 0 && currentState == STATE_PLAYING)
-        DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4,
-                 150, RED);
+        DrawText("YOU LOSE :(", GetScreenWidth() / 5, GetScreenHeight() / 4, 150, RED);
     EndDrawing();
+
+    clock_gettime(CLOCK_REALTIME, &finish);
+    sub_timespec(start, finish, &delta);
+    printf("%d.%.9ld\n", (int)delta.tv_sec, delta.tv_nsec);
 }

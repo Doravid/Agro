@@ -204,7 +204,7 @@ void loadRoom(const char *filepath, RoomData *room, Vector2 targetEntrance) {
                         .currentTimer = 1.f,
                         .maxTime = 2.f,
                         .fireTimer = 0,
-                        .fireTimerMax = 0.04,
+                        .fireTimerMax = 0.08,
                     });
                 } else if (strcmp(entId->valuestring, "Item") == 0) {
                     const char *itemNameString = getFieldValue(entity, "ItemName");
@@ -309,9 +309,9 @@ static void loadNextRoom(RoomData *lastRoom, int colliderIndex) {
         return;
     }
     const char *nextMaps[] = {
-        "maps/thing/Level_1.ldtkl",
-        "maps/thing/Level_2.ldtkl",
-        "maps/thing/Level_3.ldtkl",
+        // "maps/thing/Level_1.ldtkl",
+        // "maps/thing/Level_2.ldtkl",
+        // "maps/thing/Level_3.ldtkl",
         "maps/thing/Level_4.ldtkl",
     };
     const char *extraMaps[] = {

@@ -8,23 +8,24 @@
 typedef enum {
     PlayerProj,
     EnemyProj,
-} ProjectileOwner;
+    VisualProj,
+} ProjectileType;
 
 typedef struct {
     Vector2 position, direction;
     Color color;
     float moveSpeed, size;
     uint32_t damage;
-    ProjectileOwner owner;
+    ProjectileType owner;
     float lifetime;
 } Projectile;
 
 extern Projectile projectiles[MAX_PROJECTILES];
 extern uint32_t numProjectiles;
 
-void spawnProjectileFromPlayer(Player parent, ProjectileOwner owner);
-void spawnProjectileFromPlayerPro(Player parent, ProjectileOwner owner,
-                                  float size, float moveSpeed);
+void spawnProjectileFromPlayer(Player parent, ProjectileType owner);
+void spawnProjectileFromPlayerPro(Player parent, ProjectileType owner, float size, float moveSpeed);
 void drawProjectiles(Projectile *projs, uint32_t numProjs);
 void updateProjectiles();
 void spawnProjectile(Projectile proj_to_spawn);
+void initProjectiles();
