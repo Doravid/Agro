@@ -93,7 +93,7 @@ void updateTraps() {
                 .size = (float)GetRandomValue(4, 6),
                 .moveSpeed = speed,
                 .damage = trap->damage,
-                .owner = EnemyProj,
+                .owner = TrapProj,
                 .lifetime = (2.0f * myGridSize) / speed,
             });
             spawnProjectile((Projectile){
@@ -103,7 +103,7 @@ void updateTraps() {
                 .size = (float)GetRandomValue(4, 6),
                 .moveSpeed = speed,
                 .damage = trap->damage,
-                .owner = EnemyProj,
+                .owner = TrapProj,
                 .lifetime = (2.0f * myGridSize) / speed,
             });
         }

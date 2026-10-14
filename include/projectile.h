@@ -8,7 +8,7 @@
 typedef enum {
     PlayerProj,
     EnemyProj,
-    VisualProj,
+    TrapProj,
 } ProjectileType;
 
 typedef struct {

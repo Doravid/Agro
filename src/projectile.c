@@ -63,9 +63,8 @@ void spawnProjectileFromPlayerPro(Player parent, ProjectileType owner, float siz
 }
 
 bool projectileHitsEntity(Projectile proj) {
-    if (proj.owner == VisualProj)
-        return false;
-    if (proj.owner == EnemyProj) {
+
+    if (proj.owner == EnemyProj || proj.owner == TrapProj) {
         if (mainPlayer.dashTimer > 0)
             return false;
 
@@ -85,6 +84,9 @@ bool projectileHitsEntity(Projectile proj) {
             }
         }
     }
+
+    if (proj.owner == TrapProj)
+        return false;
 
     for (uint32_t r = 0; r < numRoomsLoaded; r++) {
         RoomData *room = &rooms[r];
@@ -110,6 +112,7 @@ void updateProjectiles() {
 
     float frameTime = GetFrameTime();
     float cullDistSqr = 2500.f * 2500.f;
+
     for (uint16_t projectileIndex = 0; projectileIndex < numProjectiles; projectileIndex++) {
         Projectile *currentProjectile = &projectiles[projectileIndex];
 
