@@ -73,6 +73,9 @@ bool projectileHitsEntity(Projectile proj) {
             damagePlayer(proj.damage);
             return true;
         }
+
+        if (proj.owner == TrapProj)
+            return false;
     }
 
     if (proj.owner == PlayerProj) {
@@ -84,9 +87,6 @@ bool projectileHitsEntity(Projectile proj) {
             }
         }
     }
-
-    if (proj.owner == TrapProj)
-        return false;
 
     for (uint32_t r = 0; r < numRoomsLoaded; r++) {
         RoomData *room = &rooms[r];

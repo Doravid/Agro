@@ -7,7 +7,7 @@
 
 Item items[MAX_ITEMS];
 uint32_t numItems = 0;
-
+/*DRAW FUNCTIONS*/
 static void drawMaxHealthItem(Vector2 pos) {
     const Vector2 size = {.x = 42, .y = 13};
 
@@ -38,7 +38,7 @@ static void drawCurrentHealthItem(Vector2 pos) {
     DrawRectanglePro(playerRecFlipped, playerOriginFlipped, rotation, drawColor);
 }
 
-static void drawDamageHealthItem(Vector2 pos) {
+static void drawDamageItem(Vector2 pos) {
 
     const float rotation = -45.0f;
     Color bladeColor = (Color){143, 191, 250, 255};
@@ -62,15 +62,6 @@ static void drawDamageHealthItem(Vector2 pos) {
     DrawRectanglePro(pommelRec, pommelOrigin, rotation, hiltColor);
 }
 
-bool addItem(Item item) {
-    if (numItems < MAX_ITEMS) {
-        items[numItems] = item;
-        numItems++;
-        return true;
-    }
-    return false;
-}
-
 void drawItems() {
     if (numItems > MAX_ITEMS) {
         puts("ERROR: TOO MANY ITEMS");
@@ -85,7 +76,7 @@ void drawItems() {
                 drawCurrentHealthItem(items[itemIndex].position);
                 break;
             case ITEM_DAMAGE:
-                drawDamageHealthItem(items[itemIndex].position);
+                drawDamageItem(items[itemIndex].position);
                 break;
 
             default:
@@ -94,6 +85,16 @@ void drawItems() {
         }
     }
 }
+
+bool addItem(Item item) {
+    if (numItems < MAX_ITEMS) {
+        items[numItems] = item;
+        numItems++;
+        return true;
+    }
+    return false;
+}
+
 static void removeItem(uint32_t index) {
     if (index >= numItems) {
         return;
@@ -101,6 +102,7 @@ static void removeItem(uint32_t index) {
     numItems--;
     items[index] = items[numItems];
 }
+
 void updateItems() {
     // This is mostly for collision checks with the player.
 
