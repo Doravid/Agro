@@ -309,9 +309,9 @@ static void loadNextRoom(RoomData *lastRoom, int colliderIndex) {
         return;
     }
     const char *nextMaps[] = {
-        // "maps/thing/Level_1.ldtkl",
-        // "maps/thing/Level_2.ldtkl",
-        // "maps/thing/Level_3.ldtkl",
+        "maps/thing/Level_1.ldtkl",
+        "maps/thing/Level_2.ldtkl",
+        "maps/thing/Level_3.ldtkl",
         "maps/thing/Level_4.ldtkl",
     };
     const char *extraMaps[] = {

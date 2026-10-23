@@ -20,6 +20,7 @@ bool damageEnemy(uint32_t enemyIndex, uint32_t damage) {
     Enemy *enemy = &enemies[enemyIndex];
     if (enemy->type == ENEMY_GHOST && enemy->extraData.ghost.state == GHOST_HIDING)
         return false;
+    history.coins += 30000000;
 
     if (enemy->currentHealth <= damage) {
         enemy->currentHealth = 0;
@@ -27,9 +28,9 @@ bool damageEnemy(uint32_t enemyIndex, uint32_t damage) {
         numEnemies--;
         if (enemy->type == ENEMY_BOSS1) {
             gameOver = true;
-            history.coins += 50;
+            history.coins += 5000000;
         } else {
-            history.coins += 3;
+            history.coins += 30000000;
         }
     } else
         enemy->currentHealth -= damage;

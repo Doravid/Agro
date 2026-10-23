@@ -15,18 +15,18 @@ PlayerHistory history = {
 };
 static void initShooter(PlayerUpgrades upgrades) {
     mainPlayer = (Player){
-        .maxHealth = 100,
-        .currentHealth = 100,
+        .maxHealth = 999990,
+        .currentHealth = 9999990,
         .position = {400.0f, 200.0f},
         .size = {40.0f, 40.0f},
         .rotation = -90.f,
         .rotationSpeed = 300.f,
-        .moveSpeed = 400.0f,
+        .moveSpeed = 900.0f,
         .color = GREEN,
         .movementVector = (Vector2){0},
         .impactVector = {0},
         .dashTimer = 0.0f,
-        .attackDamage = 15,
+        .attackDamage = 1500,
         .attackCooldown = 0.1f,
         .attackSpeed = 0.3,
         .currentWeapon = WEAPON_SHOOTER,
@@ -35,8 +35,8 @@ static void initShooter(PlayerUpgrades upgrades) {
 
 static void initBigshot(PlayerUpgrades upgrades) {
     mainPlayer = (Player){
-        .maxHealth = 50,
-        .currentHealth = 50,
+        .maxHealth = 999990,
+        .currentHealth = 9999990,
         .position = {400.0f, 200.0f},
         .size = {60.0f, 60.0f},
         .rotation = -90.f,
