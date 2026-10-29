@@ -14,9 +14,6 @@
 #include "items.h"
 #define ARRAY_LENGTH(array) (sizeof((array)) / sizeof((array)[0]))
 
-#define MAX_LOADED_ROOMS 16
-#define BOSS_ROOM_THRESHOLD 5
-
 uint8_t numRoomsTillBoss = BOSS_ROOM_THRESHOLD;
 Level currentLevel;
 RoomData rooms[MAX_LOADED_ROOMS];

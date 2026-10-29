@@ -32,13 +32,15 @@ typedef enum {
     NUM_ENEMY_TYPES
 } EnemyType;
 
-typedef struct {
+typedef struct Enemy {
     Player;
     EnemyType type;
     union {
         BossData boss;
         GhostData ghost;
     } extraData;
+    void (*draw)(struct Enemy *);
+    void (*update)(struct Enemy *);
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];

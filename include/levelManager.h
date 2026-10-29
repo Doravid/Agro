@@ -51,7 +51,10 @@ void endGame();
 void saveGame(void);
 void loadGame(void);
 
+#define MAX_LOADED_ROOMS 160
+#define BOSS_ROOM_THRESHOLD 160
+
 extern RoomData currentRoom;
 extern uint32_t numRoomsLoaded;
-extern RoomData rooms[16];
+extern RoomData rooms[MAX_LOADED_ROOMS];
 extern GameState currentState;

@@ -16,11 +16,23 @@ Enemy enemies[MAX_ENEMIES];
 uint32_t numEnemies = 0;
 bool gameOver = false;
 
+void updateEnemies() {
+    for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
+        Enemy *currentEnemy = &enemies[enemyIndex];
+        currentEnemy->update(currentEnemy);
+    }
+}
+
+void drawEnemies() {
+    for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
+        enemies[enemyIndex].draw(&enemies[enemyIndex]);
+    }
+}
+
 bool damageEnemy(uint32_t enemyIndex, uint32_t damage) {
     Enemy *enemy = &enemies[enemyIndex];
     if (enemy->type == ENEMY_GHOST && enemy->extraData.ghost.state == GHOST_HIDING)
         return false;
-    history.coins += 30000000;
 
     if (enemy->currentHealth <= damage) {
         enemy->currentHealth = 0;
@@ -28,9 +40,9 @@ bool damageEnemy(uint32_t enemyIndex, uint32_t damage) {
         numEnemies--;
         if (enemy->type == ENEMY_BOSS1) {
             gameOver = true;
-            history.coins += 5000000;
+            history.coins += 50;
         } else {
-            history.coins += 30000000;
+            history.coins += 3;
         }
     } else
         enemy->currentHealth -= damage;
@@ -52,143 +64,24 @@ static void drawMeleeEnemy(Enemy *enemy) {
 
 static void drawShooter(Enemy *enemy) { drawPlayer(*(Player *)enemy); }
 
-void drawBuffshot(Enemy enemy) {
+static void drawBuffshot(Enemy *enemy) {
     Vector2 barrelSize = {17.0f, 30.0f};
     Color barrelDrawColor = DARKPURPLE;
-    drawEntityWithBarrel(enemy.position, enemy.size, enemy.rotation, barrelSize, enemy.color,
-                         barrelDrawColor, (float)enemy.currentHealth / enemy.maxHealth);
+    drawEntityWithBarrel(enemy->position, enemy->size, enemy->rotation, barrelSize, enemy->color,
+                         barrelDrawColor, (float)enemy->currentHealth / enemy->maxHealth);
 }
 
-void drawGhost(Enemy enemy) {
+static void drawGhost(Enemy *enemy) {
     Color barrelDrawColor =
-        enemy.extraData.ghost.state == GHOST_HIDING ? Fade(DARKPURPLE, 0.2) : DARKPURPLE;
+        enemy->extraData.ghost.state == GHOST_HIDING ? Fade(DARKPURPLE, 0.2) : DARKPURPLE;
     Color bodyColor =
-        enemy.extraData.ghost.state == GHOST_HIDING ? Fade(enemy.color, 0.2) : enemy.color;
-    drawEntityWithBarrel(enemy.position, enemy.size, enemy.rotation, (Vector2){17.0f, 17.0f},
-                         bodyColor, barrelDrawColor, (float)enemy.currentHealth / enemy.maxHealth);
+        enemy->extraData.ghost.state == GHOST_HIDING ? Fade(enemy->color, 0.2) : enemy->color;
+    drawEntityWithBarrel(enemy->position, enemy->size, enemy->rotation, (Vector2){17.0f, 17.0f},
+                         bodyColor, barrelDrawColor,
+                         (float)enemy->currentHealth / enemy->maxHealth);
 }
 
-void drawEnemies() {
-    for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
-        switch (enemies[enemyIndex].type) {
-            case ENEMY_SHOOTER:
-                drawShooter(&enemies[enemyIndex]);
-                break;
-            case ENEMY_MELEE:
-                drawMeleeEnemy(&enemies[enemyIndex]);
-                break;
-            case ENEMY_BUFFSHOT:
-                drawBuffshot(enemies[enemyIndex]);
-                break;
-            case ENEMY_GHOST:
-                drawGhost(enemies[enemyIndex]);
-                break;
-            case ENEMY_BOSS1:
-                drawBoss1(&enemies[enemyIndex]);
-                break;
-            default:
-                break;
-        }
-    }
-}
-static void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed,
-                       Color color, Vector2 position, EnemyType type, uint32_t attackDamage) {
-    enemies[numEnemies] = (Enemy){
-        .rotationSpeed = rotationSpeed,
-        .attackCooldown = 0.,
-        .attackSpeed = attackSpeed,
-        .color = color,
-        .moveSpeed = moveSpeed,
-        .position = position,
-        .rotation = 0,
-        .size = {40.f, 40.f},
-        .maxHealth = maxHealth,
-        .currentHealth = maxHealth,
-        .type = type,
-        .attackDamage = attackDamage,
-    };
-    numEnemies++;
-}
-
-void spawnShooterPos(uint32_t difficulty, Vector2 spawnPos) {
-    int randValue = GetRandomValue(0, 100);
-    float baseRotationSpeed = 100.;
-    float baseAttackSpeed = 1.;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 100.;
-    uint32_t baseAttackDamage = 15;
-
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
-               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
-               ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_SHOOTER,
-               baseAttackDamage);
-    enemies[numEnemies - 1].currentWeapon = WEAPON_SHOOTER;
-}
-
-void spawnGhostPos(uint32_t difficulty, Vector2 spawnPos) {
-    int randValue = GetRandomValue(0, 100);
-    float baseRotationSpeed = 300.;
-    float baseAttackSpeed = 0.8;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 130.;
-    uint32_t baseAttackDamage = 15;
-
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
-               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
-               ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_GHOST,
-               baseAttackDamage);
-    enemies[numEnemies - 1].currentWeapon = WEAPON_SHOOTER;
-}
-
-void spawnMeleePos(uint32_t difficulty, Vector2 spawnPos) {
-    int randValue = GetRandomValue(0, 100);
-    float baseRotationSpeed = 100.;
-    float baseAttackSpeed = 1.;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 200.;
-    uint32_t baseAttackDamage = 15;
-
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
-               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
-               ColorLerp(BLUE, PINK, (float)randValue / 100), spawnPos, ENEMY_MELEE,
-               baseAttackDamage);
-}
-
-void spawnBuffshotPos(uint32_t difficulty, Vector2 spawnPos) {
-    int randValue = GetRandomValue(0, 100);
-    float baseRotationSpeed = 100.;
-    float baseAttackSpeed = 5.;
-    uint32_t baseMaxHealth = 100;
-    float baseMoveSpeed = 14.;
-    uint32_t baseAttackDamage = 40;
-
-    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
-               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
-               ColorLerp(BLUE, PINK, (float)randValue / 100), spawnPos, ENEMY_BUFFSHOT,
-               baseAttackDamage);
-}
-
-void spawnRandomEnemyPos(uint32_t difficulty, Vector2 spawnPos) {
-    int randValue = GetRandomValue(ENEMY_SHOOTER, ENEMY_GHOST);
-    switch (randValue) {
-        case ENEMY_SHOOTER:
-            spawnShooterPos(difficulty, spawnPos);
-            break;
-        case ENEMY_MELEE:
-            spawnMeleePos(difficulty, spawnPos);
-            break;
-        case ENEMY_BUFFSHOT:
-            spawnBuffshotPos(difficulty, spawnPos);
-            break;
-        case ENEMY_GHOST:
-            spawnGhostPos(difficulty, spawnPos);
-            break;
-        default:
-            break;
-    }
-}
-
-void updateShooter(Enemy *enemy) {
+static void updateShooter(Enemy *enemy) {
     // Shoot at the player if possible.
     if (enemy->attackCooldown <= 0) {
         spawnProjectileFromPlayer(*(Player *)enemy, EnemyProj);
@@ -209,7 +102,7 @@ void updateShooter(Enemy *enemy) {
     enemy->position = moveWithCollision(enemy->position, enemy->size, move);
 }
 
-void updateGhost(Enemy *enemy) {
+static void updateGhost(Enemy *enemy) {
 
     // Handle State Timer and Changes
     if (enemy->extraData.ghost.stateTimer <= 0) {
@@ -250,7 +143,7 @@ void updateGhost(Enemy *enemy) {
         enemy->position = Vector2Add(enemy->position, move);
     }
 }
-void updateMelee(Enemy *currentEnemy) {
+static void updateMelee(Enemy *currentEnemy) {
     currentEnemy->rotation += currentEnemy->rotationSpeed * GetFrameTime();
 
     Vector2 targetPoint = mainPlayer.position;
@@ -269,8 +162,7 @@ void updateMelee(Enemy *currentEnemy) {
         damagePlayer(currentEnemy->maxHealth / 10);
     }
 }
-
-void updateBuffshot(Enemy *enemy) {
+static void updateBuffshot(Enemy *enemy) {
     // Shoot at the player if possible.
     if (enemy->attackCooldown <= 0) {
         spawnProjectileFromPlayerPro(*(Player *)enemy, EnemyProj, 20.f, 100.f);
@@ -290,34 +182,114 @@ void updateBuffshot(Enemy *enemy) {
     enemy->position = moveWithCollision(enemy->position, enemy->size, move);
 }
 
-void updateEnemies() {
-    for (uint16_t enemyIndex = 0; enemyIndex < numEnemies; enemyIndex++) {
-        Enemy *currentEnemy = &enemies[enemyIndex];
-        switch (currentEnemy->type) {
-            case ENEMY_SHOOTER:
-                updateShooter(currentEnemy);
-                break;
-            case ENEMY_MELEE:
-                updateMelee(currentEnemy);
-                break;
-            case ENEMY_BUFFSHOT:
-                updateBuffshot(currentEnemy);
-                break;
-            case ENEMY_GHOST:
-                updateGhost(currentEnemy);
-                break;
-
-            case ENEMY_BOSS1:
-                updateBoss1(currentEnemy);
-                break;
-            default:
-                break;
-        }
-
-        // Rotate towards the player
+static void spawnEnemy(float rotationSpeed, float attackSpeed, uint32_t maxHealth, float moveSpeed,
+                       Color color, Vector2 position, EnemyType type, uint32_t attackDamage) {
+    if (numEnemies == MAX_ENEMIES) {
+        puts("Too many enemies!!!");
+        return;
     }
+    enemies[numEnemies] = (Enemy){
+        .rotationSpeed = rotationSpeed,
+        .attackCooldown = 0.,
+        .attackSpeed = attackSpeed,
+        .color = color,
+        .moveSpeed = moveSpeed,
+        .position = position,
+        .rotation = 0,
+        .size = {40.f, 40.f},
+        .maxHealth = maxHealth,
+        .currentHealth = maxHealth,
+        .type = type,
+        .attackDamage = attackDamage,
+    };
+    numEnemies++;
 }
 
+static void spawnShooterPos(uint32_t difficulty, Vector2 spawnPos) {
+    int randValue = GetRandomValue(0, 100);
+    float baseRotationSpeed = 100.;
+    float baseAttackSpeed = 1.;
+    uint32_t baseMaxHealth = 100;
+    float baseMoveSpeed = 100.;
+    uint32_t baseAttackDamage = 15;
+
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
+               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
+               ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_SHOOTER,
+               baseAttackDamage);
+    enemies[numEnemies - 1].currentWeapon = WEAPON_SHOOTER;
+    enemies[numEnemies - 1].draw = drawShooter;
+    enemies[numEnemies - 1].update = updateShooter;
+}
+
+static void spawnGhostPos(uint32_t difficulty, Vector2 spawnPos) {
+    int randValue = GetRandomValue(0, 100);
+    float baseRotationSpeed = 300.;
+    float baseAttackSpeed = 0.8;
+    uint32_t baseMaxHealth = 100;
+    float baseMoveSpeed = 130.;
+    uint32_t baseAttackDamage = 15;
+
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
+               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
+               ColorLerp(BLUE, DARKBLUE, (float)randValue / 100), spawnPos, ENEMY_GHOST,
+               baseAttackDamage);
+    enemies[numEnemies - 1].currentWeapon = WEAPON_SHOOTER;
+    enemies[numEnemies - 1].draw = drawGhost;
+    enemies[numEnemies - 1].update = updateGhost;
+}
+
+static void spawnMeleePos(uint32_t difficulty, Vector2 spawnPos) {
+    int randValue = GetRandomValue(0, 100);
+    float baseRotationSpeed = 100.;
+    float baseAttackSpeed = 1.;
+    uint32_t baseMaxHealth = 100;
+    float baseMoveSpeed = 200.;
+    uint32_t baseAttackDamage = 15;
+
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
+               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
+               ColorLerp(BLUE, PINK, (float)randValue / 100), spawnPos, ENEMY_MELEE,
+               baseAttackDamage);
+    enemies[numEnemies - 1].draw = drawMeleeEnemy;
+    enemies[numEnemies - 1].update = updateMelee;
+}
+
+static void spawnBuffshotPos(uint32_t difficulty, Vector2 spawnPos) {
+    int randValue = GetRandomValue(0, 100);
+    float baseRotationSpeed = 100.;
+    float baseAttackSpeed = 5.;
+    uint32_t baseMaxHealth = 100;
+    float baseMoveSpeed = 14.;
+    uint32_t baseAttackDamage = 40;
+
+    spawnEnemy(baseRotationSpeed * difficulty, baseAttackSpeed / difficulty,
+               baseMaxHealth * difficulty, baseMoveSpeed * difficulty,
+               ColorLerp(BLUE, PINK, (float)randValue / 100), spawnPos, ENEMY_BUFFSHOT,
+               baseAttackDamage);
+    enemies[numEnemies - 1].draw = drawBuffshot;
+    enemies[numEnemies - 1].update = updateBuffshot;
+}
+
+static void spawnRandomEnemyPos(uint32_t difficulty, Vector2 spawnPos) {
+    int randValue = GetRandomValue(ENEMY_SHOOTER, ENEMY_GHOST);
+    switch (randValue) {
+        case ENEMY_SHOOTER:
+            spawnShooterPos(difficulty, spawnPos);
+            break;
+        case ENEMY_MELEE:
+            spawnMeleePos(difficulty, spawnPos);
+            break;
+        case ENEMY_BUFFSHOT:
+            spawnBuffshotPos(difficulty, spawnPos);
+            break;
+        case ENEMY_GHOST:
+            spawnGhostPos(difficulty, spawnPos);
+            break;
+        default:
+            break;
+    }
+}
 // Helper Functions
 
 static float rotateTowardsTarget(float currentRotation, Vector2 currentPos, Vector2 targetPos,

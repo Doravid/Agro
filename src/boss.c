@@ -335,5 +335,7 @@ void spawnBoss1Pos(Vector2 spawnPos) {
                                   .type = ENEMY_BOSS1,
                                   .attackDamage = 45,
                                   .extraData.boss.stateTimer = 3.f};
+    enemies[numEnemies].draw = drawBoss1;
+    enemies[numEnemies].update = updateBoss1;
     numEnemies++;
 }
